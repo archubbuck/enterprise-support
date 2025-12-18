@@ -32,3 +32,12 @@ pids
 .devcontainer/
 
 .spark-workbench-id
+
+# Capacitor
+ios/App/Pods
+ios/App/build
+ios/App/DerivedData
+ios/App/App.xcworkspace/xcuserdata
+ios/App/App.xcodeproj/xcuserdata
+*.xcuserstate
+.DS_Store
