@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 📚 Documentation
+    url: https://github.com/archubbuck/barings-support/tree/main/docs
+    about: Browse comprehensive documentation for setup, configuration, and development
+  - name: 💬 Discussions
+    url: https://github.com/archubbuck/barings-support/discussions
+    about: Ask questions and discuss ideas with the community
