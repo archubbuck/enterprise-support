@@ -9,10 +9,30 @@ import { readFileSync } from 'fs';
 
 const projectRoot = process.env.PROJECT_ROOT || import.meta.dirname;
 
-// Load company config for HTML transformation
-const companyConfig = JSON.parse(
-  readFileSync(resolve(projectRoot, 'company.config.json'), 'utf-8')
-);
+// Load company config for HTML transformation with error handling
+let companyConfig: { appName: string };
+try {
+  const configPath = resolve(projectRoot, 'company.config.json');
+  companyConfig = JSON.parse(readFileSync(configPath, 'utf-8'));
+  if (!companyConfig.appName) {
+    throw new Error('company.config.json must contain an "appName" field');
+  }
+} catch (error) {
+  console.error('Error loading company.config.json:', error);
+  throw new Error(
+    'Failed to load company.config.json. Please ensure the file exists and contains valid JSON with an "appName" field.'
+  );
+}
+
+// HTML escape function to prevent XSS
+function escapeHtml(unsafe: string): string {
+  return unsafe
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -27,7 +47,7 @@ export default defineConfig({
       transformIndexHtml(html) {
         return html.replace(
           /<title>.*?<\/title>/,
-          `<title>${companyConfig.appName}</title>`
+          `<title>${escapeHtml(companyConfig.appName)}</title>`
         );
       },
     } as PluginOption,
