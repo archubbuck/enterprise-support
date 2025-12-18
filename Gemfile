@@ -1,5 +1,5 @@
 source "https://rubygems.org"
 
-ruby "3.0.0"
+ruby "3.2.0"
 
-gem "fastlane"
+gem "fastlane", "~> 2.225.0"
