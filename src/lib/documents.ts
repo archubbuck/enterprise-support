@@ -8,7 +8,69 @@ export interface SupportDocument {
   content: string;
 }
 
-export const supportDocuments: SupportDocument[] = [
+interface DocumentManifestItem {
+  id: string;
+  title: string;
+  category: string;
+  icon: string;
+  file: string;
+}
+
+// Function to replace placeholders in document content
+function replacePlaceholders(content: string): string {
+  return content
+    .replace(/\{companyName\}/g, companyConfig.companyName)
+    .replace(/\{companyName\.toUpperCase\(\)\}/g, companyConfig.companyName.toUpperCase())
+    .replace(/\{emergencyEmail\}/g, companyConfig.contacts.emergencyEmail)
+    .replace(/\{vpnPortal\}/g, companyConfig.vpnPortal);
+}
+
+// Function to load documents from local storage (app bundle assets)
+async function loadDocumentsFromAssets(): Promise<SupportDocument[]> {
+  try {
+    // Read the manifest file from assets
+    const manifestResponse = await fetch('/documents/manifest.json');
+    if (!manifestResponse.ok) {
+      throw new Error('Failed to fetch manifest');
+    }
+    
+    const manifestData = await manifestResponse.json() as DocumentManifestItem[];
+    
+    // Load each document file
+    const documents = await Promise.all(
+      manifestData.map(async (item) => {
+        try {
+          const fileResponse = await fetch(`/documents/${item.file}`);
+          if (!fileResponse.ok) {
+            throw new Error(`Failed to fetch ${item.file}`);
+          }
+          
+          const content = replacePlaceholders(await fileResponse.text());
+          const title = replacePlaceholders(item.title);
+          
+          return {
+            id: item.id,
+            title,
+            category: item.category,
+            icon: item.icon as SupportDocument['icon'],
+            content,
+          };
+        } catch (error) {
+          console.error(`Failed to load document ${item.file}:`, error);
+          return null;
+        }
+      })
+    );
+    
+    return documents.filter((doc): doc is SupportDocument => doc !== null);
+  } catch (error) {
+    console.error('Failed to load documents from assets:', error);
+    return [];
+  }
+}
+
+// Fallback hardcoded documents for web development
+const fallbackDocuments: SupportDocument[] = [
   {
     id: 'wifi-network',
     title: `${companyConfig.companyName} Wi-Fi Network Connections`,
@@ -613,6 +675,21 @@ Updates are deployed automatically. When prompted:
 Contact IT Help Desk for hardware issues.`
   }
 ];
+
+// Main function to load documents - loads from app assets (works on both web and iOS)
+export async function loadSupportDocuments(): Promise<SupportDocument[]> {
+  const documents = await loadDocumentsFromAssets();
+  // If loading from assets fails, use fallback
+  return documents.length > 0 ? documents : fallbackDocuments;
+}
+
+// Keep synchronous export for backward compatibility (will be empty initially on iOS)
+export let supportDocuments: SupportDocument[] = [];
+
+// Initialize documents immediately
+loadSupportDocuments().then(docs => {
+  supportDocuments = docs;
+});
 
 export interface ContactRegion {
   region: string;

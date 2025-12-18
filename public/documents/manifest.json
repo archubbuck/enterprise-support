@@ -1,0 +1,58 @@
+[
+  {
+    "id": "wifi-network",
+    "title": "{companyName} Wi-Fi Network Connections",
+    "category": "Network",
+    "icon": "wifi",
+    "file": "wifi-network.md"
+  },
+  {
+    "id": "ms-teams-tips",
+    "title": "Tips on Using MS Teams",
+    "category": "Collaboration",
+    "icon": "teams",
+    "file": "ms-teams-tips.md"
+  },
+  {
+    "id": "email-setup",
+    "title": "Email Setup & Best Practices",
+    "category": "Communication",
+    "icon": "email",
+    "file": "email-setup.md"
+  },
+  {
+    "id": "security-guidelines",
+    "title": "Security Guidelines",
+    "category": "Security",
+    "icon": "security",
+    "file": "security-guidelines.md"
+  },
+  {
+    "id": "vpn-setup",
+    "title": "VPN Connection Guide",
+    "category": "Network",
+    "icon": "vpn",
+    "file": "vpn-setup.md"
+  },
+  {
+    "id": "printer-setup",
+    "title": "Printer Setup & Troubleshooting",
+    "category": "Hardware",
+    "icon": "printer",
+    "file": "printer-setup.md"
+  },
+  {
+    "id": "softphone-setup",
+    "title": "Softphone & Phone System",
+    "category": "Communication",
+    "icon": "phone",
+    "file": "softphone-setup.md"
+  },
+  {
+    "id": "laptop-care",
+    "title": "Laptop Care & Maintenance",
+    "category": "Hardware",
+    "icon": "laptop",
+    "file": "laptop-care.md"
+  }
+]
