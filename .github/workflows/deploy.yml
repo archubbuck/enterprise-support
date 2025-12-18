@@ -23,7 +23,7 @@ jobs:
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.0.0'
+          ruby-version: '3.2'
           bundler-cache: true
 
       - name: Run Fastlane release
@@ -33,5 +33,6 @@ jobs:
           APPSTORE_P8: ${{ secrets.APPSTORE_P8 }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           GIT_AUTHORIZATION: ${{ secrets.GIT_AUTHORIZATION }}
+          MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
         working-directory: ios/App
         run: bundle exec fastlane release

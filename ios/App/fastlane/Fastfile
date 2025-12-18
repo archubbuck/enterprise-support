@@ -1,5 +1,13 @@
 # This file contains the fastlane.tools configuration
 # You can find the documentation at https://docs.fastlane.tools
+#
+# Required environment variables:
+# - APPSTORE_KEY_ID: App Store Connect API key ID.
+# - APPSTORE_ISSUER_ID: App Store Connect API issuer ID.
+# - APPSTORE_P8: Contents of the App Store Connect .p8 private key (raw, not base64-encoded).
+# - MATCH_PASSWORD: Password for the encrypted certificates/profiles repo used by `match`.
+# - MATCH_GIT_URL: Git URL of the repository used by `match` for code signing assets.
+# - GIT_AUTHORIZATION: Authorization token or credentials (if required) to access MATCH_GIT_URL.
 
 default_platform(:ios)
 
@@ -19,12 +27,8 @@ platform :ios do
     match(
       type: "appstore",
       app_identifier: "com.barings.support",
+      git_url: ENV["MATCH_GIT_URL"],
       readonly: true
-    )
-
-    # Increment build number to ensure unique builds
-    increment_build_number(
-      xcodeproj: "App.xcodeproj"
     )
 
     # Build the app
