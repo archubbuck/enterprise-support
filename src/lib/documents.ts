@@ -1,3 +1,5 @@
+import companyConfig from '../../company.config.json';
+
 export interface SupportDocument {
   id: string;
   title: string;
@@ -9,22 +11,22 @@ export interface SupportDocument {
 export const supportDocuments: SupportDocument[] = [
   {
     id: 'wifi-network',
-    title: 'Barings Wi-Fi Network Connections',
+    title: `${companyConfig.companyName} Wi-Fi Network Connections`,
     category: 'Network',
     icon: 'wifi',
-    content: `# Barings Wi-Fi Network Connections
+    content: `# ${companyConfig.companyName} Wi-Fi Network Connections
 
 ## Overview
-This guide explains how to connect to the Barings corporate Wi-Fi network from your devices.
+This guide explains how to connect to the ${companyConfig.companyName} corporate Wi-Fi network from your devices.
 
 ## Available Networks
 
-### BARINGS-CORP
-Primary corporate network for Barings-issued devices.
+### ${companyConfig.companyName.toUpperCase()}-CORP
+Primary corporate network for ${companyConfig.companyName}-issued devices.
 - **Security**: WPA2-Enterprise
-- **Authentication**: Use your Barings credentials
+- **Authentication**: Use your ${companyConfig.companyName} credentials
 
-### BARINGS-GUEST
+### ${companyConfig.companyName.toUpperCase()}-GUEST
 For visitors and personal devices.
 - **Security**: WPA2-PSK
 - **Password**: Available from reception or IT Help Desk
@@ -33,20 +35,20 @@ For visitors and personal devices.
 
 ### Windows Devices
 1. Click the Wi-Fi icon in the system tray
-2. Select "BARINGS-CORP" from the list
-3. Enter your Barings email and password
+2. Select "${companyConfig.companyName.toUpperCase()}-CORP" from the list
+3. Enter your ${companyConfig.companyName} email and password
 4. Check "Connect automatically" for convenience
 5. Click Connect
 
 ### macOS Devices
 1. Click the Wi-Fi icon in the menu bar
-2. Select "BARINGS-CORP"
-3. Enter your Barings credentials when prompted
+2. Select "${companyConfig.companyName.toUpperCase()}-CORP"
+3. Enter your ${companyConfig.companyName} credentials when prompted
 4. Click Join
 
 ### iOS/Android Devices
 1. Go to Settings > Wi-Fi
-2. Tap "BARINGS-CORP"
+2. Tap "${companyConfig.companyName.toUpperCase()}-CORP"
 3. Enter your credentials
 4. Accept the security certificate if prompted
 
@@ -73,7 +75,7 @@ For assistance, contact the IT Help Desk.`
     content: `# Tips on Using Microsoft Teams
 
 ## Getting Started
-Microsoft Teams is Barings' primary collaboration platform for chat, meetings, and file sharing.
+Microsoft Teams is ${companyConfig.companyName}' primary collaboration platform for chat, meetings, and file sharing.
 
 ## Essential Features
 
@@ -137,7 +139,7 @@ For Teams support, contact the IT Help Desk or visit the Teams Help channel.`
 ### Desktop Setup (Windows/Mac)
 1. Open Microsoft Outlook
 2. Go to File > Add Account
-3. Enter your Barings email address
+3. Enter your ${companyConfig.companyName} email address
 4. Follow the autodiscover prompts
 5. Enter your password when prompted
 
@@ -145,13 +147,13 @@ For Teams support, contact the IT Help Desk or visit the Teams Help channel.`
 **iOS Mail App:**
 1. Settings > Mail > Accounts > Add Account
 2. Select Microsoft Exchange
-3. Enter your Barings email
-4. Accept Barings MDM policy
+3. Enter your ${companyConfig.companyName} email
+4. Accept ${companyConfig.companyName} MDM policy
 
 **Outlook Mobile (Recommended):**
 1. Download Outlook from App Store/Play Store
 2. Tap Add Account
-3. Enter your Barings email
+3. Enter your ${companyConfig.companyName} email
 4. Authenticate with your credentials
 
 ## Email Best Practices
@@ -160,7 +162,7 @@ For Teams support, contact the IT Help Desk or visit the Teams Help channel.`
 - **Subject lines**: Be specific and actionable
 - **Recipients**: Use CC sparingly, BCC for large groups
 - **Length**: Keep emails concise; use bullets for clarity
-- **Signature**: Use the standard Barings signature template
+- **Signature**: Use the standard ${companyConfig.companyName} signature template
 
 ### Managing Your Inbox
 - **Folders**: Create folders for projects and clients
@@ -170,7 +172,7 @@ For Teams support, contact the IT Help Desk or visit the Teams Help channel.`
 
 ### Security Guidelines
 - Never share passwords via email
-- Report suspicious emails to security@barings.com
+- Report suspicious emails to ${companyConfig.contacts.emergencyEmail}
 - Verify sender addresses on financial requests
 - Don't click links in unexpected emails
 
@@ -249,7 +251,7 @@ Contact IT Help Desk for email issues.`
 ### If You Suspect Phishing
 1. Don't click any links
 2. Don't download attachments
-3. Forward to security@barings.com
+3. Forward to ${companyConfig.contacts.emergencyEmail}
 4. Delete the email
 
 ## Data Protection
@@ -260,7 +262,7 @@ Contact IT Help Desk for email issues.`
 
 ## Incident Reporting
 Report security incidents immediately to:
-- Email: security@barings.com
+- Email: ${companyConfig.contacts.emergencyEmail}
 - Phone: IT Security Hotline (see Contacts)
 
 ## Support
@@ -274,11 +276,11 @@ Contact the Security team for questions.`
     content: `# VPN Connection Guide
 
 ## Overview
-The Barings VPN provides secure access to internal resources when working remotely.
+The ${companyConfig.companyName} VPN provides secure access to internal resources when working remotely.
 
 ## Before You Start
 - Ensure you have the GlobalProtect client installed
-- Have your Barings credentials ready
+- Have your ${companyConfig.companyName} credentials ready
 - Verify MFA is set up on your account
 
 ## Installation
@@ -299,9 +301,9 @@ The Barings VPN provides secure access to internal resources when working remote
 
 ### First Time Setup
 1. Open GlobalProtect
-2. Enter portal address: vpn.barings.com
+2. Enter portal address: ${companyConfig.vpnPortal}
 3. Click Connect
-4. Enter your Barings username and password
+4. Enter your ${companyConfig.companyName} username and password
 5. Approve the MFA prompt on your phone
 6. Wait for connection to establish
 
@@ -379,7 +381,7 @@ Documents are held in a secure queue until you release them at any printer.
 
 ### Sending a Secure Print Job
 1. Print your document normally
-2. Select "Barings Secure Print" as the printer
+2. Select "${companyConfig.companyName} Secure Print" as the printer
 3. Click Print
 4. Go to any printer to release
 
@@ -432,20 +434,20 @@ For printer issues, contact IT Help Desk.`
     content: `# Softphone & Phone System
 
 ## Overview
-Barings uses a unified communications system for voice calls, accessible via desk phones, softphone, and mobile.
+${companyConfig.companyName} uses a unified communications system for voice calls, accessible via desk phones, softphone, and mobile.
 
 ## Softphone Setup
 
 ### Desktop Client
 1. Download the softphone client from IT portal
 2. Install and launch the application
-3. Sign in with your Barings credentials
+3. Sign in with your ${companyConfig.companyName} credentials
 4. Allow microphone and speaker permissions
 5. Test audio in Settings
 
 ### Mobile App
 1. Download Webex or Teams (per your region)
-2. Sign in with your Barings account
+2. Sign in with your ${companyConfig.companyName} account
 3. Enable notifications
 4. Test incoming and outgoing calls
 
@@ -526,7 +528,7 @@ Contact IT Help Desk for phone system issues.`
 ### Power Management
 - Plug in when at desk to preserve battery health
 - Keep charge between 20-80% when possible
-- Use the provided Barings charger only
+- Use the provided ${companyConfig.companyName} charger only
 - Don't leave plugged in at 100% for extended periods
 
 ### Physical Care
@@ -620,44 +622,7 @@ export interface ContactRegion {
 }
 
 export const contactInfo = {
-  email: 'ithelpdesk@barings.com',
-  emergencyEmail: 'security@barings.com',
-  regions: [
-    {
-      region: 'Americas',
-      city: 'Charlotte, NC (HQ)',
-      phone: '+1 (704) 805-7200',
-      hours: '7:00 AM - 7:00 PM EST'
-    },
-    {
-      region: 'Americas',
-      city: 'New York, NY',
-      phone: '+1 (212) 878-3600',
-      hours: '8:00 AM - 6:00 PM EST'
-    },
-    {
-      region: 'EMEA',
-      city: 'London, UK',
-      phone: '+44 20 7514 1000',
-      hours: '8:00 AM - 6:00 PM GMT'
-    },
-    {
-      region: 'EMEA',
-      city: 'Frankfurt, Germany',
-      phone: '+49 69 7169 0',
-      hours: '8:00 AM - 6:00 PM CET'
-    },
-    {
-      region: 'Asia Pacific',
-      city: 'Hong Kong',
-      phone: '+852 2841 1000',
-      hours: '9:00 AM - 6:00 PM HKT'
-    },
-    {
-      region: 'Asia Pacific',
-      city: 'Tokyo, Japan',
-      phone: '+81 3 4578 7400',
-      hours: '9:00 AM - 6:00 PM JST'
-    }
-  ] as ContactRegion[]
+  email: companyConfig.contacts.email,
+  emergencyEmail: companyConfig.contacts.emergencyEmail,
+  regions: companyConfig.contacts.regions as ContactRegion[]
 };

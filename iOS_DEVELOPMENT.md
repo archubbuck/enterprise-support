@@ -1,10 +1,25 @@
 # iOS Development Guide
 
-This guide explains how to develop and build the Barings Support iOS app on both Windows and Mac devices.
+This guide explains how to develop and build the Enterprise Support iOS app on both Windows and Mac devices.
 
 ## Overview
 
-The Barings Support app is built using **Capacitor**, which wraps the React web application into a native iOS app. This allows the web app to be packaged and distributed as a native iOS application while maintaining a single codebase.
+This app is built using **Capacitor**, which wraps the React web application into a native iOS app. This allows the web app to be packaged and distributed as a native iOS application while maintaining a single codebase.
+
+## Configuration
+
+Before building the iOS app, configure it for your enterprise by editing `company.config.json`:
+
+```json
+{
+  "companyName": "Your Company",
+  "appName": "Your Company Support",
+  "appId": "com.yourcompany.support",
+  // ... other settings
+}
+```
+
+The `appId` is particularly important for iOS as it's used as the bundle identifier.
 
 ## Prerequisites
 
@@ -172,16 +187,17 @@ Then build in Xcode (Product → Build or `Cmd + B`)
 ## Project Structure
 
 ```
-barings-support/
-├── src/                 # React source code (web app)
-├── dist/                # Built web assets (generated)
-├── ios/                 # iOS native project (Capacitor generated)
-│   └── App/             # Xcode project
-│       ├── App/         # iOS app code and resources
-│       ├── Pods/        # CocoaPods dependencies
-│       └── App.xcodeproj # Xcode project file
-├── capacitor.config.ts  # Capacitor configuration
-└── package.json         # Node.js dependencies and scripts
+enterprise-support/
+├── src/                   # React source code (web app)
+├── dist/                  # Built web assets (generated)
+├── ios/                   # iOS native project (Capacitor generated)
+│   └── App/               # Xcode project
+│       ├── App/           # iOS app code and resources
+│       ├── Pods/          # CocoaPods dependencies
+│       └── App.xcodeproj  # Xcode project file
+├── company.config.json    # Company-specific configuration
+├── capacitor.config.ts    # Capacitor configuration
+└── package.json           # Node.js dependencies and scripts
 ```
 
 ## Common Tasks

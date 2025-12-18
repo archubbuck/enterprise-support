@@ -1,6 +1,8 @@
-# Barings Support
+# Enterprise Support App
 
-A mobile-first support document hub for Barings employees to quickly access curated IT support documents and contact information, designed to work offline.
+A mobile-first support document hub for enterprise employees to quickly access curated IT support documents and contact information, designed to work offline.
+
+> **Note**: This application is enterprise-agnostic and can be configured for any organization by editing the `company.config.json` file.
 
 **Experience Qualities**:
 1. **Clean** - Flat, minimal design with clear visual hierarchy and no unnecessary decoration
