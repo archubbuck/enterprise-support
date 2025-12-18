@@ -1,5 +1,4 @@
 import { Phone, EnvelopeSimple, MapPin, Clock, CaretRight } from '@phosphor-icons/react';
-import { Button } from '@/components/ui/button';
 import { contactInfo, ContactRegion } from '@/lib/documents';
 
 function groupByRegion(regions: ContactRegion[]): Record<string, ContactRegion[]> {
