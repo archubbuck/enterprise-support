@@ -287,6 +287,13 @@ Use one of the Windows development options listed in the Prerequisites section. 
 - [Apple Developer Documentation](https://developer.apple.com/documentation/)
 - [Xcode Help](https://developer.apple.com/xcode/)
 
+## Related Documentation
+
+- [Quick Start Guide](./QUICK_START.md) - Getting started with development
+- [Configuration Guide](./CONFIGURATION.md) - Customizing the app
+- [Document Management](./DOCUMENTS.md) - Managing support documents
+- [Contributing Guide](../CONTRIBUTING.md) - How to contribute
+
 ## Support
 
-For project-specific questions, please open an issue on the GitHub repository.
+For project-specific questions, please open an issue on the [GitHub repository](https://github.com/archubbuck/barings-support/issues).
