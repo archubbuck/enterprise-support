@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { FileText, Phone, MagnifyingGlass, X } from '@phosphor-icons/react';
 import { Input } from '@/components/ui/input';
@@ -7,15 +7,24 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { DocumentTile } from '@/components/DocumentTile';
 import { DocumentViewer } from '@/components/DocumentViewer';
 import { ContactsView } from '@/components/ContactsView';
-import { supportDocuments, SupportDocument } from '@/lib/documents';
+import { loadSupportDocuments, SupportDocument } from '@/lib/documents';
 import companyConfig from '../company.config.json';
 
 function App() {
   const [activeTab, setActiveTab] = useState<'documents' | 'contacts'>('documents');
   const [selectedDocument, setSelectedDocument] = useState<SupportDocument | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [documents, setDocuments] = useState<SupportDocument[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const filteredDocuments = supportDocuments.filter(doc =>
+  useEffect(() => {
+    loadSupportDocuments().then(docs => {
+      setDocuments(docs);
+      setIsLoading(false);
+    });
+  }, []);
+
+  const filteredDocuments = documents.filter(doc =>
     doc.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     doc.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -89,7 +98,16 @@ function App() {
               )}
             </div>
 
-            {filteredDocuments.length === 0 ? (
+            {isLoading ? (
+              <div className="text-center py-16 space-y-3">
+                <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mx-auto animate-pulse">
+                  <FileText className="w-6 h-6 text-muted-foreground" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-foreground">Loading documents...</p>
+                </div>
+              </div>
+            ) : filteredDocuments.length === 0 ? (
               <div className="text-center py-16 space-y-3">
                 <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mx-auto">
                   <FileText className="w-6 h-6 text-muted-foreground" />
