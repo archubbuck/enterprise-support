@@ -9,9 +9,17 @@
         "build": "tsc -b --noCheck && vite build",
         "lint": "eslint .",
         "optimize": "vite optimize",
-        "preview": "vite preview"
+        "preview": "vite preview",
+        "ios:build": "npm run build && npx cap sync ios",
+        "ios:open": "npx cap open ios",
+        "ios:run": "npm run ios:build && npm run ios:open",
+        "cap:sync": "npx cap sync",
+        "cap:copy": "npx cap copy"
     },
     "dependencies": {
+        "@capacitor/cli": "^7.4.4",
+        "@capacitor/core": "^8.0.0",
+        "@capacitor/ios": "^8.0.0",
         "@github/spark": ">=0.43.1 <1",
         "@heroicons/react": "^2.2.0",
         "@hookform/resolvers": "^4.1.3",
