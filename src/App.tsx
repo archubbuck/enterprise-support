@@ -8,6 +8,7 @@ import { DocumentTile } from '@/components/DocumentTile';
 import { DocumentViewer } from '@/components/DocumentViewer';
 import { ContactsView } from '@/components/ContactsView';
 import { supportDocuments, SupportDocument } from '@/lib/documents';
+import companyConfig from '../company.config.json';
 
 function App() {
   const [activeTab, setActiveTab] = useState<'documents' | 'contacts'>('documents');
@@ -28,9 +29,9 @@ function App() {
               <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
-          <h1 className="text-xl font-semibold tracking-tight text-foreground">Barings Support</h1>
+          <h1 className="text-xl font-semibold tracking-tight text-foreground">{companyConfig.appName}</h1>
         </div>
-        <p className="text-sm text-muted-foreground ml-11">IT Help & Documentation</p>
+        <p className="text-sm text-muted-foreground ml-11">{companyConfig.appSubtitle}</p>
       </header>
 
       <nav className="px-5 mb-4">
