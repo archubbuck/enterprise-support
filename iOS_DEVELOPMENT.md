@@ -134,8 +134,11 @@ For rapid development on Mac:
 # Terminal 1: Run dev server
 npm run dev
 
-# Terminal 2: In Xcode, configure the app to load from localhost
-# Set server.url in capacitor.config.ts to 'http://localhost:5173'
+# Terminal 2: In capacitor.config.ts, add server.url configuration:
+# server: {
+#   url: 'http://localhost:5173',
+#   cleartext: true
+# }
 # Then run in Xcode
 ```
 

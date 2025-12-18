@@ -120,4 +120,4 @@ barings-support/
 
 💡 **Tip for Mac Developers**: For faster development, configure Capacitor to load from localhost in development mode. See iOS_DEVELOPMENT.md for details.
 
-💡 **Tip for Everyone**: Always run `npm run build` before `npm run ios:build` to ensure your latest changes are included.
+💡 **Tip for Everyone**: Use `npm run build` for web-only builds, or `npm run ios:build` to build the web app and sync it to iOS in one step.
