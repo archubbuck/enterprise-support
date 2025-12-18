@@ -125,7 +125,8 @@ enterprise-support/
 ## Need Help?
 
 - **iOS Development**: See [iOS_DEVELOPMENT.md](./iOS_DEVELOPMENT.md)
-- **Project Overview**: See [README.md](./README.md)
+- **Project Overview**: See [README.md](../README.md)
+- **Configuration Guide**: See [CONFIGURATION.md](./CONFIGURATION.md)
 - **Issues**: Open an issue on GitHub
 
 ## Tips
