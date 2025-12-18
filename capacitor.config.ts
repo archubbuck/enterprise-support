@@ -1,12 +1,14 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
+const isDev = process.env.NODE_ENV === 'development';
+
 const config: CapacitorConfig = {
   appId: 'com.barings.support',
   appName: 'Barings Support',
   webDir: 'dist',
   server: {
-    // Allow clear text traffic for local development
-    cleartext: true,
+    // Allow clear text traffic for local development only
+    cleartext: isDev,
   },
   ios: {
     // iOS-specific configurations
