@@ -24,12 +24,20 @@ platform :ios do
     )
 
     # Generate certificates and provisioning profiles with match
+    # Note: GIT_AUTHORIZATION should be a base64-encoded string in the format "username:token"
+    # If it's just a token, encode it with a placeholder username for GitHub PAT
+    git_auth = ENV["GIT_AUTHORIZATION"]
+    if git_auth && !git_auth.include?(":")
+      # If GIT_AUTHORIZATION is just a token, format it as "x-access-token:token" and encode
+      git_auth = Base64.strict_encode64("x-access-token:#{git_auth}")
+    end
+
     match(
       type: "appstore",
       app_identifier: "com.barings.support",
       git_url: ENV["MATCH_GIT_URL"],
       readonly: false,
-      git_basic_authorization: Base64.strict_encode64(ENV["GIT_AUTHORIZATION"])
+      git_basic_authorization: git_auth
     )
   end
 
@@ -45,12 +53,20 @@ platform :ios do
     )
 
     # Setup code signing with match
+    # Note: GIT_AUTHORIZATION should be a base64-encoded string in the format "username:token"
+    # If it's just a token, encode it with a placeholder username for GitHub PAT
+    git_auth = ENV["GIT_AUTHORIZATION"]
+    if git_auth && !git_auth.include?(":")
+      # If GIT_AUTHORIZATION is just a token, format it as "x-access-token:token" and encode
+      git_auth = Base64.strict_encode64("x-access-token:#{git_auth}")
+    end
+
     match(
       type: "appstore",
       app_identifier: "com.barings.support",
       git_url: ENV["MATCH_GIT_URL"],
       readonly: true,
-      git_basic_authorization: Base64.strict_encode64(ENV["GIT_AUTHORIZATION"])
+      git_basic_authorization: git_auth
     )
 
     # Build the app
