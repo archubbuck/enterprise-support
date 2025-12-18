@@ -683,14 +683,6 @@ export async function loadSupportDocuments(): Promise<SupportDocument[]> {
   return documents.length > 0 ? documents : fallbackDocuments;
 }
 
-// Keep synchronous export for backward compatibility (will be empty initially on iOS)
-export let supportDocuments: SupportDocument[] = [];
-
-// Initialize documents immediately
-loadSupportDocuments().then(docs => {
-  supportDocuments = docs;
-});
-
 export interface ContactRegion {
   region: string;
   city: string;
