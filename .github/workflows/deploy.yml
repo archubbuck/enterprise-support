@@ -24,19 +24,6 @@ jobs:
           ruby-version: '3.0'
           bundler-cache: true
 
-      - name: Install dependencies
-        run: bundle install
-
-      - name: Setup environment variables
-        env:
-          APPSTORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
-          APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
-          APPSTORE_P8: ${{ secrets.APPSTORE_P8 }}
-          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          GIT_AUTHORIZATION: ${{ secrets.GIT_AUTHORIZATION }}
-        run: |
-          echo "Environment variables configured"
-
       - name: Run Fastlane release
         env:
           APPSTORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
