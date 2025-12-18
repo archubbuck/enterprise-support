@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { FileText, Phone, MagnifyingGlass, X } from '@phosphor-icons/react';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -22,49 +21,51 @@ function App() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <header className="sticky top-0 z-40 bg-primary text-primary-foreground">
-        <div className="px-4 py-4 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center">
-            <svg viewBox="0 0 24 24" className="w-6 h-6 fill-current">
-              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <header className="px-5 pt-6 pb-4">
+        <div className="flex items-center gap-3 mb-1">
+          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+            <svg viewBox="0 0 24 24" className="w-4 h-4 text-primary-foreground">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
-          <div>
-            <h1 className="text-lg font-semibold tracking-tight">Barings Support</h1>
-            <p className="text-xs text-primary-foreground/70">IT Help & Documentation</p>
-          </div>
+          <h1 className="text-xl font-semibold tracking-tight text-foreground">Barings Support</h1>
         </div>
+        <p className="text-sm text-muted-foreground ml-11">IT Help & Documentation</p>
       </header>
 
-      <Tabs 
-        value={activeTab} 
-        onValueChange={(v) => setActiveTab(v as 'documents' | 'contacts')}
-        className="sticky top-[72px] z-30 bg-card border-b border-border"
-      >
-        <TabsList className="w-full h-12 p-0 bg-transparent rounded-none grid grid-cols-2">
-          <TabsTrigger 
-            value="documents" 
-            className="h-full rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent data-[state=active]:shadow-none flex items-center gap-2"
+      <nav className="px-5 mb-4">
+        <div className="flex gap-1 p-1 bg-muted rounded-lg">
+          <button
+            onClick={() => setActiveTab('documents')}
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-md text-sm font-medium transition-all ${
+              activeTab === 'documents'
+                ? 'bg-card text-foreground shadow-sm'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
           >
             <FileText className="w-4 h-4" weight={activeTab === 'documents' ? 'fill' : 'regular'} />
             Documents
-          </TabsTrigger>
-          <TabsTrigger 
-            value="contacts"
-            className="h-full rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent data-[state=active]:shadow-none flex items-center gap-2"
+          </button>
+          <button
+            onClick={() => setActiveTab('contacts')}
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-md text-sm font-medium transition-all ${
+              activeTab === 'contacts'
+                ? 'bg-card text-foreground shadow-sm'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
           >
             <Phone className="w-4 h-4" weight={activeTab === 'contacts' ? 'fill' : 'regular'} />
             Contacts
-          </TabsTrigger>
-        </TabsList>
-      </Tabs>
+          </button>
+        </div>
+      </nav>
 
       <ScrollArea className="flex-1">
         {activeTab === 'documents' && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="p-4 space-y-4"
+            className="px-5 pb-6 space-y-4"
           >
             <div className="relative">
               <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -73,30 +74,35 @@ function App() {
                 placeholder="Search documents..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 pr-9 bg-muted/50 border-transparent focus:border-accent focus:bg-card"
+                className="pl-9 pr-9 h-10 bg-muted border-0 focus-visible:ring-1 focus-visible:ring-accent"
               />
               {searchQuery && (
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7"
+                  className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 hover:bg-transparent"
                   onClick={() => setSearchQuery('')}
                 >
-                  <X className="w-3 h-3" />
+                  <X className="w-3.5 h-3.5" />
                 </Button>
               )}
             </div>
 
             {filteredDocuments.length === 0 ? (
-              <div className="text-center py-12 space-y-2">
-                <FileText className="w-12 h-12 text-muted-foreground/50 mx-auto" />
-                <p className="text-muted-foreground">No documents found</p>
-                <Button variant="ghost" size="sm" onClick={() => setSearchQuery('')}>
+              <div className="text-center py-16 space-y-3">
+                <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mx-auto">
+                  <FileText className="w-6 h-6 text-muted-foreground" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-foreground">No documents found</p>
+                  <p className="text-sm text-muted-foreground mt-1">Try a different search term</p>
+                </div>
+                <Button variant="ghost" size="sm" onClick={() => setSearchQuery('')} className="text-accent">
                   Clear search
                 </Button>
               </div>
             ) : (
-              <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
                 {filteredDocuments.map((doc) => (
                   <DocumentTile
                     key={doc.id}

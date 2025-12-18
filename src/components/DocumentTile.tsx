@@ -7,10 +7,9 @@ import {
   Globe, 
   Printer, 
   Phone as PhoneIcon, 
-  Laptop 
+  Laptop,
+  CaretRight
 } from '@phosphor-icons/react';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { SupportDocument } from '@/lib/documents';
 
 const iconMap = {
@@ -24,12 +23,12 @@ const iconMap = {
   laptop: Laptop,
 };
 
-const categoryColors: Record<string, string> = {
-  Network: 'bg-blue-100 text-blue-700',
-  Collaboration: 'bg-purple-100 text-purple-700',
-  Communication: 'bg-green-100 text-green-700',
-  Security: 'bg-red-100 text-red-700',
-  Hardware: 'bg-orange-100 text-orange-700',
+const categoryStyles: Record<string, { bg: string; text: string }> = {
+  Network: { bg: 'bg-blue-50', text: 'text-blue-600' },
+  Collaboration: { bg: 'bg-violet-50', text: 'text-violet-600' },
+  Communication: { bg: 'bg-emerald-50', text: 'text-emerald-600' },
+  Security: { bg: 'bg-rose-50', text: 'text-rose-600' },
+  Hardware: { bg: 'bg-amber-50', text: 'text-amber-600' },
 };
 
 interface DocumentTileProps {
@@ -39,30 +38,27 @@ interface DocumentTileProps {
 
 export function DocumentTile({ document, onSelect }: DocumentTileProps) {
   const Icon = iconMap[document.icon];
-  const categoryColor = categoryColors[document.category] || 'bg-muted text-muted-foreground';
+  const style = categoryStyles[document.category] || { bg: 'bg-muted', text: 'text-muted-foreground' };
 
   return (
-    <motion.div
-      whileHover={{ y: -4, scale: 1.02 }}
+    <motion.button
       whileTap={{ scale: 0.98 }}
-      transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+      transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+      onClick={() => onSelect(document)}
+      className="w-full flex items-center gap-4 p-4 bg-card rounded-xl hover:bg-muted/50 transition-colors text-left group"
     >
-      <Card
-        className="cursor-pointer p-4 h-full flex flex-col gap-3 border-border/50 shadow-sm hover:shadow-md hover:border-accent/30 transition-shadow"
-        onClick={() => onSelect(document)}
-      >
-        <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-          <Icon className="w-6 h-6 text-primary" weight="duotone" />
-        </div>
-        <div className="flex-1 flex flex-col gap-2">
-          <h3 className="font-medium text-sm leading-tight text-card-foreground line-clamp-2">
-            {document.title}
-          </h3>
-          <Badge variant="secondary" className={`w-fit text-[10px] px-2 py-0.5 ${categoryColor}`}>
-            {document.category}
-          </Badge>
-        </div>
-      </Card>
-    </motion.div>
+      <div className={`w-11 h-11 rounded-xl ${style.bg} flex items-center justify-center shrink-0`}>
+        <Icon className={`w-5 h-5 ${style.text}`} weight="duotone" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <h3 className="font-medium text-sm text-foreground leading-snug">
+          {document.title}
+        </h3>
+        <span className={`text-xs ${style.text} font-medium`}>
+          {document.category}
+        </span>
+      </div>
+      <CaretRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors shrink-0" />
+    </motion.button>
   );
 }
