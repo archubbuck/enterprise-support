@@ -36,8 +36,8 @@ This application is built as a React web application that is packaged as a nativ
 
 ```bash
 # Clone the repository
-git clone https://github.com/archubbuck/barings-support.git
-cd barings-support
+git clone https://github.com/archubbuck/enterprise-support.git
+cd enterprise-support
 
 # Install dependencies
 npm install
@@ -195,9 +195,9 @@ Please read our [Code of Conduct](./CODE_OF_CONDUCT.md) before contributing.
 ## Support
 
 - 📖 Check the [documentation](./docs/)
-- 🐛 [Report bugs](https://github.com/archubbuck/barings-support/issues/new?template=bug_report.md)
-- 💡 [Request features](https://github.com/archubbuck/barings-support/issues/new?template=feature_request.md)
-- 📝 [Documentation issues](https://github.com/archubbuck/barings-support/issues/new?template=documentation.md)
+- 🐛 [Report bugs](https://github.com/archubbuck/enterprise-support/issues/new?template=bug_report.md)
+- 💡 [Request features](https://github.com/archubbuck/enterprise-support/issues/new?template=feature_request.md)
+- 📝 [Documentation issues](https://github.com/archubbuck/enterprise-support/issues/new?template=documentation.md)
 
 ## License
 

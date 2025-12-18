@@ -86,15 +86,15 @@ Welcome to the Enterprise Support App documentation! This directory contains com
 ## 🤔 Need Help?
 
 - Check the relevant documentation above
-- Search existing [GitHub Issues](https://github.com/archubbuck/barings-support/issues)
-- [Open a new issue](https://github.com/archubbuck/barings-support/issues/new/choose) if you can't find an answer
+- Search existing [GitHub Issues](https://github.com/archubbuck/enterprise-support/issues)
+- [Open a new issue](https://github.com/archubbuck/enterprise-support/issues/new/choose) if you can't find an answer
 - Review the [Contributing Guide](../CONTRIBUTING.md) for development questions
 
 ## 📝 Documentation Improvements
 
 Found a problem with the documentation? We welcome improvements!
 
-- [Report documentation issues](https://github.com/archubbuck/barings-support/issues/new?template=documentation.md)
+- [Report documentation issues](https://github.com/archubbuck/enterprise-support/issues/new?template=documentation.md)
 - Submit a pull request with fixes or improvements
 - See the [Contributing Guide](../CONTRIBUTING.md) for details
 

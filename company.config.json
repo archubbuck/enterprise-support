@@ -1,13 +1,13 @@
 {
-  "companyName": "Barings",
-  "appName": "Barings Support",
-  "appId": "com.barings.support",
+  "companyName": "Your Company",
+  "appName": "Enterprise Support",
+  "appId": "com.enterprise.support",
   "appSubtitle": "IT Help & Documentation",
-  "domain": "barings.com",
-  "vpnPortal": "vpn.barings.com",
+  "domain": "example.com",
+  "vpnPortal": "vpn.example.com",
   "contacts": {
-    "email": "ithelpdesk@barings.com",
-    "emergencyEmail": "security@barings.com",
+    "email": "ithelpdesk@example.com",
+    "emergencyEmail": "security@example.com",
     "regions": [
       {
         "region": "Americas",

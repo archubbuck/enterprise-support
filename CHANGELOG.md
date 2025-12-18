@@ -51,5 +51,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Framer Motion
 - Radix UI components
 
-[Unreleased]: https://github.com/archubbuck/barings-support/compare/v0.0.0...HEAD
-[0.0.0]: https://github.com/archubbuck/barings-support/releases/tag/v0.0.0
+[Unreleased]: https://github.com/archubbuck/enterprise-support/compare/v0.0.0...HEAD
+[0.0.0]: https://github.com/archubbuck/enterprise-support/releases/tag/v0.0.0
