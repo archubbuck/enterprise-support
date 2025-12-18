@@ -1,0 +1,24 @@
+name: iOS One-Time Match Setup
+on: workflow_dispatch # Allows you to run this manually from the Actions tab
+
+jobs:
+  setup_match:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Fastlane
+        run: brew install fastlane
+      - name: Run Match Init
+        run: |
+          # This creates the Matchfile in the runner
+          fastlane match init --git_url https://${{ secrets.GH_PAT }}@github.com
+          
+          # This generates the actual certificates and pushes them to your private repo
+          # You will need to interact with the console if it asks for Apple ID, 
+          # but using an App Store Connect API Key (Step 1 in previous response) is better.
+          fastlane match appstore --app_identifier "your.bundle.id"
+        env:
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
+          APPSTORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
+          APPSTORE_P8: ${{ secrets.APPSTORE_P8 }}
