@@ -13,6 +13,26 @@
 
 default_platform(:ios)
 
+# Helper method to format and encode Git authorization token
+# Handles both raw tokens and already-encoded tokens
+def prepare_git_authorization(token)
+  return nil if token.nil? || token.empty?
+  
+  # Try to detect if the token is already base64 encoded by attempting to decode it
+  begin
+    decoded = Base64.strict_decode64(token)
+    # If it decodes successfully and contains a colon (username:token format), it's already encoded
+    if decoded.include?(":")
+      return token
+    end
+  rescue ArgumentError
+    # Not valid base64, treat as raw token
+  end
+  
+  # Format as "x-access-token:token" and base64 encode for GitHub authentication
+  Base64.strict_encode64("x-access-token:#{token}")
+end
+
 platform :ios do
   desc "Generate certificates and provisioning profiles using match"
   lane :setup_certificates do
@@ -28,12 +48,7 @@ platform :ios do
     # Generate certificates and provisioning profiles with match
     # Note: GIT_AUTHORIZATION should be a GitHub Personal Access Token (raw token)
     # It will be formatted as "x-access-token:token" and base64 encoded for git authentication
-    git_auth = ENV["GIT_AUTHORIZATION"]
-    if git_auth && !git_auth.empty?
-      # Format as "x-access-token:token" and base64 encode for GitHub authentication
-      # This works for GitHub Personal Access Tokens
-      git_auth = Base64.strict_encode64("x-access-token:#{git_auth}")
-    end
+    git_auth = prepare_git_authorization(ENV["GIT_AUTHORIZATION"])
 
     match(
       type: "appstore",
@@ -58,12 +73,7 @@ platform :ios do
     # Setup code signing with match
     # Note: GIT_AUTHORIZATION should be a GitHub Personal Access Token (raw token)
     # It will be formatted as "x-access-token:token" and base64 encoded for git authentication
-    git_auth = ENV["GIT_AUTHORIZATION"]
-    if git_auth && !git_auth.empty?
-      # Format as "x-access-token:token" and base64 encode for GitHub authentication
-      # This works for GitHub Personal Access Tokens
-      git_auth = Base64.strict_encode64("x-access-token:#{git_auth}")
-    end
+    git_auth = prepare_git_authorization(ENV["GIT_AUTHORIZATION"])
 
     match(
       type: "appstore",
