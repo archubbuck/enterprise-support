@@ -244,6 +244,71 @@ npx cap sync ios
 
 Then clean build in Xcode: Product → Clean Build Folder (`Cmd + Shift + K`)
 
+## CI/CD and Certificate Management
+
+### GitHub Actions Workflows
+
+This project includes GitHub Actions workflows for iOS certificate management and deployment:
+
+- **iOS One-Time Match Setup** (`.github/workflows/setup_match.yml`) - One-time setup to generate and store certificates
+- **Deploy to App Store** (`.github/workflows/deploy.yml`) - Automated deployment on version tags
+
+### Setting Up Fastlane Match
+
+[Fastlane Match](https://docs.fastlane.tools/actions/match/) is used to manage iOS certificates and provisioning profiles in a separate private repository.
+
+#### Prerequisites
+
+1. **Create a private repository** for storing certificates (e.g., `your-org/your-app-certificates`)
+2. **Create an App Store Connect API Key**:
+   - Go to [App Store Connect](https://appstoreconnect.apple.com) → Users and Access → Keys
+   - Create a new key with Admin or App Manager access
+   - Download the `.p8` file and note the Key ID and Issuer ID
+
+#### Required GitHub Secrets
+
+Configure these secrets in your repository settings (Settings → Secrets and variables → Actions):
+
+| Secret Name | Description | Example/Format |
+|-------------|-------------|----------------|
+| `MATCH_GIT_URL` | Git URL of your certificates repository | `https://github.com/your-org/your-app-certificates` |
+| `GIT_AUTHORIZATION` | GitHub Personal Access Token (PAT) with `repo` scope to access the certificates repository | Raw token like `ghp_xxxxxxxxxxxx` (will be automatically formatted) |
+| `MATCH_PASSWORD` | Password to encrypt/decrypt certificates in the repository | A strong passphrase |
+| `APPSTORE_ISSUER_ID` | App Store Connect API Issuer ID | `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx` |
+| `APPSTORE_KEY_ID` | App Store Connect API Key ID | `XXXXXXXXXX` |
+| `APPSTORE_P8` | Contents of the App Store Connect .p8 private key file | Copy entire content of the `.p8` file (raw text) |
+
+#### Creating the GitHub Personal Access Token
+
+1. Go to GitHub → Settings → Developer settings → [Personal access tokens → Tokens (classic)](https://github.com/settings/tokens)
+2. Click "Generate new token (classic)"
+3. Give it a descriptive name (e.g., "iOS Match Certificate Access")
+4. Select scopes:
+   - ✅ `repo` (Full control of private repositories)
+5. Set an appropriate expiration date
+6. Click "Generate token"
+7. Copy the token (starts with `ghp_`) and save it as the `GIT_AUTHORIZATION` secret
+8. **Important**: The token should be provided as a raw token. The Fastlane configuration will automatically format and encode it.
+
+#### Running the Setup Workflow
+
+Once secrets are configured:
+
+1. Go to Actions → "iOS One-Time Match Setup"
+2. Click "Run workflow"
+3. This will generate certificates and push them to your certificates repository
+4. You only need to run this once, or when adding new devices/capabilities
+
+#### How It Works
+
+The `GIT_AUTHORIZATION` secret is handled by the `prepare_git_authorization` helper in the Fastfile:
+- Accepts a raw GitHub PAT
+- Automatically detects if the token is already encoded (for backward compatibility)
+- Formats as `x-access-token:TOKEN` and base64 encodes for git basic authentication
+- Passes to Fastlane Match's `git_basic_authorization` parameter
+
+This allows Fastlane Match to securely access your private certificates repository.
+
 ## Troubleshooting
 
 ### "npx cap sync" fails with missing dist directory
