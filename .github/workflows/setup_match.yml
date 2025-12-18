@@ -22,19 +22,35 @@ jobs:
           ruby-version: '3.2'
           bundler-cache: true
 
-      - name: Run Match Init
+      - name: Configure Git Authentication
+        run: |
+          # Configure git to use the authorization token for the match repository
+          git config --global url."https://${{ secrets.GIT_AUTHORIZATION }}@github.com/".insteadOf "https://github.com/"
+
+      - name: Setup App Store Connect API Key
         working-directory: ios/App
         run: |
-          # This creates the Matchfile if it doesn't exist
-          bundle exec fastlane match init --git_url "$MATCH_GIT_URL"
+          # Create a temporary .p8 key file for App Store Connect authentication
+          mkdir -p /tmp/appstore
+          echo "$APPSTORE_P8" > /tmp/appstore/AuthKey_$APPSTORE_KEY_ID.p8
+        env:
+          APPSTORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
+          APPSTORE_P8: ${{ secrets.APPSTORE_P8 }}
+
+      - name: Generate Certificates with Match
+        working-directory: ios/App
+        run: |
+          # Generate certificates and provisioning profiles using match
+          # This pushes the certificates to the private match repository
+          bundle exec fastlane match appstore \
+            --app_identifier "com.barings.support" \
+            --git_url "$MATCH_GIT_URL" \
+            --api_key_path "/tmp/appstore/AuthKey_$APPSTORE_KEY_ID.p8"
           
-          # This generates the actual certificates and pushes them to your private repo
-          # Using App Store Connect API Key for authentication
-          bundle exec fastlane match appstore --app_identifier "com.barings.support"
+          # Clean up the temporary key file
+          rm -rf /tmp/appstore
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
-          GIT_AUTHORIZATION: ${{ secrets.GIT_AUTHORIZATION }}
           APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
           APPSTORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
-          APPSTORE_P8: ${{ secrets.APPSTORE_P8 }}
