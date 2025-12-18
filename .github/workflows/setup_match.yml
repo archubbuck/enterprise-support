@@ -24,15 +24,24 @@ jobs:
 
       - name: Configure Git Authentication
         run: |
-          # Configure git to use the authorization token for the match repository
-          git config --global url."https://${{ secrets.GIT_AUTHORIZATION }}@github.com/".insteadOf "https://github.com/"
+          # Configure git credentials for the match repository using git credential helper
+          git config --global credential.helper store
+          echo "https://x-access-token:${{ secrets.GIT_AUTHORIZATION }}@github.com" > ~/.git-credentials
+          chmod 600 ~/.git-credentials
 
       - name: Setup App Store Connect API Key
         working-directory: ios/App
         run: |
-          # Create a temporary .p8 key file for App Store Connect authentication
-          mkdir -p /tmp/appstore
-          echo "$APPSTORE_P8" > /tmp/appstore/AuthKey_$APPSTORE_KEY_ID.p8
+          # Create a secure temporary directory for the API key
+          KEY_DIR=$(mktemp -d)
+          chmod 700 "$KEY_DIR"
+          
+          # Write the API key to the secure directory
+          echo "$APPSTORE_P8" > "$KEY_DIR/AuthKey_$APPSTORE_KEY_ID.p8"
+          chmod 600 "$KEY_DIR/AuthKey_$APPSTORE_KEY_ID.p8"
+          
+          # Export the path for use in the next step
+          echo "API_KEY_PATH=$KEY_DIR/AuthKey_$APPSTORE_KEY_ID.p8" >> $GITHUB_ENV
         env:
           APPSTORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
           APPSTORE_P8: ${{ secrets.APPSTORE_P8 }}
@@ -45,12 +54,18 @@ jobs:
           bundle exec fastlane match appstore \
             --app_identifier "com.barings.support" \
             --git_url "$MATCH_GIT_URL" \
-            --api_key_path "/tmp/appstore/AuthKey_$APPSTORE_KEY_ID.p8"
-          
-          # Clean up the temporary key file
-          rm -rf /tmp/appstore
+            --api_key_path "$API_KEY_PATH"
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
           APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
           APPSTORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
+
+      - name: Cleanup
+        if: always()
+        run: |
+          # Clean up sensitive files
+          rm -f ~/.git-credentials
+          if [ -n "$API_KEY_PATH" ] && [ -f "$API_KEY_PATH" ]; then
+            rm -rf "$(dirname "$API_KEY_PATH")"
+          fi
