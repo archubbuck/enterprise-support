@@ -4,21 +4,37 @@ on: workflow_dispatch # Allows you to run this manually from the Actions tab
 jobs:
   setup_match:
     runs-on: macos-latest
+    permissions:
+      contents: read
+
     steps:
-      - uses: actions/checkout@v4
-      - name: Install Fastlane
-        run: brew install fastlane
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '16'
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+
       - name: Run Match Init
+        working-directory: ios/App
         run: |
-          # This creates the Matchfile in the runner
-          fastlane match init --git_url https://${{ secrets.GH_PAT }}@github.com
+          # This creates the Matchfile if it doesn't exist
+          bundle exec fastlane match init
           
           # This generates the actual certificates and pushes them to your private repo
-          # You will need to interact with the console if it asks for Apple ID, 
-          # but using an App Store Connect API Key (Step 1 in previous response) is better.
-          fastlane match appstore --app_identifier "your.bundle.id"
+          # Using App Store Connect API Key for authentication
+          bundle exec fastlane match appstore --app_identifier "com.barings.support"
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
+          GIT_AUTHORIZATION: ${{ secrets.GIT_AUTHORIZATION }}
           APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
           APPSTORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
           APPSTORE_P8: ${{ secrets.APPSTORE_P8 }}
