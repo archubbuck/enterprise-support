@@ -7,6 +7,7 @@ platform :ios do
   desc "Build and upload to App Store"
   lane :release do
     # Setup App Store Connect API authentication
+    # Note: APPSTORE_P8 should contain the raw .p8 key content (not base64-encoded)
     app_store_connect_api_key(
       key_id: ENV["APPSTORE_KEY_ID"],
       issuer_id: ENV["APPSTORE_ISSUER_ID"],
@@ -17,6 +18,7 @@ platform :ios do
     # Setup code signing with match
     match(
       type: "appstore",
+      app_identifier: "com.barings.support",
       readonly: true
     )
 
