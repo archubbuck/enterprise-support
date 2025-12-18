@@ -26,7 +26,7 @@ platform :ios do
     # Setup code signing with match
     match(
       type: "appstore",
-      app_identifier: "com.barings.support",
+      app_identifier: "com.enterprise.support",
       git_url: ENV["MATCH_GIT_URL"],
       readonly: true
     )

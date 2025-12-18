@@ -18,8 +18,8 @@ Before starting development, configure the app for your enterprise by editing `c
 ### Initial Setup
 ```bash
 # Clone the repository
-git clone https://github.com/archubbuck/barings-support.git
-cd barings-support
+git clone https://github.com/archubbuck/enterprise-support.git
+cd enterprise-support
 
 # Install dependencies
 npm install

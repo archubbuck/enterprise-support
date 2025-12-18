@@ -21,12 +21,12 @@ By participating in this project, you agree to maintain a respectful and collabo
 1. **Fork the repository** on GitHub
 2. **Clone your fork** locally:
    ```bash
-   git clone https://github.com/YOUR-USERNAME/barings-support.git
-   cd barings-support
+   git clone https://github.com/YOUR-USERNAME/enterprise-support.git
+   cd enterprise-support
    ```
 3. **Add the upstream repository**:
    ```bash
-   git remote add upstream https://github.com/archubbuck/barings-support.git
+   git remote add upstream https://github.com/archubbuck/enterprise-support.git
    ```
 4. **Install dependencies**:
    ```bash

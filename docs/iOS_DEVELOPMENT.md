@@ -58,8 +58,8 @@ The `appId` is particularly important for iOS as it's used as the bundle identif
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/archubbuck/barings-support.git
-cd barings-support
+git clone https://github.com/archubbuck/enterprise-support.git
+cd enterprise-support
 ```
 
 ### 2. Install Dependencies
@@ -296,4 +296,4 @@ Use one of the Windows development options listed in the Prerequisites section. 
 
 ## Support
 
-For project-specific questions, please open an issue on the [GitHub repository](https://github.com/archubbuck/barings-support/issues).
+For project-specific questions, please open an issue on the [GitHub repository](https://github.com/archubbuck/enterprise-support/issues).

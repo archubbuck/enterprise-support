@@ -1,6 +1,6 @@
 # Document Management
 
-This document explains how support documents are managed in the Barings Support app.
+This document explains how support documents are managed in the Enterprise Support app.
 
 ## Overview
 
