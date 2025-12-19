@@ -132,20 +132,24 @@ platform :ios do
     # - DEBUG_INFORMATION_FORMAT=dwarf-with-dsym: Uses DWARF with dSYM for crash symbolication
     # - ENABLE_BITCODE=NO: Disables bitcode processing (no longer required by Apple as of Xcode 14)
     # - ONLY_ACTIVE_ARCH=NO: Ensures all architectures are built (standard for release builds)
+    # - SWIFT_COMPILATION_MODE=wholemodule: Optimizes Swift compilation for release builds
     xcargs_optimizations = [
       "COMPILER_INDEX_STORE_ENABLE=NO",
       "SKIP_MACRO_VALIDATION=YES",
       "CLANG_ENABLE_MODULE_DEBUGGING=NO",
       "DEBUG_INFORMATION_FORMAT=dwarf-with-dsym",
       "ENABLE_BITCODE=NO",
-      "ONLY_ACTIVE_ARCH=NO"
+      "ONLY_ACTIVE_ARCH=NO",
+      "SWIFT_COMPILATION_MODE=wholemodule"
     ].join(" ")
     
     build_app(
       scheme: "App",
       workspace: "App.xcworkspace",
       export_method: "app-store",
-      xcargs: xcargs_optimizations
+      xcargs: xcargs_optimizations,
+      # Enable build logging for debugging
+      buildlog_path: "./fastlane/logs"
     )
 
     # Upload to App Store
