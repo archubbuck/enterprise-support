@@ -27,6 +27,7 @@ on:
 jobs:
   deploy:
     runs-on: macos-latest
+    timeout-minutes: 60
     permissions:
       contents: read
 
@@ -133,5 +134,9 @@ jobs:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           GIT_AUTHORIZATION: ${{ secrets.GIT_AUTHORIZATION }}
           MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
+          # Increase timeout and retries for xcodebuild -showBuildSettings
+          # to prevent hanging on slow CI environments (default: 3 seconds, 4 retries)
+          FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 300
+          FASTLANE_XCODEBUILD_SETTINGS_RETRIES: 8
         working-directory: ios/App
         run: bundle exec fastlane release
