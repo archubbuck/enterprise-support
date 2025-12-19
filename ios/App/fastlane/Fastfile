@@ -149,7 +149,10 @@ platform :ios do
       export_method: "app-store",
       xcargs: xcargs_optimizations,
       # Enable build logging for debugging
-      buildlog_path: "./fastlane/logs"
+      buildlog_path: "./fastlane/logs",
+      # Enable verbose output for debugging build hangs
+      output_style: "basic",
+      xcpretty_args: "--color"
     )
 
     # Upload to App Store
