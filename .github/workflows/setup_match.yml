@@ -1,4 +1,23 @@
 name: iOS One-Time Match Setup
+
+# This workflow generates iOS certificates and provisioning profiles using Fastlane Match.
+# It should be run ONCE to set up the certificates repository.
+#
+# Prerequisites:
+# Before running this workflow, ensure you have configured the following repository secrets:
+#   - MATCH_PASSWORD: Password for encrypting the certificates repository
+#   - MATCH_GIT_URL: Git URL of the match certificates repository (e.g., git@github.com:user/certs.git)
+#   - GIT_AUTHORIZATION: GitHub Personal Access Token with 'repo' scope for private repository access
+#   - APPSTORE_ISSUER_ID: App Store Connect API Issuer ID (from App Store Connect)
+#   - APPSTORE_KEY_ID: App Store Connect API Key ID (from App Store Connect)
+#   - APPSTORE_P8: App Store Connect API .p8 key content (raw content, not base64-encoded)
+#
+# How to run:
+#   1. Go to Actions tab in your GitHub repository
+#   2. Select "iOS One-Time Match Setup" from the workflows list
+#   3. Click "Run workflow" button
+#   4. Select the branch and click "Run workflow"
+
 on: workflow_dispatch # Allows you to run this manually from the Actions tab
 
 jobs:
@@ -10,6 +29,58 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Validate required secrets
+        run: |
+          # Check if all required secrets are configured
+          missing_secrets=()
+          
+          if [ -z "${{ secrets.MATCH_PASSWORD }}" ]; then
+            missing_secrets+=("MATCH_PASSWORD")
+          fi
+          
+          if [ -z "${{ secrets.MATCH_GIT_URL }}" ]; then
+            missing_secrets+=("MATCH_GIT_URL")
+          fi
+          
+          if [ -z "${{ secrets.GIT_AUTHORIZATION }}" ]; then
+            missing_secrets+=("GIT_AUTHORIZATION")
+          fi
+          
+          if [ -z "${{ secrets.APPSTORE_ISSUER_ID }}" ]; then
+            missing_secrets+=("APPSTORE_ISSUER_ID")
+          fi
+          
+          if [ -z "${{ secrets.APPSTORE_KEY_ID }}" ]; then
+            missing_secrets+=("APPSTORE_KEY_ID")
+          fi
+          
+          if [ -z "${{ secrets.APPSTORE_P8 }}" ]; then
+            missing_secrets+=("APPSTORE_P8")
+          fi
+          
+          if [ ${#missing_secrets[@]} -gt 0 ]; then
+            echo "❌ Error: The following required secrets are not configured:"
+            for secret in "${missing_secrets[@]}"; do
+              echo "  - $secret"
+            done
+            echo ""
+            echo "📝 Please configure these secrets in your repository settings:"
+            echo "   Settings > Secrets and variables > Actions > Repository secrets"
+            echo ""
+            echo "Required secrets:"
+            echo "  • MATCH_PASSWORD: Password for encrypting the certificates repository"
+            echo "  • MATCH_GIT_URL: Git URL of the match certificates repository"
+            echo "  • GIT_AUTHORIZATION: GitHub Personal Access Token with repo access"
+            echo "  • APPSTORE_ISSUER_ID: App Store Connect API Issuer ID"
+            echo "  • APPSTORE_KEY_ID: App Store Connect API Key ID"
+            echo "  • APPSTORE_P8: App Store Connect API .p8 key content (raw, not base64)"
+            echo ""
+            echo "For more information, see the README or workflow comments."
+            exit 1
+          fi
+          
+          echo "✅ All required secrets are configured"
 
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1
