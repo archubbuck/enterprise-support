@@ -10,8 +10,12 @@
 # - GIT_AUTHORIZATION: GitHub Personal Access Token (PAT) with access to MATCH_GIT_URL repo.
 #                      Must have 'repo' scope to access private repositories.
 #                      Provide as a raw token (will be automatically formatted and encoded).
+# - APP_IDENTIFIER: (Optional) Bundle identifier for the app. Defaults to "com.enterprise.support".
 
 default_platform(:ios)
+
+# App bundle identifier - can be overridden via APP_IDENTIFIER environment variable
+APP_IDENTIFIER = ENV["APP_IDENTIFIER"] || "com.enterprise.support"
 
 # Helper method to format and encode Git authorization token
 # Handles both raw tokens and already-encoded tokens
@@ -33,16 +37,26 @@ def prepare_git_authorization(token)
   Base64.strict_encode64("x-access-token:#{token}")
 end
 
-# Helper method to configure Xcode project with code signing settings
-# Uses values from match environment variables set by the match action
-# The fallback values are used only if match doesn't set the environment variables
+# Helper method to configure Xcode project with code signing settings.
+# Uses values from match environment variables set by the match action.
+# Expects `match` to have been run first so that it exports the required environment variables.
+# If those environment variables are not set, this method will fail explicitly to ensure
+# proper configuration rather than falling back to potentially incorrect hardcoded values.
+#
+# @param app_identifier [String] The app's bundle identifier in reverse-DNS format
+#   (for example, "com.enterprise.support"). This identifier must match the one used
+#   when running `match` because it is interpolated directly into the environment variable names,
+#   e.g., "sigh_#{app_identifier}_appstore_team-id" and "sigh_#{app_identifier}_appstore_profile-name".
 def configure_code_signing(app_identifier)
   UI.user_error!("app_identifier cannot be nil or empty") if app_identifier.nil? || app_identifier.empty?
   
   # Match sets environment variables like sigh_com.enterprise.support_appstore_team-id
-  # Fallback to hardcoded values if environment variables are not set (shouldn't normally happen)
-  team_id = ENV["sigh_#{app_identifier}_appstore_team-id"] || "2A39NE6LJM"
-  profile_name = ENV["sigh_#{app_identifier}_appstore_profile-name"] || "match AppStore #{app_identifier}"
+  team_id = ENV["sigh_#{app_identifier}_appstore_team-id"]
+  profile_name = ENV["sigh_#{app_identifier}_appstore_profile-name"]
+  
+  # Fail explicitly if match didn't set the required environment variables
+  UI.user_error!("Team ID not found. Ensure match has been run before calling configure_code_signing.") if team_id.nil? || team_id.empty?
+  UI.user_error!("Profile name not found. Ensure match has been run before calling configure_code_signing.") if profile_name.nil? || profile_name.empty?
   
   update_code_signing_settings(
     use_automatic_signing: false,
@@ -73,14 +87,14 @@ platform :ios do
 
     match(
       type: "appstore",
-      app_identifier: "com.enterprise.support",
+      app_identifier: APP_IDENTIFIER,
       git_url: ENV["MATCH_GIT_URL"],
       readonly: false,
       git_basic_authorization: git_auth
     )
 
     # Configure Xcode project with code signing settings
-    configure_code_signing("com.enterprise.support")
+    configure_code_signing(APP_IDENTIFIER)
   end
 
   desc "Build and upload to App Store"
@@ -101,14 +115,14 @@ platform :ios do
 
     match(
       type: "appstore",
-      app_identifier: "com.enterprise.support",
+      app_identifier: APP_IDENTIFIER,
       git_url: ENV["MATCH_GIT_URL"],
       readonly: true,
       git_basic_authorization: git_auth
     )
 
     # Configure Xcode project with code signing settings
-    configure_code_signing("com.enterprise.support")
+    configure_code_signing(APP_IDENTIFIER)
 
     # Build the app
     build_app(
