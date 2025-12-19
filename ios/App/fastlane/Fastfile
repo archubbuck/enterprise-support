@@ -125,10 +125,14 @@ platform :ios do
     configure_code_signing(APP_IDENTIFIER)
 
     # Build the app
+    # xcargs optimizations:
+    # - COMPILER_INDEX_STORE_ENABLE=NO: Disables Xcode index store (not needed for CI/release builds)
+    # - SKIP_MACRO_VALIDATION=YES: Skips macro validation to speed up builds
     build_app(
       scheme: "App",
       workspace: "App.xcworkspace",
-      export_method: "app-store"
+      export_method: "app-store",
+      xcargs: "COMPILER_INDEX_STORE_ENABLE=NO SKIP_MACRO_VALIDATION=YES"
     )
 
     # Upload to App Store
