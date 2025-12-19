@@ -90,7 +90,8 @@ platform :ios do
       app_identifier: APP_IDENTIFIER,
       git_url: ENV["MATCH_GIT_URL"],
       readonly: false,
-      git_basic_authorization: git_auth
+      git_basic_authorization: git_auth,
+      keychain_password: ""
     )
 
     # Configure Xcode project with code signing settings
@@ -118,7 +119,8 @@ platform :ios do
       app_identifier: APP_IDENTIFIER,
       git_url: ENV["MATCH_GIT_URL"],
       readonly: true,
-      git_basic_authorization: git_auth
+      git_basic_authorization: git_auth,
+      keychain_password: ""
     )
 
     # Configure Xcode project with code signing settings
@@ -149,9 +151,7 @@ platform :ios do
       export_method: "app-store",
       xcargs: xcargs_optimizations,
       # Enable build logging for debugging
-      buildlog_path: "./fastlane/logs",
-      # Use xcpretty for formatted output
-      xcpretty_args: "--color"
+      buildlog_path: "./fastlane/logs"
     )
 
     # Upload to App Store
