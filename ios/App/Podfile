@@ -25,17 +25,20 @@ post_install do |installer|
   # Optimize build settings for faster CI builds
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
-      # Disable code signing for pods (speeds up embedding)
-      config.build_settings['EXPANDED_CODE_SIGN_IDENTITY'] = ""
-      config.build_settings['CODE_SIGNING_REQUIRED'] = "NO"
-      config.build_settings['CODE_SIGNING_ALLOWED'] = "NO"
-      
-      # Optimize Swift compilation
-      config.build_settings['SWIFT_COMPILATION_MODE'] = 'wholemodule'
-      config.build_settings['SWIFT_OPTIMIZATION_LEVEL'] = '-O'
-      
-      # Disable unnecessary features for CI
-      config.build_settings['COMPILER_INDEX_STORE_ENABLE'] = 'NO'
+      # Apply optimizations only to Release configuration
+      if config.name == 'Release'
+        # Disable code signing for pods (speeds up embedding)
+        config.build_settings['EXPANDED_CODE_SIGN_IDENTITY'] = ""
+        config.build_settings['CODE_SIGNING_REQUIRED'] = "NO"
+        config.build_settings['CODE_SIGNING_ALLOWED'] = "NO"
+        
+        # Optimize Swift compilation
+        config.build_settings['SWIFT_COMPILATION_MODE'] = 'wholemodule'
+        config.build_settings['SWIFT_OPTIMIZATION_LEVEL'] = '-O'
+        
+        # Disable unnecessary features for CI
+        config.build_settings['COMPILER_INDEX_STORE_ENABLE'] = 'NO'
+      end
     end
   end
 end
