@@ -124,19 +124,28 @@ platform :ios do
     # Configure Xcode project with code signing settings
     configure_code_signing(APP_IDENTIFIER)
 
-    # Build the app
+    # Build the app with optimizations for faster CI/release builds
     # xcargs optimizations:
     # - COMPILER_INDEX_STORE_ENABLE=NO: Disables Xcode index store (not needed for CI/release builds)
     # - SKIP_MACRO_VALIDATION=YES: Skips macro validation to speed up builds
     # - CLANG_ENABLE_MODULE_DEBUGGING=NO: Disables module debugging symbols for faster builds
-    # - DEBUG_INFORMATION_FORMAT=dwarf: Uses faster DWARF debug format instead of dSYM
+    # - DEBUG_INFORMATION_FORMAT=dwarf-with-dsym: Uses DWARF with dSYM for crash symbolication
     # - ENABLE_BITCODE=NO: Disables bitcode processing (no longer required by Apple as of Xcode 14)
     # - ONLY_ACTIVE_ARCH=NO: Ensures all architectures are built (standard for release builds)
+    xcargs_optimizations = [
+      "COMPILER_INDEX_STORE_ENABLE=NO",
+      "SKIP_MACRO_VALIDATION=YES",
+      "CLANG_ENABLE_MODULE_DEBUGGING=NO",
+      "DEBUG_INFORMATION_FORMAT=dwarf-with-dsym",
+      "ENABLE_BITCODE=NO",
+      "ONLY_ACTIVE_ARCH=NO"
+    ].join(" ")
+    
     build_app(
       scheme: "App",
       workspace: "App.xcworkspace",
       export_method: "app-store",
-      xcargs: "COMPILER_INDEX_STORE_ENABLE=NO SKIP_MACRO_VALIDATION=YES CLANG_ENABLE_MODULE_DEBUGGING=NO DEBUG_INFORMATION_FORMAT=dwarf ENABLE_BITCODE=NO ONLY_ACTIVE_ARCH=NO"
+      xcargs: xcargs_optimizations
     )
 
     # Upload to App Store
