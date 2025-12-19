@@ -150,8 +150,7 @@ platform :ios do
       xcargs: xcargs_optimizations,
       # Enable build logging for debugging
       buildlog_path: "./fastlane/logs",
-      # Enable verbose output for debugging build hangs
-      output_style: "basic",
+      # Use xcpretty for formatted output
       xcpretty_args: "--color"
     )
 
