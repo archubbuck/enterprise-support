@@ -57,6 +57,16 @@ platform :ios do
       readonly: false,
       git_basic_authorization: git_auth
     )
+
+    # Configure Xcode project with code signing settings
+    update_code_signing_settings(
+      use_automatic_signing: false,
+      path: "App.xcodeproj",
+      team_id: "2A39NE6LJM",
+      bundle_identifier: "com.enterprise.support",
+      profile_name: "match AppStore com.enterprise.support",
+      code_sign_identity: "Apple Distribution"
+    )
   end
 
   desc "Build and upload to App Store"
@@ -81,6 +91,16 @@ platform :ios do
       git_url: ENV["MATCH_GIT_URL"],
       readonly: true,
       git_basic_authorization: git_auth
+    )
+
+    # Configure Xcode project with code signing settings
+    update_code_signing_settings(
+      use_automatic_signing: false,
+      path: "App.xcodeproj",
+      team_id: "2A39NE6LJM",
+      bundle_identifier: "com.enterprise.support",
+      profile_name: "match AppStore com.enterprise.support",
+      code_sign_identity: "Apple Distribution"
     )
 
     # Build the app
