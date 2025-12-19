@@ -123,7 +123,7 @@ jobs:
 
       - name: Install CocoaPods dependencies
         working-directory: ios/App
-        run: pod install --repo-update
+        run: pod install
 
       - name: Run Fastlane release
         env:
