@@ -71,6 +71,11 @@ end
 platform :ios do
   desc "Generate certificates and provisioning profiles using match"
   lane :setup_certificates do
+    # Setup CI environment with temporary keychain
+    # This creates a new temporary keychain and sets it as default
+    # Required for proper certificate management in CI environments
+    setup_ci
+
     # Setup App Store Connect API authentication
     # Note: APPSTORE_P8 should contain the raw .p8 key content (not base64-encoded)
     app_store_connect_api_key(
@@ -90,8 +95,7 @@ platform :ios do
       app_identifier: APP_IDENTIFIER,
       git_url: ENV["MATCH_GIT_URL"],
       readonly: false,
-      git_basic_authorization: git_auth,
-      keychain_password: ""
+      git_basic_authorization: git_auth
     )
 
     # Configure Xcode project with code signing settings
@@ -100,6 +104,11 @@ platform :ios do
 
   desc "Build and upload to App Store"
   lane :release do
+    # Setup CI environment with temporary keychain
+    # This creates a new temporary keychain and sets it as default
+    # Required for proper certificate management in CI environments
+    setup_ci
+
     # Setup App Store Connect API authentication
     # Note: APPSTORE_P8 should contain the raw .p8 key content (not base64-encoded)
     app_store_connect_api_key(
@@ -119,8 +128,7 @@ platform :ios do
       app_identifier: APP_IDENTIFIER,
       git_url: ENV["MATCH_GIT_URL"],
       readonly: true,
-      git_basic_authorization: git_auth,
-      keychain_password: ""
+      git_basic_authorization: git_auth
     )
 
     # Configure Xcode project with code signing settings
