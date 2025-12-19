@@ -45,3 +45,9 @@ ios/App/App.xcodeproj/xcuserdata
 # Ruby/Bundler
 ios/App/vendor/
 ios/App/.bundle/
+
+# Fastlane
+ios/App/fastlane/logs
+ios/App/fastlane/report.xml
+ios/App/fastlane/test_output
+ios/App/fastlane/README.md

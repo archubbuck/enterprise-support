@@ -113,9 +113,17 @@ jobs:
           bundler-cache: true
           working-directory: ios/App
 
+      - name: Cache CocoaPods
+        uses: actions/cache@v4
+        with:
+          path: ios/App/Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('ios/App/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-
+
       - name: Install CocoaPods dependencies
         working-directory: ios/App
-        run: pod install
+        run: pod install --repo-update
 
       - name: Run Fastlane release
         env:
