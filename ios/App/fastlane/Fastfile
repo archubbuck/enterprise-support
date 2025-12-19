@@ -34,13 +34,16 @@ def prepare_git_authorization(token)
 end
 
 # Helper method to configure Xcode project with code signing settings
-def configure_code_signing
+# Uses values from match environment variables set by the match action
+def configure_code_signing(app_identifier)
+  # Match sets environment variables like sigh_com.enterprise.support_appstore_team-id
+  # We can use ENV directly or pass the values explicitly
   update_code_signing_settings(
     use_automatic_signing: false,
     path: "App.xcodeproj",
-    team_id: "2A39NE6LJM",
-    bundle_identifier: "com.enterprise.support",
-    profile_name: "match AppStore com.enterprise.support",
+    team_id: ENV["sigh_#{app_identifier}_appstore_team-id"] || "2A39NE6LJM",
+    bundle_identifier: app_identifier,
+    profile_name: ENV["sigh_#{app_identifier}_appstore_profile-name"] || "match AppStore #{app_identifier}",
     code_sign_identity: "Apple Distribution"
   )
 end
@@ -71,7 +74,7 @@ platform :ios do
     )
 
     # Configure Xcode project with code signing settings
-    configure_code_signing
+    configure_code_signing("com.enterprise.support")
   end
 
   desc "Build and upload to App Store"
@@ -99,7 +102,7 @@ platform :ios do
     )
 
     # Configure Xcode project with code signing settings
-    configure_code_signing
+    configure_code_signing("com.enterprise.support")
 
     # Build the app
     build_app(
