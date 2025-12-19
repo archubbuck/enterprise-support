@@ -35,15 +35,21 @@ end
 
 # Helper method to configure Xcode project with code signing settings
 # Uses values from match environment variables set by the match action
+# The fallback values are used only if match doesn't set the environment variables
 def configure_code_signing(app_identifier)
+  UI.user_error!("app_identifier cannot be nil or empty") if app_identifier.nil? || app_identifier.empty?
+  
   # Match sets environment variables like sigh_com.enterprise.support_appstore_team-id
-  # We can use ENV directly or pass the values explicitly
+  # Fallback to hardcoded values if environment variables are not set (shouldn't normally happen)
+  team_id = ENV["sigh_#{app_identifier}_appstore_team-id"] || "2A39NE6LJM"
+  profile_name = ENV["sigh_#{app_identifier}_appstore_profile-name"] || "match AppStore #{app_identifier}"
+  
   update_code_signing_settings(
     use_automatic_signing: false,
     path: "App.xcodeproj",
-    team_id: ENV["sigh_#{app_identifier}_appstore_team-id"] || "2A39NE6LJM",
+    team_id: team_id,
     bundle_identifier: app_identifier,
-    profile_name: ENV["sigh_#{app_identifier}_appstore_profile-name"] || "match AppStore #{app_identifier}",
+    profile_name: profile_name,
     code_sign_identity: "Apple Distribution"
   )
 end
