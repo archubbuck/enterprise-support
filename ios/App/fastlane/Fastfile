@@ -211,7 +211,7 @@ platform :ios do
         skip_metadata: true,
         submit_for_review: false,
         precheck_include_in_app_purchases: false,
-        skip_waiting_for_build_processing: true
+        skip_waiting_for_build_processing: true,
       )
       UI.success("✅ Upload completed successfully!")
     rescue => ex
