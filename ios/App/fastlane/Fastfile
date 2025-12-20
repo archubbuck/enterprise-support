@@ -10,6 +10,7 @@
 # - GIT_AUTHORIZATION: GitHub Personal Access Token (PAT) with access to MATCH_GIT_URL repo.
 #                      Must have 'repo' scope to access private repositories.
 #                      Provide as a raw token (will be automatically formatted and encoded).
+# - APPLE_TEAM_ID: Your Apple Developer Team ID (10-character string found in App Store Connect).
 # - APP_IDENTIFIER: (Optional) Bundle identifier for the app. Defaults to "com.enterprise.support".
 
 default_platform(:ios)
@@ -96,7 +97,8 @@ platform :ios do
       app_identifier: APP_IDENTIFIER,
       git_url: ENV["MATCH_GIT_URL"],
       readonly: false,
-      git_basic_authorization: git_auth
+      git_basic_authorization: git_auth,
+      team_id: ENV["APPLE_TEAM_ID"]
     )
 
     # Configure Xcode project with code signing settings
@@ -130,7 +132,8 @@ platform :ios do
       app_identifier: APP_IDENTIFIER,
       git_url: ENV["MATCH_GIT_URL"],
       readonly: true,
-      git_basic_authorization: git_auth
+      git_basic_authorization: git_auth,
+      team_id: ENV["APPLE_TEAM_ID"]
     )
 
     # Configure Xcode project with code signing settings
