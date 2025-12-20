@@ -13,11 +13,11 @@ Fixed the iOS App Store deployment failure caused by the error:
 Upload failed: Could not retrieve response as fastlane runs in non-interactive mode
 ```
 
-**Root Cause:** Fastlane's `upload_to_app_store` action was waiting for build processing status, which requires interactive confirmation/polling unavailable in CI/CD environments.
+**Root Cause:** Fastlane's `upload_to_app_store` action was missing the required `app_identifier` parameter, causing it to auto-detect the app by prompting for user selection. Additionally, it was waiting for build processing status. Both require interaction unavailable in CI/CD environments.
 
-**Solution:** Added `skip_waiting_for_build_processing: true` parameter to bypass the waiting period.
+**Solution:** Added `app_identifier: APP_IDENTIFIER` parameter to prevent auto-detection prompts, and kept `skip_waiting_for_build_processing: true` to bypass build processing wait.
 
-**Impact:** Minimal change (1 line), high confidence fix following fastlane best practices.
+**Impact:** Minimal change (1 parameter added), high confidence fix following fastlane best practices.
 
 ---
 
@@ -27,21 +27,22 @@ Upload failed: Could not retrieve response as fastlane runs in non-interactive m
 The deployment workflow for v1.0.17 failed with a non-interactive mode error. This occurs when fastlane tries to:
 
 1. Upload IPA to App Store Connect ✅ (succeeds)
-2. Wait for build processing to complete ❌ (fails - requires interaction)
-3. Poll processing status periodically ❌ (not possible in CI/CD)
+2. Auto-detect app identifier ❌ (fails - requires user selection)
+3. Wait for build processing to complete ❌ (fails - requires interaction)
+4. Poll processing status periodically ❌ (not possible in CI/CD)
 
 ### Why It Happens
 In CI/CD environments like GitHub Actions:
 - No terminal/UI available for user interaction
-- Cannot display progress prompts or status updates
+- Cannot display prompts for app selection
 - Cannot wait for user confirmation to continue
-- Fastlane defaults to waiting for processing completion
+- Fastlane needs explicit parameters to avoid auto-detection
 
 ### Problem Statement Alignment
 This fix directly addresses **Section 1: Missing Parameters** from the problem statement:
 > "You may also need to add the option to actions like [upload_to_app_store] to bypass confirmation prompts."
 
-The `skip_waiting_for_build_processing` parameter is exactly the option needed to bypass the processing wait confirmation.
+The `app_identifier` parameter prevents app selection prompts, and `skip_waiting_for_build_processing` bypasses the processing wait confirmation.
 
 ---
 
@@ -49,26 +50,28 @@ The `skip_waiting_for_build_processing` parameter is exactly the option needed t
 
 ### Code Change
 **File:** `ios/App/fastlane/Fastfile`  
-**Line:** 213  
+**Line:** 210  
 **Change:** Added 1 parameter
 
 ```ruby
 upload_to_app_store(
   api_key: api_key,
+  app_identifier: APP_IDENTIFIER,  # ✅ NEW - Prevents app selection prompt
   skip_metadata: true,
   submit_for_review: false,
   precheck_include_in_app_purchases: false,
-  skip_waiting_for_build_processing: true  # ✅ NEW - Prevents interactive prompt
+  skip_waiting_for_build_processing: true,  # Prevents build processing wait
 )
 ```
 
 ### Why This Works
 
-1. **Immediate Return**: Upload completes immediately after IPA transfer, no waiting
-2. **Non-Blocking**: App Store Connect processes build asynchronously in background
-3. **No Interaction Needed**: Eliminates all interactive prompts and status polling
-4. **Industry Standard**: Recommended approach for all CI/CD iOS deployments
-5. **Backwards Compatible**: Doesn't affect build, signing, or other workflow steps
+1. **Explicit App Identification**: The `app_identifier` parameter tells fastlane exactly which app to upload to, preventing auto-detection and prompts
+2. **No Auto-Detection**: Fastlane won't query App Store Connect for available apps
+3. **Non-Blocking**: The `skip_waiting_for_build_processing` parameter ensures upload completes immediately after IPA transfer
+4. **No Interaction Needed**: Eliminates all interactive prompts (app selection and status polling)
+5. **Industry Standard**: Recommended approach for all CI/CD iOS deployments
+6. **Backwards Compatible**: Doesn't affect build, signing, or other workflow steps
 
 ---
 
