@@ -229,10 +229,16 @@ platform :ios do
     if parts[0] =~ /^\d{4}$/ && parts.length > 1
       # First part is a year, use the rest as company name
       company_name = parts[1]
+    elsif parts[0] =~ /^\d{4}$/ && parts.length == 1
+      # Only a year is present, use default company name
+      company_name = "Enterprise Support"
     else
       # No year found, use the entire text as company name
       company_name = existing_copyright
     end
+    
+    # Ensure company name is not empty
+    company_name = "Enterprise Support" if company_name.nil? || company_name.strip.empty?
     
     current_year = Time.now.year
     copyright_text = "#{current_year} #{company_name}"
