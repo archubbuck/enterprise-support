@@ -109,9 +109,24 @@ jobs:
         run: npx cap sync ios
 
       - name: Setup Xcode
+        id: setup-xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: '16'
+
+      - name: Verify Xcode and Transporter setup
+        run: |
+          echo "DEVELOPER_DIR=$DEVELOPER_DIR"
+          echo "Xcode path: $(xcode-select -p)"
+          echo "Xcode version: $(xcodebuild -version)"
+          # Check if iTMSTransporter exists
+          if [ -f "$DEVELOPER_DIR/usr/bin/iTMSTransporter" ]; then
+            echo "✅ iTMSTransporter found at: $DEVELOPER_DIR/usr/bin/iTMSTransporter"
+          else
+            echo "⚠️  iTMSTransporter not found at expected location"
+            echo "Searching for iTMSTransporter..."
+            find /Applications -name "iTMSTransporter" 2>/dev/null || echo "Not found in /Applications"
+          fi
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
