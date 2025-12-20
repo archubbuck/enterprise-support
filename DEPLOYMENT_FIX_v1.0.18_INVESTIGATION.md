@@ -25,7 +25,7 @@ After investigating the Fastlane documentation and related issues:
 ## The Fix
 
 ### Change Made
-Removed the invalid `skip_waiting_for_build_processing: true` parameter from the `upload_to_app_store` call in `/home/runner/work/enterprise-support/enterprise-support/ios/App/fastlane/Fastfile` (line 214).
+Removed the invalid `skip_waiting_for_build_processing: true` parameter from the `upload_to_app_store` call in `ios/App/fastlane/Fastfile` (line 214).
 
 ### Before:
 ```ruby
