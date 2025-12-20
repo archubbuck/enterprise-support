@@ -156,6 +156,7 @@ platform :ios do
     
     # Get the provisioning profile name set by match
     profile_name = ENV["sigh_#{APP_IDENTIFIER}_appstore_profile-name"]
+    UI.user_error!("Provisioning profile name not found. Ensure match has been run successfully.") if profile_name.nil? || profile_name.empty?
     
     build_app(
       scheme: "App",
