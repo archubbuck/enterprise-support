@@ -120,11 +120,12 @@ platform :ios do
       # Remove /Contents/Developer suffix if present to get the Xcode.app path
       xcode_path = xcode_path.sub(/\/Contents\/Developer\/?$/, "") if xcode_path.include?("/Contents/Developer")
       
-      if !xcode_path.empty? && xcode_path.include?("Xcode")
+      # Validate that the path looks like a valid Xcode installation
+      if !xcode_path.empty? && xcode_path.end_with?(".app") && File.directory?(xcode_path)
         UI.important("Setting Xcode path to: #{xcode_path}")
         xcode_select(xcode_path)
       else
-        UI.message("DEVELOPER_DIR is set but doesn't point to a valid Xcode installation, skipping xcode_select")
+        UI.message("DEVELOPER_DIR is set but doesn't point to a valid Xcode.app directory, skipping xcode_select")
       end
     else
       UI.message("DEVELOPER_DIR not set, using system default Xcode")

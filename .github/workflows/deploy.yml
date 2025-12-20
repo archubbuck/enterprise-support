@@ -153,6 +153,7 @@ jobs:
           # Download and install Transporter from Apple
           # This is required for uploading builds to App Store Connect via Fastlane
           # The URL redirects to the actual package file
+          # Note: Apple doesn't provide checksums for this download, but it's served over HTTPS
           curl -fsSL "https://itunesconnect.apple.com/WebObjects/iTunesConnect.woa/ra/resources/download/public/Transporter__OSX/bin/" -o "/tmp/itmstransporter.pkg"
           
           # Verify the download succeeded and file is not empty
@@ -164,12 +165,12 @@ jobs:
           echo "Installing Transporter package..."
           sudo installer -pkg "/tmp/itmstransporter.pkg" -target /
           
-          # Verify installation
-          if [ -f "/usr/local/itms/bin/iTMSTransporter" ]; then
-            echo "✅ Transporter installed successfully"
-            /usr/local/itms/bin/iTMSTransporter -version || echo "Transporter binary exists but -version failed (this is expected)"
+          # Verify installation by checking if the binary exists and is executable
+          if [ -x "/usr/local/itms/bin/iTMSTransporter" ]; then
+            echo "✅ Transporter installed successfully at /usr/local/itms/bin/iTMSTransporter"
+            ls -lh "/usr/local/itms/bin/iTMSTransporter"
           else
-            echo "⚠️  Transporter installation may have failed - binary not found at expected location"
+            echo "❌ Transporter installation failed - binary not found or not executable"
             exit 1
           fi
 
