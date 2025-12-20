@@ -230,7 +230,8 @@ platform :ios do
         skip_metadata: false,
         skip_screenshots: true,
         submit_for_review: false,
-        precheck_include_in_app_purchases: false
+        precheck_include_in_app_purchases: false,
+        force: true
       )
       UI.success("✅ Upload completed successfully!")
     rescue => ex
