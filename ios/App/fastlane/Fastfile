@@ -166,8 +166,7 @@ platform :ios do
     # Upload to App Store
     upload_to_app_store(
       skip_metadata: true,
-      submit_for_review: false,
-      skip_waiting_for_build_processing: true
+      submit_for_review: false
     )
   end
 end
