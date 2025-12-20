@@ -1,0 +1,33 @@
+Enterprise Support is a mobile-first support document hub designed to help employees quickly access curated IT support documents and contact information.
+
+KEY FEATURES
+
+• Native iOS App – Runs seamlessly on iPhone and iPad with an iOS-native design
+• Document Browser – Browse IT support documents organized by category
+• Quick Search – Instantly search across all documents to find the help you need
+• Contact Directory – Fast access to IT support contacts across all regions
+• Offline Support – All content available offline so you can get help anytime, anywhere
+• Modern UI – Clean, intuitive interface designed for ease of use
+
+PERFECT FOR
+
+Enterprise Support is ideal for organizations looking to provide their employees with:
+• Easy access to IT documentation
+• Quick contact information for support teams
+• Offline-capable reference material
+• Mobile-first support experience
+
+ABOUT THE APP
+
+Built as a React web application packaged as a native iOS app using Capacitor, Enterprise Support offers the best of both worlds: the performance of a native app with the flexibility of web technologies.
+
+The app is designed to be enterprise-agnostic and easily customizable for your organization's specific needs.
+
+OPEN SOURCE
+
+This app is open source and available under the MIT License. You can find the source code, documentation, and contribution guidelines at:
+https://github.com/archubbuck/enterprise-support
+
+SUPPORT
+
+For technical support, feature requests, or bug reports, please visit our GitHub repository or contact your IT help desk.
