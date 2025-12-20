@@ -147,6 +147,22 @@ jobs:
         working-directory: ios/App
         run: pod install
 
+      - name: Install Transporter for App Store uploads
+        run: |
+          echo "📦 Installing Transporter for App Store uploads..."
+          # Download and install Transporter from Apple
+          # This is required for uploading builds to App Store Connect via Fastlane
+          curl -fsSL "https://itunesconnect.apple.com/WebObjects/iTunesConnect.woa/ra/resources/download/public/Transporter__OSX/bin/" -o "/tmp/itmstransporter.pkg"
+          sudo installer -pkg "/tmp/itmstransporter.pkg" -target /
+          
+          # Verify installation
+          if [ -f "/usr/local/itms/bin/iTMSTransporter" ]; then
+            echo "✅ Transporter installed successfully"
+            /usr/local/itms/bin/iTMSTransporter -version
+          else
+            echo "⚠️  Transporter installation may have failed"
+          fi
+
       - name: Run Fastlane release
         env:
           APPSTORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
@@ -163,6 +179,7 @@ jobs:
           # Configure App Store upload timeouts and optimizations
           FASTLANE_ITUNES_TRANSPORTER_TIMEOUT: 1800  # 30 minute timeout for uploads
           FASTLANE_ITUNES_TRANSPORTER_USE_SHELL_SCRIPT: 1  # Use shell script mode for better reliability
+          FASTLANE_ITUNES_TRANSPORTER_PATH: /usr/local/itms/bin/iTMSTransporter  # Path to installed Transporter
           DELIVER_ITMSTRANSPORTER_ADDITIONAL_UPLOAD_PARAMETERS: "-t Aspera"  # Use faster Aspera upload method
         working-directory: ios/App
         run: bundle exec fastlane release
