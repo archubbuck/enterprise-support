@@ -61,6 +61,7 @@ def configure_code_signing(app_identifier)
   update_code_signing_settings(
     use_automatic_signing: false,
     path: "App.xcodeproj",
+    targets: "App",
     team_id: team_id,
     bundle_identifier: app_identifier,
     profile_name: profile_name,
