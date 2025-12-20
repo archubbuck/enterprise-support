@@ -11,6 +11,7 @@ name: Deploy to App Store
 #   - APPSTORE_ISSUER_ID: App Store Connect API Issuer ID (from App Store Connect)
 #   - APPSTORE_KEY_ID: App Store Connect API Key ID (from App Store Connect)
 #   - APPSTORE_P8: App Store Connect API .p8 key content (raw content, not base64-encoded)
+#   - APPLE_TEAM_ID: Your Apple Developer Team ID (found in App Store Connect or Developer Portal)
 #
 # You must also run the "iOS One-Time Match Setup" workflow ONCE before using this deployment workflow.
 #
@@ -64,6 +65,10 @@ jobs:
             missing_secrets+=("APPSTORE_P8")
           fi
           
+          if [ -z "${{ secrets.APPLE_TEAM_ID }}" ]; then
+            missing_secrets+=("APPLE_TEAM_ID")
+          fi
+          
           if [ ${#missing_secrets[@]} -gt 0 ]; then
             echo "❌ Error: The following required secrets are not configured:"
             for secret in "${missing_secrets[@]}"; do
@@ -80,6 +85,7 @@ jobs:
             echo "  • APPSTORE_ISSUER_ID: App Store Connect API Issuer ID"
             echo "  • APPSTORE_KEY_ID: App Store Connect API Key ID"
             echo "  • APPSTORE_P8: App Store Connect API .p8 key content (raw, not base64)"
+            echo "  • APPLE_TEAM_ID: Apple Developer Team ID"
             echo ""
             echo "For more information, see the README or workflow comments."
             exit 1
@@ -134,6 +140,7 @@ jobs:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           GIT_AUTHORIZATION: ${{ secrets.GIT_AUTHORIZATION }}
           MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           # Increase timeout and retries for xcodebuild -showBuildSettings
           # to prevent hanging on slow CI environments (default: 3 seconds, 4 retries)
           FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 300
