@@ -1,13 +1,66 @@
 # Deployment Failure Investigation Report
 **Date:** December 20, 2024  
-**Issue:** Latest deployment failure for v1.0.13  
-**Workflow Run:** #14  
+**Latest Issue:** Deployment failure for v1.0.14  
+**Workflow Run:** #15  
 **Status:** ✅ Fixed
 
 ---
 
-## Executive Summary
+## Latest Issue (v1.0.14 - December 20, 2024)
 
+### Problem
+The iOS App Store deployment workflow failed on deployment run #15 for tag v1.0.14 during the "Run Fastlane release" step. The build completed successfully (40 seconds), but the `upload_to_app_store` action failed with:
+
+```
+undefined method `team_id' for nil:NilClass (NoMethodError)
+        UI.user_error!("Could not find app with app identifier '#{options[:app_identifier]}' in your App Store Connect account (#{options[:username]} - Team: #{Spaceship::Tunes.client.team_id})")
+```
+
+### Root Cause
+The `upload_to_app_store` action was being called without explicitly passing the API key. Even though `app_store_connect_api_key` was called earlier in the lane (line 115), the returned API key object was not being stored or passed to `upload_to_app_store`. This caused `Spaceship::Tunes.client` to be `nil`, resulting in the authentication failure when trying to upload the built IPA to App Store Connect.
+
+### Solution Applied
+Modified the Fastfile to:
+1. Capture the return value from `app_store_connect_api_key` into a variable: `api_key`
+2. Pass this `api_key` to the `upload_to_app_store` action explicitly
+
+**Changes:**
+```ruby
+# Line 115: Store the API key
+api_key = app_store_connect_api_key(
+  key_id: ENV["APPSTORE_KEY_ID"],
+  issuer_id: ENV["APPSTORE_ISSUER_ID"],
+  key_content: ENV["APPSTORE_P8"],
+  is_key_content_base64: false
+)
+
+# Line 176: Pass the API key to upload_to_app_store
+upload_to_app_store(
+  api_key: api_key,  # ✅ Added this line
+  skip_metadata: true,
+  submit_for_review: false
+)
+```
+
+### Why This Fix Works
+1. **Explicit Authentication**: The `upload_to_app_store` action now has explicit access to the App Store Connect API credentials
+2. **No Implicit Connection**: Without passing `api_key`, Fastlane tries to use the implicit Spaceship connection which wasn't properly initialized
+3. **Best Practice**: This follows Fastlane's recommended approach for API key authentication as documented in [Fastlane App Store Connect API docs](https://docs.fastlane.tools/app-store-connect-api/)
+4. **Minimal Change**: Only 2 lines modified in the Fastfile
+
+### References
+- [Fastlane App Store Connect API Documentation](https://docs.fastlane.tools/app-store-connect-api/)
+- [Fastlane app_store_connect_api_key Action](https://docs.fastlane.tools/actions/app_store_connect_api_key/)
+- [Fastlane upload_to_app_store Action](https://docs.fastlane.tools/actions/upload_to_app_store/)
+
+---
+
+## Previous Issue (v1.0.13 - December 20, 2024)
+
+**Workflow Run:** #14  
+**Status:** ✅ Fixed
+
+### Problem
 The iOS App Store deployment workflow failed on December 20, 2024, during the "Run Fastlane release" step for version tag v1.0.13 (run #14). After thorough investigation and research into Fastlane behavior in CI environments, the root cause was identified as the Xcode project having **automatic code signing enabled** (`CODE_SIGN_STYLE = Automatic`) in the `project.pbxproj` file.
 
 Even though the Fastfile explicitly configured manual code signing via `update_code_signing_settings` and specified provisioning profiles in the `export_options` parameter of `build_app`, Xcode was ignoring these settings because the project file itself was set to automatic signing. This is a well-documented issue where Xcode's project-level settings can override Fastlane's runtime configurations, especially in CI environments.
