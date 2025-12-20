@@ -214,7 +214,7 @@ platform :ios do
 
     # Update copyright with current year for App Store metadata
     # Apple requires copyright year to match current year for validation
-    copyright_path = File.join(Dir.pwd, "fastlane", "metadata", "en-US", "copyright.txt")
+    copyright_path = File.join(Dir.pwd, "metadata", "en-US", "copyright.txt")
     default_company_name = "Enterprise Support"
     year_regex = /^\d{4}$/
     
