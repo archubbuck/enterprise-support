@@ -124,8 +124,8 @@ jobs:
             echo "✅ iTMSTransporter found at: $DEVELOPER_DIR/usr/bin/iTMSTransporter"
           else
             echo "⚠️  iTMSTransporter not found at expected location"
-            echo "Searching for iTMSTransporter..."
-            find /Applications -name "iTMSTransporter" 2>/dev/null || echo "Not found in /Applications"
+            echo "Searching for iTMSTransporter in Xcode installations..."
+            find /Applications/Xcode*.app -name "iTMSTransporter" -type f 2>/dev/null | head -5 || echo "Not found in Xcode installations"
           fi
 
       - name: Setup Ruby
@@ -152,15 +152,25 @@ jobs:
           echo "📦 Installing Transporter for App Store uploads..."
           # Download and install Transporter from Apple
           # This is required for uploading builds to App Store Connect via Fastlane
+          # The URL redirects to the actual package file
           curl -fsSL "https://itunesconnect.apple.com/WebObjects/iTunesConnect.woa/ra/resources/download/public/Transporter__OSX/bin/" -o "/tmp/itmstransporter.pkg"
+          
+          # Verify the download succeeded and file is not empty
+          if [ ! -s "/tmp/itmstransporter.pkg" ]; then
+            echo "❌ Failed to download Transporter package"
+            exit 1
+          fi
+          
+          echo "Installing Transporter package..."
           sudo installer -pkg "/tmp/itmstransporter.pkg" -target /
           
           # Verify installation
           if [ -f "/usr/local/itms/bin/iTMSTransporter" ]; then
             echo "✅ Transporter installed successfully"
-            /usr/local/itms/bin/iTMSTransporter -version
+            /usr/local/itms/bin/iTMSTransporter -version || echo "Transporter binary exists but -version failed (this is expected)"
           else
-            echo "⚠️  Transporter installation may have failed"
+            echo "⚠️  Transporter installation may have failed - binary not found at expected location"
+            exit 1
           fi
 
       - name: Run Fastlane release

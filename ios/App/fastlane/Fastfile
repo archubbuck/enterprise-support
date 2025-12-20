@@ -115,10 +115,19 @@ platform :ios do
     # Explicitly select Xcode using the DEVELOPER_DIR environment variable
     # This ensures Fastlane uses the correct Xcode installation for finding tools like iTMSTransporter
     # The DEVELOPER_DIR is set by the setup-xcode GitHub Action
-    if ENV["DEVELOPER_DIR"]
-      xcode_path = ENV["DEVELOPER_DIR"].sub(/\/Contents\/Developer$/, "")
-      UI.important("Setting Xcode path to: #{xcode_path}")
-      xcode_select(xcode_path)
+    if ENV["DEVELOPER_DIR"] && !ENV["DEVELOPER_DIR"].empty?
+      xcode_path = ENV["DEVELOPER_DIR"]
+      # Remove /Contents/Developer suffix if present to get the Xcode.app path
+      xcode_path = xcode_path.sub(/\/Contents\/Developer\/?$/, "") if xcode_path.include?("/Contents/Developer")
+      
+      if !xcode_path.empty? && xcode_path.include?("Xcode")
+        UI.important("Setting Xcode path to: #{xcode_path}")
+        xcode_select(xcode_path)
+      else
+        UI.message("DEVELOPER_DIR is set but doesn't point to a valid Xcode installation, skipping xcode_select")
+      end
+    else
+      UI.message("DEVELOPER_DIR not set, using system default Xcode")
     end
 
     # Setup CI environment with temporary keychain
