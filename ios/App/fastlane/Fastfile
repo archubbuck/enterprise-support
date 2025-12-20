@@ -212,6 +212,15 @@ platform :ios do
     
     UI.success("✅ IPA validation passed")
 
+    # Update copyright with current year for App Store metadata
+    # Apple requires copyright year to match current year for validation
+    copyright_path = File.join(Dir.pwd, "fastlane", "metadata", "en-US", "copyright.txt")
+    current_year = Time.now.year
+    copyright_text = "#{current_year} Enterprise Support"
+    
+    File.write(copyright_path, copyright_text)
+    UI.important("📝 Updated copyright to: #{copyright_text}")
+
     # Upload to App Store with retry logic
     UI.important("🚀 Starting App Store upload...")
     UI.important("📦 IPA path: #{ipa_path}")
