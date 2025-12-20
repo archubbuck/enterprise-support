@@ -1,9 +1,55 @@
 # Deployment Failure Investigation Summary
 
-## Issue
+## Latest Issue (v1.0.12 - December 20, 2024)
+
+### Problem
+The iOS App Store deployment workflow failed during the "Run Fastlane release" step on deployment run #13 for tag v1.0.12.
+
+### Root Cause
+The `build_app` action in the Fastfile was missing **explicit provisioning profile configuration** in the `export_options` parameter. This is a common issue with Fastlane 2.230+ when running in CI environments like GitHub Actions.
+
+Even though `match` correctly downloads and installs the App Store provisioning profile and sets environment variables, Xcode can sometimes fail to pick up the correct profile during the build/export process in CI environments. This causes the build to fail or request the wrong type of provisioning profile.
+
+### Solution Applied
+Added explicit provisioning profile mapping in the `build_app` call to ensure Xcode uses the correct profile:
+
+```ruby
+# Get the provisioning profile name set by match
+profile_name = ENV["sigh_#{APP_IDENTIFIER}_appstore_profile-name"]
+
+build_app(
+  scheme: "App",
+  workspace: "App.xcworkspace",
+  export_method: "app-store",
+  xcargs: xcargs_optimizations,
+  export_options: {
+    provisioningProfiles: {
+      APP_IDENTIFIER => profile_name
+    }
+  }
+)
+```
+
+This explicitly tells Xcode which provisioning profile to use for the app identifier, preventing any ambiguity in CI environments.
+
+### Why This Fix Works
+1. **Explicit Profile Mapping**: Instead of relying on Xcode to auto-detect the profile, we explicitly specify it
+2. **Uses Match Environment Variables**: The profile name comes from the environment variable that `match` sets
+3. **Follows Best Practices**: This is the [recommended approach](https://docs.fastlane.tools/best-practices/continuous-integration/github/) for GitHub Actions and other CI environments
+
+### References
+- [Fastlane GitHub Actions Best Practices](https://docs.fastlane.tools/best-practices/continuous-integration/github/)
+- [Common Fastlane + GitHub Actions Code Signing Issues](https://github.com/fastlane/fastlane/discussions/21581)
+- [build_app export_options Documentation](https://docs.fastlane.tools/actions/build_ios_app/)
+
+---
+
+## Previous Issue (Fixed)
+
+### Problem
 The iOS App Store deployment workflow was consistently failing during the "Run Fastlane release" step.
 
-## Root Cause
+### Root Cause
 The Fastfile (ios/App/fastlane/Fastfile) contained an **invalid parameter** in the `build_app` action call:
 
 ```ruby

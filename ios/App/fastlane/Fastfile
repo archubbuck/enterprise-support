@@ -154,11 +154,19 @@ platform :ios do
       "SWIFT_COMPILATION_MODE=wholemodule"
     ].join(" ")
     
+    # Get the provisioning profile name set by match
+    profile_name = ENV["sigh_#{APP_IDENTIFIER}_appstore_profile-name"]
+    
     build_app(
       scheme: "App",
       workspace: "App.xcworkspace",
       export_method: "app-store",
-      xcargs: xcargs_optimizations
+      xcargs: xcargs_optimizations,
+      export_options: {
+        provisioningProfiles: {
+          APP_IDENTIFIER => profile_name
+        }
+      }
     )
 
     # Upload to App Store
