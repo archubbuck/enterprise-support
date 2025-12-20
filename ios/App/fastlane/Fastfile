@@ -215,6 +215,8 @@ platform :ios do
     # Update copyright with current year for App Store metadata
     # Apple requires copyright year to match current year for validation
     copyright_path = File.join(Dir.pwd, "fastlane", "metadata", "en-US", "copyright.txt")
+    default_company_name = "Enterprise Support"
+    year_regex = /^\d{4}$/
     
     # Verify the copyright file exists before updating
     UI.user_error!("Copyright file not found at: #{copyright_path}") unless File.exist?(copyright_path)
@@ -226,19 +228,19 @@ platform :ios do
     # Extract company name by removing the leading year if present
     # Format is expected to be: "YYYY Company Name" or "Company Name"
     parts = existing_copyright.split(' ', 2)
-    if parts[0] =~ /^\d{4}$/ && parts.length > 1
+    if parts[0] =~ year_regex && parts.length > 1
       # First part is a year, use the rest as company name
       company_name = parts[1]
-    elsif parts[0] =~ /^\d{4}$/ && parts.length == 1
+    elsif parts[0] =~ year_regex && parts.length == 1
       # Only a year is present, use default company name
-      company_name = "Enterprise Support"
+      company_name = default_company_name
     else
       # No year found, use the entire text as company name
       company_name = existing_copyright
     end
     
     # Ensure company name is not empty
-    company_name = "Enterprise Support" if company_name.nil? || company_name.strip.empty?
+    company_name = default_company_name if company_name.nil? || company_name.strip.empty?
     
     current_year = Time.now.year
     copyright_text = "#{current_year} #{company_name}"
