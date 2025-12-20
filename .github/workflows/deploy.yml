@@ -190,7 +190,7 @@ jobs:
           # Configure App Store upload timeouts and optimizations
           FASTLANE_ITUNES_TRANSPORTER_TIMEOUT: 1800  # 30 minute timeout for uploads
           FASTLANE_ITUNES_TRANSPORTER_USE_SHELL_SCRIPT: 1  # Use shell script mode for better reliability
-          FASTLANE_ITUNES_TRANSPORTER_PATH: /usr/local/itms/bin/iTMSTransporter  # Path to installed Transporter
+          FASTLANE_ITUNES_TRANSPORTER_PATH: /usr/local/itms  # Path to Transporter directory (not the binary itself)
           DELIVER_ITMSTRANSPORTER_ADDITIONAL_UPLOAD_PARAMETERS: "-t Aspera"  # Use faster Aspera upload method
         working-directory: ios/App
         run: bundle exec fastlane release
