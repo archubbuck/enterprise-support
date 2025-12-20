@@ -12,6 +12,11 @@
 #                      Provide as a raw token (will be automatically formatted and encoded).
 # - APPLE_TEAM_ID: Your Apple Developer Team ID (10-character string found in App Store Connect).
 # - APP_IDENTIFIER: (Optional) Bundle identifier for the app. Defaults to "com.enterprise.support".
+#
+# Optional environment variables for upload retry configuration:
+# - FASTLANE_UPLOAD_MAX_RETRIES: Maximum number of upload retry attempts (default: 3)
+# - FASTLANE_UPLOAD_RETRY_DELAY: Initial retry delay in seconds (default: 60)
+#   Note: Delay doubles with each retry attempt (exponential backoff)
 
 default_platform(:ios)
 
@@ -180,7 +185,11 @@ platform :ios do
     
     ipa_size_mb = File.size(ipa_path) / 1024.0 / 1024.0
     UI.important("📦 IPA size: #{ipa_size_mb.round(2)} MB")
-    UI.user_error!("IPA file is suspiciously small (#{ipa_size_mb.round(2)} MB). Build may have failed.") if ipa_size_mb < 1
+    
+    # Minimum IPA size check - basic Capacitor iOS apps are typically 5+ MB
+    # This catches build failures that produce empty or corrupt IPA files
+    min_ipa_size_mb = 1.0
+    UI.user_error!("IPA file is suspiciously small (#{ipa_size_mb.round(2)} MB). Build may have failed.") if ipa_size_mb < min_ipa_size_mb
     
     UI.success("✅ IPA validation passed")
 
@@ -189,8 +198,11 @@ platform :ios do
     UI.important("📦 IPA path: #{ipa_path}")
     UI.important("🔑 API Key configured: #{!api_key.nil?}")
     
-    retries = 3
-    retry_delay = 60  # Start with 60 seconds
+    # Retry configuration - can be customized via environment variables
+    max_retries = ENV["FASTLANE_UPLOAD_MAX_RETRIES"] ? ENV["FASTLANE_UPLOAD_MAX_RETRIES"].to_i : 3
+    initial_retry_delay = ENV["FASTLANE_UPLOAD_RETRY_DELAY"] ? ENV["FASTLANE_UPLOAD_RETRY_DELAY"].to_i : 60
+    retries = max_retries
+    retry_delay = initial_retry_delay
     
     begin
       upload_to_app_store(
