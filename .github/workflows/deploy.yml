@@ -145,5 +145,9 @@ jobs:
           # to prevent hanging on slow CI environments (default: 3 seconds, 4 retries)
           FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 300
           FASTLANE_XCODEBUILD_SETTINGS_RETRIES: 8
+          # Configure App Store upload timeouts and optimizations
+          FASTLANE_ITUNES_TRANSPORTER_TIMEOUT: 1800  # 30 minute timeout for uploads
+          FASTLANE_ITUNES_TRANSPORTER_USE_SHELL_SCRIPT: 1  # Use shell script mode for better reliability
+          DELIVER_ITMSTRANSPORTER_ADDITIONAL_UPLOAD_PARAMETERS: "-t Aspera"  # Use faster Aspera upload method
         working-directory: ios/App
         run: bundle exec fastlane release

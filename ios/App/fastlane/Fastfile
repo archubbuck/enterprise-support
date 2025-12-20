@@ -174,11 +174,46 @@ platform :ios do
       }
     )
 
-    # Upload to App Store
-    upload_to_app_store(
-      api_key: api_key,
-      skip_metadata: true,
-      submit_for_review: false
-    )
+    # Validate IPA before upload
+    ipa_path = lane_context[SharedValues::IPA_OUTPUT_PATH]
+    UI.user_error!("IPA file not found at: #{ipa_path}") unless File.exist?(ipa_path)
+    
+    ipa_size_mb = File.size(ipa_path) / 1024.0 / 1024.0
+    UI.important("📦 IPA size: #{ipa_size_mb.round(2)} MB")
+    UI.user_error!("IPA file is suspiciously small (#{ipa_size_mb.round(2)} MB). Build may have failed.") if ipa_size_mb < 1
+    
+    UI.success("✅ IPA validation passed")
+
+    # Upload to App Store with retry logic
+    UI.important("🚀 Starting App Store upload...")
+    UI.important("📦 IPA path: #{ipa_path}")
+    UI.important("🔑 API Key configured: #{!api_key.nil?}")
+    
+    retries = 3
+    retry_delay = 60  # Start with 60 seconds
+    
+    begin
+      upload_to_app_store(
+        api_key: api_key,
+        skip_metadata: true,
+        submit_for_review: false,
+        precheck_include_in_app_purchases: false
+      )
+      UI.success("✅ Upload completed successfully!")
+    rescue => ex
+      retries -= 1
+      if retries > 0
+        UI.important("⚠️  Upload failed: #{ex.message}")
+        UI.important("🔄 Retrying in #{retry_delay} seconds... (#{retries} attempts remaining)")
+        sleep(retry_delay)
+        retry_delay *= 2  # Exponential backoff
+        retry
+      else
+        UI.error("❌ Upload failed after all retry attempts")
+        UI.error("Error details: #{ex.message}")
+        UI.error("Backtrace: #{ex.backtrace.first(5).join("\n")}")
+        raise
+      end
+    end
   end
 end
