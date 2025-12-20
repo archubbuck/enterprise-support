@@ -158,9 +158,7 @@ platform :ios do
       scheme: "App",
       workspace: "App.xcworkspace",
       export_method: "app-store",
-      xcargs: xcargs_optimizations,
-      # Enable build logging for debugging
-      buildlog_path: "./fastlane/logs"
+      xcargs: xcargs_optimizations
     )
 
     # Upload to App Store
