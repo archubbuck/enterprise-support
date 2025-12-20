@@ -184,6 +184,49 @@ Then build in Xcode (Product → Build or `Cmd + B`)
    - Complete App Store Connect listing
    - Submit for review
 
+### App Store Metadata
+
+This project includes pre-configured App Store metadata in the `ios/App/fastlane/metadata/en-US/` directory. This metadata is automatically uploaded to App Store Connect when using Fastlane.
+
+#### Available Metadata Files
+
+- **promotional_text.txt** - Short promotional text (max 170 characters)
+- **description.txt** - Full app description (max 4,000 characters)
+- **keywords.txt** - Comma-separated keywords (max 100 characters)
+- **support_url.txt** - URL for customer support
+- **marketing_url.txt** - Marketing website URL (optional)
+- **copyright.txt** - Copyright notice
+
+#### Customizing Metadata
+
+To customize the App Store listing for your organization:
+
+1. Edit the metadata files in `ios/App/fastlane/metadata/en-US/`
+2. Keep within character limits (check with `wc -c <filename>`)
+3. The changes will be uploaded automatically during the next Fastlane deployment
+
+Example:
+```bash
+# Check character count
+wc -c ios/App/fastlane/metadata/en-US/promotional_text.txt
+
+# Edit the file
+nano ios/App/fastlane/metadata/en-US/promotional_text.txt
+```
+
+#### Multiple Locales
+
+To add metadata for additional languages:
+
+1. Create a new directory: `ios/App/fastlane/metadata/<locale>/`
+   - Examples: `en-GB`, `es-ES`, `fr-FR`, `de-DE`
+2. Copy the metadata files from `en-US/` and translate them
+3. Fastlane will automatically upload all locales
+
+#### Metadata in CI/CD
+
+The GitHub Actions deployment workflow (`.github/workflows/deploy.yml`) uses Fastlane's `upload_to_app_store` action, which automatically uploads metadata alongside the app binary. The metadata upload can be controlled via the `skip_metadata` parameter in the Fastfile.
+
 ## Project Structure
 
 ```
