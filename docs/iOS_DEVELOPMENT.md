@@ -195,7 +195,7 @@ This project includes pre-configured App Store metadata in the `ios/App/fastlane
 - **keywords.txt** - Comma-separated keywords (max 100 characters)
 - **support_url.txt** - URL for customer support
 - **marketing_url.txt** - Marketing website URL (optional)
-- **copyright.txt** - Copyright notice
+- **copyright.txt** - Copyright notice (format: "YYYY Company Name", e.g., "2025 Enterprise Support")
 
 #### Customizing Metadata
 
