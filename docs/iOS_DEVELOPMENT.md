@@ -196,6 +196,41 @@ This project includes pre-configured App Store metadata in the `ios/App/fastlane
 - **support_url.txt** - URL for customer support
 - **marketing_url.txt** - Marketing website URL (optional)
 - **copyright.txt** - Copyright notice (format: "YYYY Company Name", e.g., "2025 Enterprise Support")
+- **screenshots/** - App screenshots for different device sizes (required for iOS)
+
+#### App Screenshots
+
+Screenshots are **required** for iOS apps submitted to the App Store. Only the first 3 screenshots will be displayed on the app installation sheets, but you can provide up to 10 screenshots per device size.
+
+**Screenshot Requirements:**
+
+- Screenshots must be actual captures of your app running on the newest devices
+- Screenshots are required for at least one device size, but it's recommended to provide them for all supported sizes
+- Supported device sizes:
+  - 6.7-inch iPhone (1290 x 2796 pixels) - iPhone 15 Pro Max, iPhone 14 Pro Max
+  - 6.5-inch iPhone (1284 x 2778 pixels) - iPhone 15 Plus, iPhone 14 Plus
+  - 6.1-inch iPhone (1179 x 2556 pixels) - iPhone 15 Pro, iPhone 15, iPhone 14 Pro
+- Screenshots must be in PNG or JPEG format
+- File names should follow the pattern: `1_1.png`, `1_2.png`, `1_3.png`, etc.
+
+**Adding Screenshots:**
+
+1. Take screenshots on the actual devices or using iOS Simulator
+2. Place them in `ios/App/fastlane/metadata/en-US/screenshots/`
+3. Name them sequentially: `1_1.png`, `1_2.png`, `1_3.png`, etc.
+4. Screenshots will be automatically uploaded during the next Fastlane deployment
+
+Example using iOS Simulator:
+```bash
+# Run the app in the simulator
+npm run ios:run
+
+# Take a screenshot: Cmd + S (saves to Desktop)
+# Resize and rename the screenshot
+# Move to: ios/App/fastlane/metadata/en-US/screenshots/
+```
+
+**Note:** The project includes placeholder screenshots for initial setup. Replace these with actual app screenshots showing your app's key features and user interface before submitting to the App Store.
 
 #### Customizing Metadata
 
