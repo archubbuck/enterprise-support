@@ -204,7 +204,7 @@ Screenshots are **required** for iOS apps submitted to the App Store. Only the f
 
 **Screenshot Requirements:**
 
-- Screenshots must be actual captures of your app running on the newest devices
+- Screenshots must be actual captures of your app running on supported iOS devices
 - Screenshots are required for at least one device size, but it's recommended to provide them for all supported sizes
 - Supported device sizes:
   - 6.7-inch iPhone (1290 x 2796 pixels) - iPhone 15 Pro Max, iPhone 14 Pro Max
