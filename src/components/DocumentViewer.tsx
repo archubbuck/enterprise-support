@@ -36,6 +36,9 @@ export function DocumentViewer({ document, onBack }: DocumentViewerProps) {
         );
       
       case 'pdf':
+        if (!document.fileUrl) {
+          return <div className="text-center py-8 text-sm text-muted-foreground">File URL not available</div>;
+        }
         return (
           <div className="space-y-4">
             <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
@@ -60,6 +63,9 @@ export function DocumentViewer({ document, onBack }: DocumentViewerProps) {
         );
       
       case 'image':
+        if (!document.fileUrl) {
+          return <div className="text-center py-8 text-sm text-muted-foreground">File URL not available</div>;
+        }
         return (
           <div className="space-y-4">
             <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
@@ -83,6 +89,9 @@ export function DocumentViewer({ document, onBack }: DocumentViewerProps) {
         );
       
       case 'word':
+        if (!document.fileUrl) {
+          return <div className="text-center py-8 text-sm text-muted-foreground">File URL not available</div>;
+        }
         return (
           <div className="space-y-4">
             <div className="p-6 bg-muted/50 rounded-lg text-center space-y-4">
