@@ -3,13 +3,13 @@ import { useState, useEffect } from 'react';
 interface RuntimeConfig {
   app: string;
   featurePreviews?: {
-    tagFiltering?: boolean;
+    [key: string]: boolean;
   };
 }
 
 let cachedConfig: RuntimeConfig | null = null;
 
-export function useFeaturePreview(featureName: 'tagFiltering'): boolean {
+export function useFeaturePreview(featureName: string): boolean {
   const [isEnabled, setIsEnabled] = useState(false);
 
   useEffect(() => {
