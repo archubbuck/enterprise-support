@@ -14,11 +14,11 @@ export function TagFilter({ availableTags, selectedTags, onTagToggle, onClearAll
   }
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2" role="region" aria-labelledby="tag-filter-label">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Tag className="w-4 h-4 text-muted-foreground" />
-          <span className="text-sm font-medium text-foreground">Filter by tags</span>
+          <span id="tag-filter-label" className="text-sm font-medium text-foreground">Filter by tags</span>
         </div>
         {selectedTags.length > 0 && (
           <Button
@@ -37,6 +37,7 @@ export function TagFilter({ availableTags, selectedTags, onTagToggle, onClearAll
           return (
             <button
               key={tag}
+              type="button"
               onClick={() => onTagToggle(tag)}
               aria-pressed={isSelected}
               aria-label={`Filter by ${tag} tag`}

@@ -7,32 +7,40 @@ interface RuntimeConfig {
   };
 }
 
-let cachedConfig: RuntimeConfig | null = null;
-
 export function useFeaturePreview(featureName: string): boolean {
   const [isEnabled, setIsEnabled] = useState(false);
 
   useEffect(() => {
-    const loadConfig = async () => {
-      if (cachedConfig) {
-        setIsEnabled(cachedConfig.featurePreviews?.[featureName] || false);
-        return;
-      }
+    let isMounted = true;
 
+    const loadConfig = async () => {
       try {
         const response = await fetch('/runtime.config.json');
-        if (response.ok) {
-          const config: RuntimeConfig = await response.json();
-          cachedConfig = config;
-          setIsEnabled(config.featurePreviews?.[featureName] || false);
+        if (!response.ok) {
+          if (isMounted) {
+            setIsEnabled(false);
+          }
+          return;
+        }
+
+        const config: RuntimeConfig = await response.json();
+
+        if (isMounted) {
+          setIsEnabled(config.featurePreviews?.[featureName] ?? false);
         }
       } catch (error) {
         console.error('Failed to load runtime config:', error);
-        setIsEnabled(false);
+        if (isMounted) {
+          setIsEnabled(false);
+        }
       }
     };
 
     loadConfig();
+
+    return () => {
+      isMounted = false;
+    };
   }, [featureName]);
 
   return isEnabled;
