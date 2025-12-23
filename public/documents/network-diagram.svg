@@ -1,0 +1,34 @@
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="300" fill="#f0f0f0"/>
+  
+  <!-- Title -->
+  <text x="200" y="30" font-size="20" font-weight="bold" text-anchor="middle" fill="#333">
+    Network Architecture Diagram
+  </text>
+  
+  <!-- Internet Cloud -->
+  <ellipse cx="200" cy="80" rx="60" ry="35" fill="#4285f4" opacity="0.3" stroke="#4285f4" stroke-width="2"/>
+  <text x="200" y="85" font-size="14" text-anchor="middle" fill="#333">Internet</text>
+  
+  <!-- Firewall -->
+  <rect x="160" y="130" width="80" height="40" fill="#ea4335" opacity="0.3" stroke="#ea4335" stroke-width="2" rx="5"/>
+  <text x="200" y="155" font-size="12" text-anchor="middle" fill="#333">Firewall</text>
+  
+  <!-- VPN Gateway -->
+  <rect x="50" y="200" width="80" height="40" fill="#34a853" opacity="0.3" stroke="#34a853" stroke-width="2" rx="5"/>
+  <text x="90" y="225" font-size="12" text-anchor="middle" fill="#333">VPN Gateway</text>
+  
+  <!-- Internal Network -->
+  <rect x="270" y="200" width="100" height="40" fill="#fbbc04" opacity="0.3" stroke="#fbbc04" stroke-width="2" rx="5"/>
+  <text x="320" y="225" font-size="12" text-anchor="middle" fill="#333">Internal Network</text>
+  
+  <!-- Connection Lines -->
+  <line x1="200" y1="115" x2="200" y2="130" stroke="#666" stroke-width="2"/>
+  <line x1="180" y1="170" x2="110" y2="200" stroke="#666" stroke-width="2"/>
+  <line x1="220" y1="170" x2="295" y2="200" stroke="#666" stroke-width="2"/>
+  
+  <!-- Note -->
+  <text x="200" y="280" font-size="11" text-anchor="middle" fill="#666">
+    Network Topology - Corporate Environment
+  </text>
+</svg>

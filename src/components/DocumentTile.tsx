@@ -8,7 +8,9 @@ import {
   Printer, 
   Phone as PhoneIcon, 
   Laptop,
-  CaretRight
+  CaretRight,
+  File,
+  Image as ImageIcon
 } from '@phosphor-icons/react';
 import { SupportDocument } from '@/lib/documents';
 
@@ -21,6 +23,8 @@ const iconMap = {
   printer: Printer,
   phone: PhoneIcon,
   laptop: Laptop,
+  file: File,
+  image: ImageIcon,
 };
 
 const categoryStyles: Record<string, { bg: string; text: string }> = {
@@ -29,6 +33,7 @@ const categoryStyles: Record<string, { bg: string; text: string }> = {
   Communication: { bg: 'bg-emerald-50', text: 'text-emerald-600' },
   Security: { bg: 'bg-rose-50', text: 'text-rose-600' },
   Hardware: { bg: 'bg-amber-50', text: 'text-amber-600' },
+  General: { bg: 'bg-slate-50', text: 'text-slate-600' },
 };
 
 interface DocumentTileProps {

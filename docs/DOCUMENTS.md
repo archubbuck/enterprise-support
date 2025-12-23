@@ -78,6 +78,8 @@ For emergencies, contact {emergencyEmail}.
 
 To add a new support document:
 
+### Markdown Documents
+
 1. Create a new `.md` file in `public/documents/` (e.g., `new-doc.md`)
 2. Write content using Markdown format
 3. Use placeholders where needed (e.g., `{companyName}`)
@@ -91,8 +93,33 @@ To add a new support document:
      "file": "new-doc.md"
    }
    ```
-5. Available icons: `wifi`, `teams`, `email`, `security`, `vpn`, `printer`, `phone`, `laptop`
-6. Available categories: `Network`, `Collaboration`, `Communication`, `Security`, `Hardware`
+
+### PDF, Word, and Image Documents
+
+The app now supports PDF, Word (.doc, .docx), and image files (.jpg, .png, .gif, .svg, .webp) as documents:
+
+1. Place your file in `public/documents/` (e.g., `policy.pdf`, `handbook.docx`, `diagram.png`)
+2. Add an entry to `manifest.json` with the `type` field:
+   ```json
+   {
+     "id": "security-policy",
+     "title": "IT Security Policy (PDF)",
+     "category": "Security",
+     "icon": "file",
+     "file": "policy.pdf",
+     "type": "pdf"
+   }
+   ```
+3. Document types:
+   - `"type": "markdown"` - Markdown files (default if type is omitted)
+   - `"type": "pdf"` - PDF files (displayed inline with viewer)
+   - `"type": "image"` - Image files (displayed inline)
+   - `"type": "word"` - Word documents (download prompt)
+
+### Configuration
+
+- **Available icons**: `wifi`, `teams`, `email`, `security`, `vpn`, `printer`, `phone`, `laptop`, `file`, `image`
+- **Available categories**: `Network`, `Collaboration`, `Communication`, `Security`, `Hardware`, `General`
 
 ## Editing Documents
 

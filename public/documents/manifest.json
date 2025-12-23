@@ -32,6 +32,33 @@
     "tags": ["security", "password", "mfa", "phishing"]
   },
   {
+    "id": "security-policy",
+    "title": "IT Security Policy (PDF)",
+    "category": "Security",
+    "icon": "file",
+    "file": "sample-policy.pdf",
+    "type": "pdf",
+    "tags": ["security", "policy", "compliance"]
+  },
+  {
+    "id": "network-diagram",
+    "title": "Network Architecture Diagram",
+    "category": "Network",
+    "icon": "image",
+    "file": "network-diagram.svg",
+    "type": "image",
+    "tags": ["network", "diagram", "architecture"]
+  },
+  {
+    "id": "employee-handbook",
+    "title": "Employee Handbook (Word)",
+    "category": "General",
+    "icon": "file",
+    "file": "employee-handbook.docx",
+    "type": "word",
+    "tags": ["handbook", "policies", "hr"]
+  },
+  {
     "id": "vpn-setup",
     "title": "VPN Connection Guide",
     "category": "Network",
