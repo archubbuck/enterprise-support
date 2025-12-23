@@ -54,14 +54,18 @@ export default defineConfig({
     {
       name: 'copy-runtime-config',
       closeBundle() {
-        const srcPath = resolve(projectRoot, 'runtime.config.json');
-        const destDir = resolve(projectRoot, 'dist');
-        const destPath = resolve(destDir, 'runtime.config.json');
-        if (existsSync(srcPath)) {
-          if (!existsSync(destDir)) {
-            mkdirSync(destDir, { recursive: true });
+        try {
+          const srcPath = resolve(projectRoot, 'runtime.config.json');
+          const destDir = resolve(projectRoot, 'dist');
+          const destPath = resolve(destDir, 'runtime.config.json');
+          if (existsSync(srcPath)) {
+            if (!existsSync(destDir)) {
+              mkdirSync(destDir, { recursive: true });
+            }
+            copyFileSync(srcPath, destPath);
           }
-          copyFileSync(srcPath, destPath);
+        } catch (error) {
+          console.warn('Warning: Failed to copy runtime.config.json during closeBundle:', error);
         }
       },
     } as PluginOption,
