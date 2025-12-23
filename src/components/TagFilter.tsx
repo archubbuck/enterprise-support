@@ -38,6 +38,8 @@ export function TagFilter({ availableTags, selectedTags, onTagToggle, onClearAll
             <button
               key={tag}
               onClick={() => onTagToggle(tag)}
+              aria-pressed={isSelected}
+              aria-label={`Filter by ${tag} tag`}
               className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
                 isSelected
                   ? 'bg-accent text-accent-foreground shadow-sm'
