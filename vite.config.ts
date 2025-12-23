@@ -5,7 +5,7 @@ import { defineConfig, PluginOption } from "vite";
 import sparkPlugin from "@github/spark/spark-vite-plugin";
 import createIconImportProxy from "@github/spark/vitePhosphorIconProxyPlugin";
 import { resolve } from 'path';
-import { readFileSync } from 'fs';
+import { readFileSync, copyFileSync, existsSync, mkdirSync } from 'fs';
 
 const projectRoot = process.env.PROJECT_ROOT || import.meta.dirname;
 
@@ -49,6 +49,16 @@ export default defineConfig({
           /<title>.*?<\/title>/,
           `<title>${escapeHtml(companyConfig.appName)}</title>`
         );
+      },
+    } as PluginOption,
+    {
+      name: 'copy-runtime-config',
+      closeBundle() {
+        const srcPath = resolve(projectRoot, 'runtime.config.json');
+        const destPath = resolve(projectRoot, 'dist', 'runtime.config.json');
+        if (existsSync(srcPath)) {
+          copyFileSync(srcPath, destPath);
+        }
       },
     } as PluginOption,
   ],
