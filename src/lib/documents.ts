@@ -1,12 +1,16 @@
 import companyConfig from '../../company.config.json';
 
+export type DocumentType = 'markdown' | 'pdf' | 'image' | 'word';
+
 export interface SupportDocument {
   id: string;
   title: string;
   category: string;
-  icon: 'wifi' | 'teams' | 'email' | 'security' | 'vpn' | 'printer' | 'phone' | 'laptop';
+  icon: 'wifi' | 'teams' | 'email' | 'security' | 'vpn' | 'printer' | 'phone' | 'laptop' | 'file' | 'image';
   content: string;
   tags?: string[];
+  type: DocumentType;
+  fileUrl?: string; // For non-markdown documents
 }
 
 interface DocumentManifestItem {
@@ -16,6 +20,32 @@ interface DocumentManifestItem {
   icon: string;
   file: string;
   tags?: string[];
+  type?: DocumentType; // Optional for backward compatibility
+}
+
+// Function to detect document type from file extension
+function detectDocumentType(filename: string): DocumentType {
+  const extension = filename.toLowerCase().split('.').pop();
+  
+  switch (extension) {
+    case 'md':
+    case 'markdown':
+      return 'markdown';
+    case 'pdf':
+      return 'pdf';
+    case 'jpg':
+    case 'jpeg':
+    case 'png':
+    case 'gif':
+    case 'webp':
+    case 'svg':
+      return 'image';
+    case 'doc':
+    case 'docx':
+      return 'word';
+    default:
+      return 'markdown'; // Default to markdown for backward compatibility
+  }
 }
 
 // Function to replace placeholders in document content
@@ -42,12 +72,24 @@ async function loadDocumentsFromAssets(): Promise<SupportDocument[]> {
     const documents = await Promise.all(
       manifestData.map(async (item) => {
         try {
-          const fileResponse = await fetch(`/documents/${item.file}`);
-          if (!fileResponse.ok) {
-            throw new Error(`Failed to fetch ${item.file}`);
+          const documentType = item.type || detectDocumentType(item.file);
+          const fileUrl = `/documents/${item.file}`;
+          
+          let content = '';
+          
+          // For markdown, load and process the content
+          if (documentType === 'markdown') {
+            const fileResponse = await fetch(fileUrl);
+            if (!fileResponse.ok) {
+              throw new Error(`Failed to fetch ${item.file}`);
+            }
+            content = replacePlaceholders(await fileResponse.text());
+          } else {
+            // For other file types (PDF, Word, images), we'll just store the URL
+            // Content can be a simple message or empty
+            content = `This is a ${documentType} file. View below.`;
           }
           
-          const content = replacePlaceholders(await fileResponse.text());
           const title = replacePlaceholders(item.title);
           
           return {
@@ -57,6 +99,8 @@ async function loadDocumentsFromAssets(): Promise<SupportDocument[]> {
             icon: item.icon as SupportDocument['icon'],
             content,
             tags: item.tags,
+            type: documentType,
+            fileUrl,
           };
         } catch (error) {
           console.error(`Failed to load document ${item.file}:`, error);
@@ -80,6 +124,7 @@ const fallbackDocuments: SupportDocument[] = [
     category: 'Network',
     icon: 'wifi',
     tags: ['network', 'wifi', 'connection', 'setup'],
+    type: 'markdown',
     content: `# ${companyConfig.companyName} Wi-Fi Network Connections
 
 ## Overview
@@ -139,6 +184,7 @@ For assistance, contact the IT Help Desk.`
     category: 'Collaboration',
     icon: 'teams',
     tags: ['collaboration', 'teams', 'chat', 'meetings'],
+    type: 'markdown',
     content: `# Tips on Using Microsoft Teams
 
 ## Getting Started
@@ -200,6 +246,7 @@ For Teams support, contact the IT Help Desk or visit the Teams Help channel.`
     category: 'Communication',
     icon: 'email',
     tags: ['email', 'outlook', 'setup', 'communication'],
+    type: 'markdown',
     content: `# Email Setup & Best Practices
 
 ## Outlook Configuration
@@ -265,6 +312,7 @@ Contact IT Help Desk for email issues.`
     category: 'Security',
     icon: 'security',
     tags: ['security', 'password', 'mfa', 'phishing'],
+    type: 'markdown',
     content: `# Security Guidelines
 
 ## Password Policy
@@ -343,6 +391,7 @@ Contact the Security team for questions.`
     category: 'Network',
     icon: 'vpn',
     tags: ['vpn', 'network', 'remote', 'setup'],
+    type: 'markdown',
     content: `# VPN Connection Guide
 
 ## Overview
@@ -422,6 +471,7 @@ Contact IT Help Desk for VPN assistance.`
     category: 'Hardware',
     icon: 'printer',
     tags: ['printer', 'hardware', 'setup', 'troubleshooting'],
+    type: 'markdown',
     content: `# Printer Setup & Troubleshooting
 
 ## Finding Printers
@@ -503,6 +553,7 @@ For printer issues, contact IT Help Desk.`
     category: 'Communication',
     icon: 'phone',
     tags: ['phone', 'softphone', 'communication', 'setup'],
+    type: 'markdown',
     content: `# Softphone & Phone System
 
 ## Overview
@@ -594,6 +645,7 @@ Contact IT Help Desk for phone system issues.`
     category: 'Hardware',
     icon: 'laptop',
     tags: ['laptop', 'hardware', 'maintenance', 'care'],
+    type: 'markdown',
     content: `# Laptop Care & Maintenance
 
 ## Daily Care
