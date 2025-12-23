@@ -25,7 +25,7 @@ interface DocumentManifestItem {
 
 // Function to detect document type from file extension
 function detectDocumentType(filename: string): DocumentType {
-  const extension = filename.toLowerCase().split('.').pop();
+  const extension = filename.toLowerCase().split('.').pop() || '';
   
   switch (extension) {
     case 'md':

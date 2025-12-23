@@ -58,6 +58,7 @@ export function DocumentViewer({ document, onBack }: DocumentViewerProps) {
               className="w-full border border-border rounded-lg"
               style={{ height: 'calc(100vh - 200px)', minHeight: '400px' }}
               title={document.title}
+              sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
             />
           </div>
         );
