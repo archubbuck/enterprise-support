@@ -4,55 +4,63 @@
     "title": "{companyName} Wi-Fi Network Connections",
     "category": "Network",
     "icon": "wifi",
-    "file": "wifi-network.md"
+    "file": "wifi-network.md",
+    "tags": ["network", "wifi", "connection", "setup"]
   },
   {
     "id": "ms-teams-tips",
     "title": "Tips on Using MS Teams",
     "category": "Collaboration",
     "icon": "teams",
-    "file": "ms-teams-tips.md"
+    "file": "ms-teams-tips.md",
+    "tags": ["collaboration", "teams", "chat", "meetings"]
   },
   {
     "id": "email-setup",
     "title": "Email Setup & Best Practices",
     "category": "Communication",
     "icon": "email",
-    "file": "email-setup.md"
+    "file": "email-setup.md",
+    "tags": ["email", "outlook", "setup", "communication"]
   },
   {
     "id": "security-guidelines",
     "title": "Security Guidelines",
     "category": "Security",
     "icon": "security",
-    "file": "security-guidelines.md"
+    "file": "security-guidelines.md",
+    "tags": ["security", "password", "mfa", "phishing"]
   },
   {
     "id": "vpn-setup",
     "title": "VPN Connection Guide",
     "category": "Network",
     "icon": "vpn",
-    "file": "vpn-setup.md"
+    "file": "vpn-setup.md",
+    "tags": ["vpn", "network", "remote", "setup"]
   },
   {
     "id": "printer-setup",
     "title": "Printer Setup & Troubleshooting",
     "category": "Hardware",
     "icon": "printer",
-    "file": "printer-setup.md"
+    "file": "printer-setup.md",
+    "tags": ["printer", "hardware", "setup", "troubleshooting"]
   },
   {
     "id": "softphone-setup",
     "title": "Softphone & Phone System",
     "category": "Communication",
     "icon": "phone",
-    "file": "softphone-setup.md"
+    "file": "softphone-setup.md",
+    "tags": ["phone", "softphone", "communication", "setup"]
   },
   {
     "id": "laptop-care",
     "title": "Laptop Care & Maintenance",
     "category": "Hardware",
     "icon": "laptop",
-    "file": "laptop-care.md"
+    "file": "laptop-care.md",
+    "tags": ["laptop", "hardware", "maintenance", "care"]
   }
 ]
