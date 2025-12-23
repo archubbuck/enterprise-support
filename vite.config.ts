@@ -55,8 +55,12 @@ export default defineConfig({
       name: 'copy-runtime-config',
       closeBundle() {
         const srcPath = resolve(projectRoot, 'runtime.config.json');
-        const destPath = resolve(projectRoot, 'dist', 'runtime.config.json');
+        const destDir = resolve(projectRoot, 'dist');
+        const destPath = resolve(destDir, 'runtime.config.json');
         if (existsSync(srcPath)) {
+          if (!existsSync(destDir)) {
+            mkdirSync(destDir, { recursive: true });
+          }
           copyFileSync(srcPath, destPath);
         }
       },

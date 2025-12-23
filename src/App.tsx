@@ -46,7 +46,7 @@ function App() {
 
       // Tag filter (only if feature is enabled)
       const matchesTags = !isTagFilteringEnabled || selectedTags.length === 0 ||
-        selectedTags.every(tag => doc.tags?.includes(tag));
+        (doc.tags && selectedTags.every(tag => doc.tags.includes(tag)));
 
       return matchesSearch && matchesTags;
     });
