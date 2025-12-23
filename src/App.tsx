@@ -20,6 +20,9 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const isTagFilteringEnabled = useFeaturePreview('tagFiltering');
+  const isPdfEnabled = useFeaturePreview('pdfDocuments');
+  const isWordEnabled = useFeaturePreview('wordDocuments');
+  const isImageEnabled = useFeaturePreview('imageDocuments');
 
   useEffect(() => {
     loadSupportDocuments().then(docs => {
@@ -48,9 +51,16 @@ function App() {
       const matchesTags = !isTagFilteringEnabled || selectedTags.length === 0 ||
         (doc.tags && selectedTags.every(tag => doc.tags.includes(tag)));
 
-      return matchesSearch && matchesTags;
+      // Feature flag filter - check if document type is enabled
+      const isTypeEnabled = 
+        doc.type === 'markdown' || // markdown is always enabled
+        (doc.type === 'pdf' && isPdfEnabled) ||
+        (doc.type === 'word' && isWordEnabled) ||
+        (doc.type === 'image' && isImageEnabled);
+
+      return matchesSearch && matchesTags && isTypeEnabled;
     });
-  }, [documents, searchQuery, selectedTags, isTagFilteringEnabled]);
+  }, [documents, searchQuery, selectedTags, isTagFilteringEnabled, isPdfEnabled, isWordEnabled, isImageEnabled]);
 
   const handleTagToggle = (tag: string) => {
     setSelectedTags(prev =>

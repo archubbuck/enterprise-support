@@ -121,6 +121,31 @@ The app now supports PDF, Word (.doc, .docx), and image files (.jpg, .png, .gif,
 - **Available icons**: `wifi`, `teams`, `email`, `security`, `vpn`, `printer`, `phone`, `laptop`, `file`, `image`
 - **Available categories**: `Network`, `Collaboration`, `Communication`, `Security`, `Hardware`, `General`
 
+## Feature Flags
+
+Document types can be enabled or disabled using feature flags in `runtime.config.json`:
+
+```json
+{
+  "app": "68f9bd1cd2bc86b055e9",
+  "featurePreviews": {
+    "tagFiltering": false,
+    "pdfDocuments": true,
+    "wordDocuments": true,
+    "imageDocuments": true
+  }
+}
+```
+
+### Available Feature Flags
+
+- **`pdfDocuments`**: Enable/disable PDF document support (default: `true`)
+- **`wordDocuments`**: Enable/disable Word document support (default: `true`)
+- **`imageDocuments`**: Enable/disable image document support (default: `true`)
+- **`tagFiltering`**: Enable/disable tag filtering feature (default: `false`)
+
+When a document type is disabled via feature flag, documents of that type will be hidden from the document list, even if they exist in the manifest. Markdown documents are always enabled and cannot be disabled.
+
 ## Editing Documents
 
 To edit an existing document:

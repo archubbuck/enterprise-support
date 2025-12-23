@@ -1,6 +1,9 @@
 {
   "app": "68f9bd1cd2bc86b055e9",
   "featurePreviews": {
-    "tagFiltering": false
+    "tagFiltering": false,
+    "pdfDocuments": true,
+    "wordDocuments": true,
+    "imageDocuments": true
   }
 }
