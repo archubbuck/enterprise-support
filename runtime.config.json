@@ -1,3 +1,6 @@
 {
-  "app": "68f9bd1cd2bc86b055e9"
+  "app": "68f9bd1cd2bc86b055e9",
+  "featurePreviews": {
+    "tagFiltering": false
+  }
 }

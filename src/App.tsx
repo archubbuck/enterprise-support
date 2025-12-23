@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { FileText, Phone, MagnifyingGlass, X } from '@phosphor-icons/react';
 import { Input } from '@/components/ui/input';
@@ -7,7 +7,9 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { DocumentTile } from '@/components/DocumentTile';
 import { DocumentViewer } from '@/components/DocumentViewer';
 import { ContactsView } from '@/components/ContactsView';
+import { TagFilter } from '@/components/TagFilter';
 import { loadSupportDocuments, SupportDocument } from '@/lib/documents';
+import { useFeaturePreview } from '@/hooks/useFeaturePreview';
 import companyConfig from '../company.config.json';
 
 function App() {
@@ -16,6 +18,8 @@ function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [documents, setDocuments] = useState<SupportDocument[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const isTagFilteringEnabled = useFeaturePreview('tagFiltering');
 
   useEffect(() => {
     loadSupportDocuments().then(docs => {
@@ -24,10 +28,41 @@ function App() {
     });
   }, []);
 
-  const filteredDocuments = documents.filter(doc =>
-    doc.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    doc.category.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Extract all unique tags from documents
+  const availableTags = useMemo(() => {
+    const tagSet = new Set<string>();
+    documents.forEach(doc => {
+      doc.tags?.forEach(tag => tagSet.add(tag));
+    });
+    return Array.from(tagSet).sort();
+  }, [documents]);
+
+  const filteredDocuments = useMemo(() => {
+    return documents.filter(doc => {
+      // Text search filter
+      const matchesSearch = 
+        doc.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        doc.category.toLowerCase().includes(searchQuery.toLowerCase());
+
+      // Tag filter (only if feature is enabled)
+      const matchesTags = !isTagFilteringEnabled || selectedTags.length === 0 ||
+        selectedTags.every(tag => doc.tags?.includes(tag));
+
+      return matchesSearch && matchesTags;
+    });
+  }, [documents, searchQuery, selectedTags, isTagFilteringEnabled]);
+
+  const handleTagToggle = (tag: string) => {
+    setSelectedTags(prev =>
+      prev.includes(tag)
+        ? prev.filter(t => t !== tag)
+        : [...prev, tag]
+    );
+  };
+
+  const handleClearAllTags = () => {
+    setSelectedTags([]);
+  };
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -97,6 +132,15 @@ function App() {
                 </Button>
               )}
             </div>
+
+            {isTagFilteringEnabled && (
+              <TagFilter
+                availableTags={availableTags}
+                selectedTags={selectedTags}
+                onTagToggle={handleTagToggle}
+                onClearAll={handleClearAllTags}
+              />
+            )}
 
             {isLoading ? (
               <div className="text-center py-16 space-y-3">

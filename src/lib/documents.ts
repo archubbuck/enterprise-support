@@ -6,6 +6,7 @@ export interface SupportDocument {
   category: string;
   icon: 'wifi' | 'teams' | 'email' | 'security' | 'vpn' | 'printer' | 'phone' | 'laptop';
   content: string;
+  tags?: string[];
 }
 
 interface DocumentManifestItem {
@@ -14,6 +15,7 @@ interface DocumentManifestItem {
   category: string;
   icon: string;
   file: string;
+  tags?: string[];
 }
 
 // Function to replace placeholders in document content
@@ -54,6 +56,7 @@ async function loadDocumentsFromAssets(): Promise<SupportDocument[]> {
             category: item.category,
             icon: item.icon as SupportDocument['icon'],
             content,
+            tags: item.tags,
           };
         } catch (error) {
           console.error(`Failed to load document ${item.file}:`, error);
@@ -76,6 +79,7 @@ const fallbackDocuments: SupportDocument[] = [
     title: `${companyConfig.companyName} Wi-Fi Network Connections`,
     category: 'Network',
     icon: 'wifi',
+    tags: ['network', 'wifi', 'connection', 'setup'],
     content: `# ${companyConfig.companyName} Wi-Fi Network Connections
 
 ## Overview
@@ -134,6 +138,7 @@ For assistance, contact the IT Help Desk.`
     title: 'Tips on Using MS Teams',
     category: 'Collaboration',
     icon: 'teams',
+    tags: ['collaboration', 'teams', 'chat', 'meetings'],
     content: `# Tips on Using Microsoft Teams
 
 ## Getting Started
@@ -194,6 +199,7 @@ For Teams support, contact the IT Help Desk or visit the Teams Help channel.`
     title: 'Email Setup & Best Practices',
     category: 'Communication',
     icon: 'email',
+    tags: ['email', 'outlook', 'setup', 'communication'],
     content: `# Email Setup & Best Practices
 
 ## Outlook Configuration
@@ -258,6 +264,7 @@ Contact IT Help Desk for email issues.`
     title: 'Security Guidelines',
     category: 'Security',
     icon: 'security',
+    tags: ['security', 'password', 'mfa', 'phishing'],
     content: `# Security Guidelines
 
 ## Password Policy
@@ -335,6 +342,7 @@ Contact the Security team for questions.`
     title: 'VPN Connection Guide',
     category: 'Network',
     icon: 'vpn',
+    tags: ['vpn', 'network', 'remote', 'setup'],
     content: `# VPN Connection Guide
 
 ## Overview
@@ -413,6 +421,7 @@ Contact IT Help Desk for VPN assistance.`
     title: 'Printer Setup & Troubleshooting',
     category: 'Hardware',
     icon: 'printer',
+    tags: ['printer', 'hardware', 'setup', 'troubleshooting'],
     content: `# Printer Setup & Troubleshooting
 
 ## Finding Printers
@@ -493,6 +502,7 @@ For printer issues, contact IT Help Desk.`
     title: 'Softphone & Phone System',
     category: 'Communication',
     icon: 'phone',
+    tags: ['phone', 'softphone', 'communication', 'setup'],
     content: `# Softphone & Phone System
 
 ## Overview
@@ -583,6 +593,7 @@ Contact IT Help Desk for phone system issues.`
     title: 'Laptop Care & Maintenance',
     category: 'Hardware',
     icon: 'laptop',
+    tags: ['laptop', 'hardware', 'maintenance', 'care'],
     content: `# Laptop Care & Maintenance
 
 ## Daily Care
