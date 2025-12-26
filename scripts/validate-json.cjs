@@ -8,7 +8,7 @@
  * 
  * Usage:
  *   npm run validate:json
- *   node scripts/validate-json.js
+ *   node scripts/validate-json.cjs
  */
 
 const fs = require('fs');
