@@ -135,6 +135,7 @@ Comprehensive documentation is available to help you get started and work with t
 - ⚙️ [Configuration Guide](./docs/CONFIGURATION.md) - Customize for your organization
 - 📱 [iOS Development Guide](./docs/iOS_DEVELOPMENT.md) - iOS-specific development instructions
 - 📝 [Document Management](./docs/DOCUMENTS.md) - Managing support documents
+- 🔧 [Troubleshooting Guide](./docs/TROUBLESHOOTING.md) - Fix common issues
 - 🤝 [Contributing Guide](./CONTRIBUTING.md) - How to contribute to this project
 - 📋 [Changelog](./CHANGELOG.md) - Track project changes
 
@@ -171,6 +172,8 @@ enterprise-support/
 - `npm run dev` - Start development server
 - `npm run build` - Build for production
 - `npm run lint` - Run ESLint
+- `npm run validate:json` - Validate all JSON files
+- `npm run check` - Run all validation checks (JSON + lint)
 - `npm run ios:build` - Build and sync to iOS
 - `npm run ios:open` - Open project in Xcode (Mac only)
 - `npm run ios:run` - Build, sync, and open in Xcode (Mac only)
