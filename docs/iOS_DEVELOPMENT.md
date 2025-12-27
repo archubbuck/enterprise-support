@@ -184,7 +184,85 @@ Then build in Xcode (Product → Build or `Cmd + B`)
    - Complete App Store Connect listing
    - Submit for review
 
-### App Store Metadata
+### Export Compliance and Encryption Declaration
+
+### Overview
+
+When submitting an iOS app to the App Store, Apple requires you to declare whether your app uses encryption. This is part of U.S. export compliance regulations. Without proper configuration, you'll be prompted to answer encryption questions manually in App Store Connect for every app submission, which can be time-consuming and delay releases.
+
+This app has been pre-configured to bypass the manual export compliance setup by declaring encryption usage directly in the `Info.plist` file.
+
+### What is ITSAppUsesNonExemptEncryption?
+
+The `ITSAppUsesNonExemptEncryption` key in the Info.plist file allows you to declare your app's encryption usage upfront. When set to `false`, it indicates that:
+
+- Your app **does not** use encryption algorithms that require export documentation
+- Your app **only** uses standard encryption provided by Apple's operating system (e.g., HTTPS, data protection APIs)
+- Your app **does not** implement proprietary or non-standard encryption algorithms
+
+### Current Configuration
+
+The app's `ios/App/App/Info.plist` file includes:
+
+```xml
+<key>ITSAppUsesNonExemptEncryption</key>
+<false/>
+```
+
+This configuration means:
+- ✅ No manual encryption questions in App Store Connect
+- ✅ Faster app submission workflow
+- ✅ Automated deployment pipelines won't be interrupted
+- ✅ Standard HTTPS and Apple encryption APIs can be used freely
+
+### When to Use `false` vs `true`
+
+**Use `false` (current setting) if your app:**
+- Only uses HTTPS/TLS for network communication
+- Only uses Apple's standard encryption APIs (Keychain, Data Protection, etc.)
+- Does not implement custom encryption algorithms
+- Does not use encryption libraries beyond what's provided by iOS
+
+**Change to `true` if your app:**
+- Implements proprietary encryption algorithms
+- Uses non-standard encryption not accepted by international standards bodies (IEEE, IETF, ITU)
+- Adds third-party encryption libraries with custom algorithms
+- Has specific encryption requirements beyond standard iOS capabilities
+
+⚠️ **Important**: If you change this to `true` or add custom encryption, you'll need to provide additional documentation to Apple and may need to submit your app for encryption export compliance review.
+
+### How This Helps
+
+Without this configuration, every time you submit a new version to App Store Connect, you would need to:
+1. Wait for the build to finish processing
+2. Manually answer encryption compliance questions
+3. Submit the declaration
+4. Wait for additional review time
+
+With this configuration:
+- Encryption declaration is automated
+- Submissions are faster and smoother
+- CI/CD pipelines can fully automate releases
+- No manual intervention needed for standard apps
+
+### More Information
+
+For detailed information about encryption export regulations and requirements, see:
+- [Apple's Encryption Export Compliance Documentation](https://developer.apple.com/documentation/security/complying_with_encryption_export_regulations)
+- [App Store Connect Help - Export Compliance](https://help.apple.com/app-store-connect/#/dev88f5c7bf9)
+
+### Modifying the Configuration
+
+If you need to change the encryption declaration:
+
+1. Open `ios/App/App/Info.plist`
+2. Locate the `ITSAppUsesNonExemptEncryption` key
+3. Change the value to `true` if you're adding custom encryption
+4. Prepare to provide additional documentation in App Store Connect
+
+**Note**: For most standard mobile applications that only use HTTPS and Apple's built-in encryption APIs, the current `false` setting is correct and should not be changed.
+
+## App Store Metadata
 
 This project includes pre-configured App Store metadata in the `ios/App/fastlane/metadata/en-US/` directory. This metadata is automatically uploaded to App Store Connect when using Fastlane.
 
