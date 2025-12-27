@@ -148,7 +148,7 @@ Examples:
 ### How to Create App Preview Videos
 
 1. **Record Gameplay:**
-   - Use iOS Simulator: `xcrun simctl io booted recordVideo video.mov`
+   - Use iOS Simulator: `xcrun simctl io booted recordVideo --type=h264 video.mov`
    - Or use screen recording on physical device
 
 2. **Edit Video:**

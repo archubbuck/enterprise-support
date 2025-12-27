@@ -269,7 +269,7 @@ Complete folder structure with all supported files:
 ```
 ios/App/fastlane/metadata/
 ├── routing_app_coverage.geojson          # Routing coverage area
-├── copyright.txt                          # Global copyright (optional)
+├── copyright.txt                          # Global copyright (optional, can be overridden by locale-specific)
 ├── primary_category.txt                   # App Store category
 ├── secondary_category.txt                 # Secondary category
 ├── en-US/                                 # Locale-specific metadata
@@ -279,7 +279,7 @@ ios/App/fastlane/metadata/
 │   ├── promotional_text.txt               # Promotional banner text
 │   ├── support_url.txt                    # Support website
 │   ├── privacy_url.txt                    # Privacy policy URL
-│   ├── copyright.txt                      # Copyright (locale)
+│   ├── copyright.txt                      # Copyright (locale-specific, recommended)
 │   ├── name.txt                          # App name override
 │   ├── subtitle.txt                       # App subtitle
 │   ├── release_notes.txt                  # What's new text

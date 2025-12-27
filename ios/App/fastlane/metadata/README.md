@@ -120,7 +120,7 @@ Common validation errors:
 
 ## Upload to App Store Connect
 
-**Note:** Fastlane does not automatically upload routing coverage files in the current version.
+**Note:** As of current Fastlane versions, routing coverage files are not automatically uploaded by the `upload_to_app_store` action. Check [Fastlane deliver documentation](https://docs.fastlane.tools/actions/deliver/) for updates.
 
 You have two options:
 
