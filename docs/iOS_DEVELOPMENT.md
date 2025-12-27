@@ -273,8 +273,10 @@ This project includes pre-configured App Store metadata in the `ios/App/fastlane
 - **keywords.txt** - Comma-separated keywords (max 100 characters)
 - **support_url.txt** - URL for customer support
 - **marketing_url.txt** - Marketing website URL (optional)
-- **copyright.txt** - Copyright notice (format: "YYYY Company Name", e.g., "2025 Enterprise Support")
+- **copyright.txt** - Copyright notice (format: "YYYY Company Name", e.g., "2025 Enterprise Support") - **Automatically updated with current year during deployment** ✨
 - **screenshots/** - App screenshots for different device sizes (required for iOS)
+
+> **Note:** The copyright field is automatically updated with the current year during each deployment. See [Apple Connect Copyright Automation](./APPLE_CONNECT_COPYRIGHT_AUTOMATION.md) for details.
 
 #### App Screenshots
 
@@ -648,6 +650,7 @@ If builds are still slow:
 - [Quick Start Guide](./QUICK_START.md) - Getting started with development
 - [Configuration Guide](./CONFIGURATION.md) - Customizing the app
 - [Document Management](./DOCUMENTS.md) - Managing support documents
+- [Apple Connect Copyright Automation](./APPLE_CONNECT_COPYRIGHT_AUTOMATION.md) - Automated copyright field management
 - [Contributing Guide](../CONTRIBUTING.md) - How to contribute
 
 ## Support
