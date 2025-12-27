@@ -299,7 +299,8 @@ platform :ios do
         skip_screenshots: false,
         submit_for_review: false,
         precheck_include_in_app_purchases: false,
-        force: true
+        force: true,
+        automatic_release: true
       )
       UI.success("✅ Upload completed successfully!")
       UI.success("✅ Upload finished in #{(Time.now - upload_start).round(1)}s")
