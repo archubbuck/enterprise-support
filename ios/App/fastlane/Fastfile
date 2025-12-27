@@ -231,7 +231,17 @@ platform :ios do
     UI.success("✅ IPA validation passed")
 
     # Update copyright with current year for App Store metadata
+    # This automation ensures the copyright field always has the current year
     # Apple requires copyright year to match current year for validation
+    # 
+    # How it works:
+    # 1. Reads existing copyright from metadata/en-US/copyright.txt
+    # 2. Extracts company name (preserving it across updates)
+    # 3. Updates year to current year
+    # 4. Writes updated copyright back to file
+    # 5. Uploads with metadata to App Store Connect
+    #
+    # See: docs/APPLE_CONNECT_COPYRIGHT_AUTOMATION.md for full documentation
     copyright_start = Time.now
     UI.important("🕐 Updating copyright metadata...")
     copyright_path = File.join(Dir.pwd, "metadata", "en-US", "copyright.txt")
