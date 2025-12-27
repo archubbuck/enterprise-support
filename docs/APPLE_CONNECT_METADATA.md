@@ -60,7 +60,7 @@ The Fastlane script automatically:
 2025 Enterprise Support
 ```
 
-See [APPLE_CONNECT_COPYRIGHT_AUTOMATION.md](./APPLE_CONNECT_COPYRIGHT_AUTOMATION.md) for detailed documentation.
+See [Apple Connect Copyright Automation](./APPLE_CONNECT_COPYRIGHT_AUTOMATION.md) for detailed documentation.
 
 ### 4. Routing App Coverage File ⚠️
 
