@@ -137,6 +137,7 @@ Comprehensive documentation is available to help you get started and work with t
 - 📱 [iOS Development Guide](./docs/iOS_DEVELOPMENT.md) - iOS-specific development instructions
 - 📝 [Document Management](./docs/DOCUMENTS.md) - Managing support documents
 - 🚀 [CI/CD Pipeline](./docs/CI_CD.md) - Continuous integration and deployment
+- 📲 [Apple Connect Metadata Automation](./docs/APPLE_CONNECT_METADATA.md) - Automated metadata uploads
 - ✨ [Apple Connect Copyright Automation](./docs/APPLE_CONNECT_COPYRIGHT_AUTOMATION.md) - Automated copyright field management
 - 🔧 [Troubleshooting Guide](./docs/TROUBLESHOOTING.md) - Fix common issues
 - 🤝 [Contributing Guide](./CONTRIBUTING.md) - How to contribute to this project
