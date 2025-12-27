@@ -119,29 +119,29 @@ The default company name is set to `"Enterprise Support"` in the Fastfile. To ch
 
 ### Manual Test
 
-You can test the copyright automation locally without running a full build:
+You can test the copyright automation locally without running a full build using the provided test script:
 
-1. Create a test script:
-   ```ruby
-   #!/usr/bin/env ruby
-   require 'time'
-   
-   # Test with different copyright formats
-   test_cases = [
-     "2024 My Company",
-     "My Company",
-     "2025",
-     ""
-   ]
-   
-   # Run the logic for each test case
-   # (See full test script in repository)
-   ```
+```bash
+ruby scripts/test-copyright-automation.rb
+```
 
-2. Run the test:
-   ```bash
-   ruby test_copyright.rb
-   ```
+The test script validates the automation logic with multiple scenarios including:
+- Standard format with year and company
+- Outdated years that need updating
+- Company name only (without year)
+- Year only (fallback to default)
+- Empty strings (fallback to default)
+- Multi-word company names
+- Whitespace handling
+
+Example output:
+```
+Test Case 2: Outdated year
+--------------------------------------------------------------------------------
+Input copyright: '2024 My Company'
+✓ Detected format: Year + Company (2024 My Company)
+Output copyright: '2025 My Company'
+```
 
 ### CI/CD Test
 
