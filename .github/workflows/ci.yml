@@ -1,0 +1,59 @@
+name: Continuous Integration
+
+# This workflow runs automated checks on pull requests and pushes to main
+# It validates the build, linting, and JSON files to catch issues early
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  ci:
+    name: Build and Validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Validate JSON files
+        run: npm run validate:json
+      
+      - name: Run linting
+        run: npm run lint
+      
+      - name: Build application
+        run: npm run build
+      
+      - name: Report success
+        if: success()
+        run: |
+          echo "✅ All CI checks passed!"
+          echo "- JSON validation: ✓"
+          echo "- Linting: ✓"
+          echo "- Build: ✓"
+      
+      - name: Report failure
+        if: failure()
+        run: |
+          echo "❌ CI checks failed!"
+          echo ""
+          echo "Please review the errors above and fix them."
+          echo "See docs/TROUBLESHOOTING.md for common issues."
+          exit 1
