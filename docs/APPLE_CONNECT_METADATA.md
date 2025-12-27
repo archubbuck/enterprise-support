@@ -331,7 +331,7 @@ ios/App/fastlane/metadata/
 1. Check `metadata/en-US/copyright.txt` exists
 2. Verify Fastfile copyright automation code is present
 3. Check deployment logs for copyright processing
-4. See [APPLE_CONNECT_COPYRIGHT_AUTOMATION.md](./APPLE_CONNECT_COPYRIGHT_AUTOMATION.md)
+4. See [Apple Connect Copyright Automation](./APPLE_CONNECT_COPYRIGHT_AUTOMATION.md)
 
 ### Routing Coverage File Issues
 
