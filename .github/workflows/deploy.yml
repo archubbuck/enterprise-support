@@ -100,7 +100,12 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        uses: nick-invision/retry@v3
+        with:
+          timeout_minutes: 5
+          max_attempts: 3
+          retry_wait_seconds: 10
+          command: npm ci
 
       - name: Build web app
         run: npm run build
@@ -114,12 +119,21 @@ jobs:
         with:
           xcode-version: '16'
 
-      - name: Verify Xcode and Transporter setup
+      - name: Verify Xcode setup
         run: |
-          echo "DEVELOPER_DIR=$DEVELOPER_DIR"
-          echo "Xcode path: $(xcode-select -p)"
-          echo "Xcode version: $(xcodebuild -version)"
-          # Check if iTMSTransporter exists
+          echo "✅ Xcode Configuration:"
+          echo "  DEVELOPER_DIR: $DEVELOPER_DIR"
+          echo "  Xcode path: $(xcode-select -p)"
+          echo "  Xcode version: $(xcodebuild -version)"
+
+      - name: Verify xcrun availability
+        run: |
+          echo "✅ Checking xcrun..."
+          xcrun --version
+
+      - name: Check iTMSTransporter location
+        run: |
+          echo "🔍 Checking iTMSTransporter..."
           if [ -f "$DEVELOPER_DIR/usr/bin/iTMSTransporter" ]; then
             echo "✅ iTMSTransporter found at: $DEVELOPER_DIR/usr/bin/iTMSTransporter"
           else
@@ -144,10 +158,22 @@ jobs:
             ${{ runner.os }}-pods-
 
       - name: Install CocoaPods dependencies
-        working-directory: ios/App
-        run: pod install
+        uses: nick-invision/retry@v3
+        with:
+          timeout_minutes: 5
+          max_attempts: 3
+          retry_wait_seconds: 10
+          command: cd ios/App && pod install
+
+      - name: Cache Transporter CLI
+        id: cache-transporter
+        uses: actions/cache@v4
+        with:
+          path: /usr/local/itms
+          key: ${{ runner.os }}-transporter-cli-v1
 
       - name: Install Transporter for App Store uploads
+        if: steps.cache-transporter.outputs.cache-hit != 'true'
         run: |
           echo "📦 Installing Transporter for App Store uploads..."
           # Download and install Transporter from Apple
@@ -171,6 +197,16 @@ jobs:
             ls -lh "/usr/local/itms/bin/iTMSTransporter"
           else
             echo "❌ Transporter installation failed - binary not found or not executable"
+            exit 1
+          fi
+
+      - name: Verify Transporter CLI
+        run: |
+          if [ -x "/usr/local/itms/bin/iTMSTransporter" ]; then
+            echo "✅ Transporter CLI ready at /usr/local/itms/bin/iTMSTransporter"
+            ls -lh "/usr/local/itms/bin/iTMSTransporter"
+          else
+            echo "❌ Transporter CLI not available"
             exit 1
           fi
 
