@@ -1,0 +1,315 @@
+# CI/CD Pipeline Documentation
+
+## Overview
+
+This repository uses GitHub Actions for continuous integration and deployment. The CI/CD pipeline ensures code quality and reliability by automatically validating every change.
+
+## Workflows
+
+### 1. Continuous Integration (CI)
+
+**File:** `.github/workflows/ci.yml`
+
+**Triggers:**
+- Pull requests to `main` branch
+- Pushes to `main` branch
+
+**What it does:**
+1. Checks out the repository code
+2. Sets up Node.js 22 (as specified in `.nvmrc`)
+3. Installs dependencies with npm
+4. Validates all JSON files for syntax errors
+5. Runs ESLint to check code quality
+6. Builds the application to ensure no build errors
+
+**Duration:** ~5-10 minutes
+
+**Purpose:** Prevents broken code from being merged into the main branch
+
+### 2. JSON Validation
+
+**File:** `.github/workflows/json-validation.yml`
+
+**Triggers:**
+- Pull requests that modify JSON files
+- Pushes to `main` that modify JSON files
+
+**What it does:**
+1. Validates syntax of all JSON files in the repository
+2. Reports detailed error messages if validation fails
+
+**Duration:** ~1 minute
+
+**Purpose:** Catches JSON syntax errors early in development
+
+### 3. Deploy to App Store
+
+**File:** `.github/workflows/deploy.yml`
+
+**Triggers:**
+- When a version tag is pushed (e.g., `v1.0.0`)
+
+**What it does:**
+1. Builds the web application
+2. Syncs with Capacitor
+3. Builds the iOS app
+4. Uploads to App Store Connect
+
+**Duration:** ~30-45 minutes
+
+**Requirements:**
+- Repository secrets must be configured (see iOS deployment docs)
+- Certificate setup must be completed first
+
+### 4. iOS One-Time Match Setup
+
+**File:** `.github/workflows/setup_match.yml`
+
+**Triggers:**
+- Manual workflow dispatch only
+
+**What it does:**
+1. Generates iOS signing certificates
+2. Creates provisioning profiles
+3. Stores them in a private certificates repository
+
+**Duration:** ~15-20 minutes
+
+**Note:** This should only be run once during initial setup
+
+## Local Development
+
+### Running CI Checks Locally
+
+Before pushing code, you can run the same checks locally:
+
+```bash
+# Validate JSON files
+npm run validate:json
+
+# Run linting
+npm run lint
+
+# Build the application
+npm run build
+
+# Run all checks at once
+npm run check
+```
+
+### Node.js Version
+
+This project requires Node.js 22 or higher. The version is specified in:
+- `.nvmrc` file
+- `package.json` engines field
+- All GitHub Actions workflows
+
+To use the correct version locally with nvm:
+
+```bash
+nvm use
+```
+
+## Understanding CI Failures
+
+### JSON Validation Failures
+
+**Common causes:**
+- Trailing commas in JSON files
+- Comments in JSON files (not allowed)
+- Missing quotes around keys or values
+- Mismatched brackets/braces
+
+**How to fix:**
+1. Check the error message for the file and line number
+2. Open the file and navigate to the problematic line
+3. Fix the JSON syntax error
+4. Run `npm run validate:json` to verify
+5. Commit and push the fix
+
+### Linting Failures
+
+**Common causes:**
+- Unused variables
+- Missing semicolons (if required by config)
+- Incorrect indentation
+- Code style violations
+
+**How to fix:**
+1. Review the ESLint error messages
+2. Many issues can be auto-fixed: `npm run lint -- --fix`
+3. For warnings, evaluate if they should be fixed or suppressed
+4. Commit the fixes
+
+### Build Failures
+
+**Common causes:**
+- TypeScript type errors
+- Missing dependencies
+- Import errors
+- Configuration issues
+
+**How to fix:**
+1. Check the build error messages carefully
+2. Ensure all dependencies are installed: `npm ci`
+3. Fix TypeScript errors or import issues
+4. Test locally: `npm run build`
+5. Commit the fixes
+
+## Deployment Process
+
+### Normal Deployment
+
+1. Make changes on a feature branch
+2. Create a pull request to `main`
+3. CI runs automatically and must pass
+4. After review and approval, merge to `main`
+5. When ready to release:
+   ```bash
+   git tag v1.0.0
+   git push origin v1.0.0
+   ```
+6. Deployment workflow runs automatically
+7. App is uploaded to App Store Connect
+
+### Emergency Fixes
+
+If the main branch is broken:
+
+1. Create a hotfix branch
+2. Make the minimal fix required
+3. Create PR and wait for CI to pass
+4. Fast-track review if needed
+5. Merge and deploy following normal process
+
+## Monitoring Workflows
+
+### Viewing Workflow Runs
+
+1. Go to the repository on GitHub
+2. Click the "Actions" tab
+3. Select a workflow from the left sidebar
+4. View recent runs and their status
+
+### Understanding Status Badges
+
+In pull requests, you'll see status checks:
+- ✅ Green checkmark: All checks passed
+- ❌ Red X: One or more checks failed
+- 🟡 Yellow dot: Checks are running
+- ⚪ Gray circle: Checks haven't started
+
+### Getting Notifications
+
+Configure notification settings in GitHub:
+- Settings → Notifications → Actions
+- Choose when to receive alerts about workflow failures
+
+## Best Practices
+
+### Before Committing
+
+1. Run `npm run check` locally
+2. Fix any issues found
+3. Commit only when checks pass
+
+### Pull Request Guidelines
+
+1. Keep PRs focused and small
+2. Ensure CI passes before requesting review
+3. Fix CI failures promptly
+4. Don't merge PRs with failing checks
+
+### Working with Node.js
+
+1. Always use the correct Node version (22)
+2. Run `npm ci` instead of `npm install` for reproducible builds
+3. Don't commit `node_modules` or `dist` folders
+4. Keep `package-lock.json` in sync
+
+### Handling Warnings
+
+CI may show warnings that don't fail the build:
+- Review warnings and fix them when possible
+- Don't ignore security warnings
+- Document any warnings that can't be fixed
+
+## Troubleshooting
+
+### CI is slower than usual
+
+**Possible causes:**
+- GitHub Actions runner availability
+- Large dependency installation
+- Complex build process
+
+**Solutions:**
+- Be patient, especially during peak hours
+- Dependency caching is enabled to speed up runs
+- Consider optimizing build if consistently slow
+
+### CI passes locally but fails in GitHub
+
+**Possible causes:**
+- Different Node.js versions
+- Platform-specific issues (Windows vs Linux)
+- Missing environment variables
+
+**Solutions:**
+- Verify Node.js 22 is being used: `node --version`
+- Check that all files are committed
+- Review workflow logs for specific errors
+
+### Deployment workflow fails
+
+See `docs/iOS_DEVELOPMENT.md` for iOS-specific troubleshooting.
+
+Common issues:
+- Missing or expired certificates
+- Incorrect secret configuration
+- App Store Connect API issues
+
+## Security Considerations
+
+### Secrets Management
+
+Never commit secrets to the repository. All sensitive values are stored as GitHub Secrets:
+- `MATCH_PASSWORD`
+- `MATCH_GIT_URL`
+- `GIT_AUTHORIZATION`
+- `APPSTORE_ISSUER_ID`
+- `APPSTORE_KEY_ID`
+- `APPSTORE_P8`
+- `APPLE_TEAM_ID`
+
+### Workflow Permissions
+
+Workflows run with minimal required permissions:
+- `contents: read` for most workflows
+- `contents: write` only when needed for certificate setup
+
+### Dependency Security
+
+- Dependabot monitors for vulnerable dependencies
+- Review and merge Dependabot PRs promptly
+- Run `npm audit` periodically
+
+## Additional Resources
+
+- [GitHub Actions Documentation](https://docs.github.com/en/actions)
+- [Troubleshooting Guide](./TROUBLESHOOTING.md)
+- [iOS Development Guide](./iOS_DEVELOPMENT.md)
+- [Quick Start Guide](./QUICK_START.md)
+
+## Support
+
+If you encounter issues with the CI/CD pipeline:
+
+1. Check this documentation
+2. Review recent workflow runs in the Actions tab
+3. Check troubleshooting documentation
+4. Create an issue with:
+   - Description of the problem
+   - Link to failing workflow run
+   - Steps you've already tried
+   - Relevant error messages
