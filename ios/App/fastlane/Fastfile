@@ -112,6 +112,9 @@ platform :ios do
 
   desc "Build and upload to App Store"
   lane :release do
+    start_time = Time.now
+    UI.important("🕐 Release lane started at #{start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+    
     # Explicitly select Xcode using the DEVELOPER_DIR environment variable
     # This ensures Fastlane uses the correct Xcode installation for finding tools like iTMSTransporter
     # The DEVELOPER_DIR is set by the setup-xcode GitHub Action
@@ -134,21 +137,29 @@ platform :ios do
     # Setup CI environment with temporary keychain
     # This creates a new temporary keychain and sets it as default
     # Required for proper certificate management in CI environments
+    ci_setup_start = Time.now
+    UI.important("🕐 Setting up CI keychain...")
     setup_ci
+    UI.success("✅ CI keychain setup completed in #{(Time.now - ci_setup_start).round(1)}s")
 
     # Setup App Store Connect API authentication
     # Note: APPSTORE_P8 should contain the raw .p8 key content (not base64-encoded)
     # Store the API key for later use with upload_to_app_store
+    api_key_start = Time.now
+    UI.important("🕐 Setting up App Store Connect API...")
     api_key = app_store_connect_api_key(
       key_id: ENV["APPSTORE_KEY_ID"],
       issuer_id: ENV["APPSTORE_ISSUER_ID"],
       key_content: ENV["APPSTORE_P8"],
       is_key_content_base64: false
     )
+    UI.success("✅ API key configured in #{(Time.now - api_key_start).round(1)}s")
 
     # Setup code signing with match
     # Note: GIT_AUTHORIZATION should be a GitHub Personal Access Token (raw token)
     # It will be formatted as "x-access-token:token" and base64 encoded for git authentication
+    match_start = Time.now
+    UI.important("🕐 Downloading certificates and profiles with match...")
     git_auth = prepare_git_authorization(ENV["GIT_AUTHORIZATION"])
 
     match(
@@ -159,9 +170,13 @@ platform :ios do
       git_basic_authorization: git_auth,
       team_id: ENV["APPLE_TEAM_ID"]
     )
+    UI.success("✅ Match completed in #{(Time.now - match_start).round(1)}s")
 
     # Configure Xcode project with code signing settings
+    signing_start = Time.now
+    UI.important("🕐 Configuring code signing settings...")
     configure_code_signing(APP_IDENTIFIER)
+    UI.success("✅ Code signing configured in #{(Time.now - signing_start).round(1)}s")
 
     # Build the app with optimizations for faster CI/release builds
     # xcargs optimizations:
@@ -186,6 +201,8 @@ platform :ios do
     profile_name = ENV["sigh_#{APP_IDENTIFIER}_appstore_profile-name"]
     UI.user_error!("Provisioning profile name not found. Ensure match has been run successfully.") if profile_name.nil? || profile_name.empty?
     
+    build_start = Time.now
+    UI.important("🕐 Building iOS app archive...")
     build_app(
       scheme: "App",
       workspace: "App.xcworkspace",
@@ -197,6 +214,7 @@ platform :ios do
         }
       }
     )
+    UI.success("✅ Build completed in #{(Time.now - build_start).round(1)}s")
 
     # Validate IPA before upload
     ipa_path = lane_context[SharedValues::IPA_OUTPUT_PATH]
@@ -214,6 +232,8 @@ platform :ios do
 
     # Update copyright with current year for App Store metadata
     # Apple requires copyright year to match current year for validation
+    copyright_start = Time.now
+    UI.important("🕐 Updating copyright metadata...")
     copyright_path = File.join(Dir.pwd, "metadata", "en-US", "copyright.txt")
     default_company_name = "Enterprise Support"
     year_regex = /^\d{4}$/
@@ -247,8 +267,10 @@ platform :ios do
     
     File.write(copyright_path, copyright_text)
     UI.important("📝 Updated copyright to: #{copyright_text}")
+    UI.success("✅ Copyright updated in #{(Time.now - copyright_start).round(1)}s")
 
     # Upload to App Store with retry logic
+    upload_start = Time.now
     UI.important("🚀 Starting App Store upload...")
     UI.important("📦 IPA path: #{ipa_path}")
     UI.important("🔑 API Key configured: #{!api_key.nil?}")
@@ -270,6 +292,7 @@ platform :ios do
         force: true
       )
       UI.success("✅ Upload completed successfully!")
+      UI.success("✅ Upload finished in #{(Time.now - upload_start).round(1)}s")
     rescue => ex
       retries -= 1
       if retries > 0
@@ -285,5 +308,9 @@ platform :ios do
         raise
       end
     end
+    
+    total_time = Time.now - start_time
+    UI.success("🎉 Release lane completed successfully!")
+    UI.important("⏱️  Total time: #{total_time.round(1)}s (#{(total_time / 60).round(1)} minutes)")
   end
 end
