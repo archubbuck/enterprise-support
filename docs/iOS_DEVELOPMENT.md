@@ -184,7 +184,7 @@ Then build in Xcode (Product → Build or `Cmd + B`)
    - Complete App Store Connect listing
    - Submit for review
 
-### Export Compliance and Encryption Declaration
+## Export Compliance and Encryption Declaration
 
 ### Overview
 
