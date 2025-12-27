@@ -1,6 +1,7 @@
 # Enterprise Support App
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
+[![CI](https://github.com/archubbuck/enterprise-support/actions/workflows/ci.yml/badge.svg)](https://github.com/archubbuck/enterprise-support/actions/workflows/ci.yml)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Capacitor](https://img.shields.io/badge/Capacitor-7-119EFF?logo=capacitor&logoColor=white)](https://capacitorjs.com/)
@@ -135,6 +136,7 @@ Comprehensive documentation is available to help you get started and work with t
 - ⚙️ [Configuration Guide](./docs/CONFIGURATION.md) - Customize for your organization
 - 📱 [iOS Development Guide](./docs/iOS_DEVELOPMENT.md) - iOS-specific development instructions
 - 📝 [Document Management](./docs/DOCUMENTS.md) - Managing support documents
+- 🚀 [CI/CD Pipeline](./docs/CI_CD.md) - Continuous integration and deployment
 - 🔧 [Troubleshooting Guide](./docs/TROUBLESHOOTING.md) - Fix common issues
 - 🤝 [Contributing Guide](./CONTRIBUTING.md) - How to contribute to this project
 - 📋 [Changelog](./CHANGELOG.md) - Track project changes
