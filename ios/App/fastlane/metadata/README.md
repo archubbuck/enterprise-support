@@ -26,10 +26,10 @@ The current file defines a small rectangular area in San Francisco as a placehol
   "coordinates": [
     [
       [
-        [-122.4194, 37.7749],  // West, North (longitude, latitude)
-        [-122.4083, 37.7749],  // East, North
-        [-122.4083, 37.7849],  // East, South
-        [-122.4194, 37.7849],  // West, South
+        [-122.4194, 37.7749],  // West, South (longitude, latitude)
+        [-122.4083, 37.7749],  // East, South
+        [-122.4083, 37.7849],  // East, North
+        [-122.4194, 37.7849],  // West, North
         [-122.4194, 37.7749]   // Close the polygon
       ]
     ]
