@@ -70,6 +70,8 @@ export default defineConfig({
       },
     } as PluginOption,
   ],
+  // Use Lightning CSS transformer for better CSS optimization and error recovery
+  // errorRecovery allows the build to continue even if there are non-critical CSS parsing issues
   css: {
     transformer: 'lightningcss',
     lightningcss: {
