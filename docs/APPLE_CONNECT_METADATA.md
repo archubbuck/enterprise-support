@@ -8,7 +8,34 @@ When you run the deployment workflow (triggered by pushing a version tag like `v
 
 ## Automated Metadata Fields
 
-### 1. Marketing URL ✅
+### 1. App Categories ✅
+
+**Status:** Fully Automated
+
+**Required:** Primary category is **required** by Apple for every app submission.
+
+**Locations:**
+- `ios/App/fastlane/metadata/primary_category.txt` - Main App Store category (required)
+- `ios/App/fastlane/metadata/secondary_category.txt` - Secondary category (optional, recommended)
+
+**Current Values:**
+- Primary: `BUSINESS` - For enterprise/business employee apps
+- Secondary: `PRODUCTIVITY` - For productivity-enhancing tools
+
+**Valid Categories:**
+Categories must be in all caps and match Apple's official list:
+- `BUSINESS`, `PRODUCTIVITY`, `UTILITIES`, `EDUCATION`
+- `FINANCE`, `HEALTH_AND_FITNESS`, `LIFESTYLE`, `MEDICAL`
+- `REFERENCE`, `SHOPPING`, `SOCIAL_NETWORKING`, `SPORTS`
+- `TRAVEL`, `ENTERTAINMENT`, `FOOD_AND_DRINK`, `NEWS`
+- `PHOTO_AND_VIDEO`, `BOOKS`, `WEATHER`, `NAVIGATION`
+- `MUSIC`, `GAMES`, `CATALOGS`
+
+**To Update:** Edit these files with valid category names and commit. The categories will be automatically uploaded to App Store Connect with the next deployment.
+
+**Note:** Without a primary category, metadata upload will fail or be skipped by Apple.
+
+### 2. Marketing URL ✅
 
 **Status:** Fully Automated
 
@@ -16,11 +43,11 @@ The Marketing URL is automatically populated from the metadata file.
 
 **Location:** `ios/App/fastlane/metadata/en-US/marketing_url.txt`
 
-**Current Value:** `https://github.com/archubbuck`
+**Current Value:** `https://github.com/archubbuck/enterprise-support`
 
 **To Update:** Edit the file and commit your changes.
 
-### 2. Version ✅
+### 3. Version ✅
 
 **Status:** Fully Automated
 
@@ -39,7 +66,7 @@ The app version is managed through Xcode's build system.
 1. Edit the Xcode project file or use Xcode to update the version
 2. Commit and push a new version tag (e.g., `v1.1.0`)
 
-### 3. Copyright ✅
+### 4. Copyright ✅
 
 **Status:** Fully Automated with Auto-Update
 
@@ -62,7 +89,7 @@ The Fastlane script automatically:
 
 See [Apple Connect Copyright Automation](./APPLE_CONNECT_COPYRIGHT_AUTOMATION.md) for detailed documentation.
 
-### 4. Routing App Coverage File ⚠️
+### 5. Routing App Coverage File ⚠️
 
 **Status:** Template Provided
 
@@ -104,7 +131,7 @@ Apple requires routing apps to specify geographic coverage areas using a GeoJSON
 
 **Note:** Currently, Fastlane doesn't automatically upload routing coverage files. You may need to upload this manually via App Store Connect or use the App Store Connect API.
 
-### 5. Screenshots ✅
+### 6. Screenshots ✅
 
 **Status:** Fully Automated
 
@@ -162,7 +189,7 @@ Screenshots are automatically uploaded from the metadata folder.
 
 See `screenshots/README.md` for detailed instructions.
 
-### 6. App Previews (Videos) 📹
+### 7. App Previews (Videos) 📹
 
 **Status:** Infrastructure Ready
 
@@ -202,7 +229,7 @@ App Store Connect supports preview videos to showcase your app.
 
 **Note:** Fastlane automatically detects and uploads both images and videos from the screenshots directory.
 
-### 7. App Name & Subtitle ✅
+### 8. App Name & Subtitle ✅
 
 **Status:** Fully Automated
 
@@ -216,7 +243,7 @@ App Store Connect supports preview videos to showcase your app.
 
 **To Update:** Edit these files and commit your changes. The values will be automatically uploaded to App Store Connect with the next deployment.
 
-### 8. Support & Privacy URLs ✅
+### 9. Support & Privacy URLs ✅
 
 **Status:** Fully Automated
 
@@ -230,7 +257,7 @@ App Store Connect supports preview videos to showcase your app.
 
 Update these files to change the URLs.
 
-### 9. Description & Keywords ✅
+### 10. Description & Keywords ✅
 
 **Status:** Fully Automated
 
