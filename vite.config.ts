@@ -70,6 +70,12 @@ export default defineConfig({
       },
     } as PluginOption,
   ],
+  css: {
+    transformer: 'lightningcss',
+    lightningcss: {
+      errorRecovery: true,
+    },
+  },
   resolve: {
     alias: {
       '@': resolve(projectRoot, 'src')
