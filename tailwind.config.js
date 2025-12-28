@@ -140,5 +140,9 @@ const defaultTheme = {
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: { ...defaultTheme, ...theme },
+  // Blocklist the container utility to prevent invalid CSS generation
+  // The container utility in Tailwind v4 tries to create responsive containers for ALL breakpoints,
+  // including our custom 'raw' media query breakpoints (pwa, coarse, fine), which generates
+  // invalid CSS syntax that Lightning CSS cannot parse during optimization
   blocklist: ['container'],
 };
