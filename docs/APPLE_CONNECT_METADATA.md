@@ -202,17 +202,35 @@ App Store Connect supports preview videos to showcase your app.
 
 **Note:** Fastlane automatically detects and uploads both images and videos from the screenshots directory.
 
-### 7. Support & Privacy URLs ✅
+### 7. App Name & Subtitle ✅
 
 **Status:** Fully Automated
 
 **Locations:**
-- `ios/App/fastlane/metadata/en-US/support_url.txt`
-- `ios/App/fastlane/metadata/en-US/privacy_url.txt` (if needed)
+- `ios/App/fastlane/metadata/en-US/name.txt` - App display name
+- `ios/App/fastlane/metadata/en-US/subtitle.txt` - App subtitle (appears below the app name)
+
+**Current Values:**
+- Name: `Enterprise Support`
+- Subtitle: `IT Help & Documentation`
+
+**To Update:** Edit these files and commit your changes. The values will be automatically uploaded to App Store Connect with the next deployment.
+
+### 8. Support & Privacy URLs ✅
+
+**Status:** Fully Automated
+
+**Locations:**
+- `ios/App/fastlane/metadata/en-US/support_url.txt` - Support website URL
+- `ios/App/fastlane/metadata/en-US/privacy_url.txt` - Privacy policy URL
+
+**Current Values:**
+- Support URL: Links to the GitHub repository
+- Privacy URL: Links to the GitHub repository
 
 Update these files to change the URLs.
 
-### 8. Description & Keywords ✅
+### 9. Description & Keywords ✅
 
 **Status:** Fully Automated
 
