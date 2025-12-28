@@ -43,9 +43,16 @@ The Marketing URL is automatically populated from the metadata file.
 
 **Location:** `ios/App/fastlane/metadata/en-US/marketing_url.txt`
 
-**Current Value:** `https://github.com/archubbuck/enterprise-support`
+**Current Value:** `https://github.com/archubbuck/enterprise-support/blob/main/README.md`
 
-**To Update:** Edit the file and commit your changes.
+This URL points to the project's README which serves as the primary marketing and information page, including:
+- App overview and features
+- Quick start guide
+- Technology stack
+- Platform support information
+- Getting started instructions
+
+**To Update:** Edit the file and commit your changes. Ensure the URL points to a valid, accessible page.
 
 ### 3. Version ✅
 
@@ -250,12 +257,26 @@ App Store Connect supports preview videos to showcase your app.
 **Locations:**
 - `ios/App/fastlane/metadata/en-US/support_url.txt` - Support website URL
 - `ios/App/fastlane/metadata/en-US/privacy_url.txt` - Privacy policy URL
+- `ios/App/fastlane/metadata/en-US/marketing_url.txt` - Marketing website URL
 
 **Current Values:**
-- Support URL: Links to the GitHub repository
-- Privacy URL: Links to the GitHub repository
+- Support URL: `https://github.com/archubbuck/enterprise-support/blob/main/SUPPORT.md` - Links to the support documentation
+- Privacy URL: `https://github.com/archubbuck/enterprise-support/blob/main/PRIVACY.md` - Links to the privacy policy
+- Marketing URL: `https://github.com/archubbuck/enterprise-support/blob/main/README.md` - Links to the project README
 
-Update these files to change the URLs.
+**Documentation Files:**
+- **PRIVACY.md** - Comprehensive privacy policy explaining:
+  - No personal data collection
+  - Local-only data storage
+  - No third-party tracking
+  - Compliance with GDPR and CCPA
+- **SUPPORT.md** - Support resources including:
+  - Links to documentation
+  - How to report issues
+  - Contact information
+  - FAQs
+
+Update these files to change the URLs. Ensure any URLs point to valid, accessible pages that return HTTP 200.
 
 ### 10. Description & Keywords ✅
 
