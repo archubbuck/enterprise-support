@@ -235,7 +235,7 @@ platform :ios do
     # Apple requires copyright year to match current year for validation
     # 
     # How it works:
-    # 1. Reads existing copyright from metadata/en-US/copyright.txt
+    # 1. Reads existing copyright from fastlane/metadata/en-US/copyright.txt
     # 2. Extracts company name (preserving it across updates)
     # 3. Updates year to current year
     # 4. Writes updated copyright back to file
@@ -244,12 +244,13 @@ platform :ios do
     # See: docs/APPLE_CONNECT_COPYRIGHT_AUTOMATION.md for full documentation
     copyright_start = Time.now
     UI.important("🕐 Updating copyright metadata...")
-    copyright_path = File.join(Dir.pwd, "metadata", "en-US", "copyright.txt")
+    copyright_path = File.join(Dir.pwd, "fastlane", "metadata", "en-US", "copyright.txt")
     default_company_name = "Enterprise Support"
     year_regex = /^\d{4}$/
     
     # Verify the copyright file exists before updating
     UI.user_error!("Copyright file not found at: #{copyright_path}") unless File.exist?(copyright_path)
+    UI.message("📂 Copyright file located at: #{copyright_path}")
     
     # Read the existing copyright to extract the company name (everything after the year)
     # This preserves the company name even if it changes in the future
@@ -279,11 +280,24 @@ platform :ios do
     UI.important("📝 Updated copyright to: #{copyright_text}")
     UI.success("✅ Copyright updated in #{(Time.now - copyright_start).round(1)}s")
 
+    # Verify screenshots directory exists and contains files
+    screenshots_path = File.join(Dir.pwd, "fastlane", "metadata", "en-US", "screenshots")
+    if Dir.exist?(screenshots_path)
+      screenshot_files = Dir.glob(File.join(screenshots_path, "*.{png,jpg,jpeg}")).sort
+      UI.message("📸 Found #{screenshot_files.length} screenshot(s) in: #{screenshots_path}")
+      screenshot_files.each { |f| UI.message("  - #{File.basename(f)}") }
+    else
+      UI.warning("⚠️  Screenshots directory not found at: #{screenshots_path}")
+      UI.warning("⚠️  Screenshots will not be uploaded. Add screenshots to enable them.")
+    end
+
     # Upload to App Store with retry logic
     upload_start = Time.now
     UI.important("🚀 Starting App Store upload...")
     UI.important("📦 IPA path: #{ipa_path}")
     UI.important("🔑 API Key configured: #{!api_key.nil?}")
+    UI.important("📁 Metadata path: ./fastlane/metadata")
+    UI.important("📸 Screenshots path: ./fastlane/metadata/en-US/screenshots")
     
     # Retry configuration - can be customized via environment variables
     max_retries = ENV["FASTLANE_UPLOAD_MAX_RETRIES"] ? ENV["FASTLANE_UPLOAD_MAX_RETRIES"].to_i : 3
@@ -297,6 +311,7 @@ platform :ios do
         app_identifier: APP_IDENTIFIER,
         skip_metadata: false,
         skip_screenshots: false,
+        metadata_path: "./fastlane/metadata",
         submit_for_review: false,
         precheck_include_in_app_purchases: false,
         force: true,
