@@ -311,7 +311,7 @@ platform :ios do
         app_identifier: APP_IDENTIFIER,
         skip_metadata: false,
         skip_screenshots: false,
-        metadata_path: "./fastlane/metadata",
+        metadata_path: "./fastlane/metadata",  # Relative path is standard Fastlane convention
         submit_for_review: false,
         precheck_include_in_app_purchases: false,
         force: true,
