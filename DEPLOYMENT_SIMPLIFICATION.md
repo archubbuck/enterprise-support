@@ -1,7 +1,7 @@
 # Deployment Pipeline Simplification
 
 **Date:** December 29, 2024  
-**Issue:** [Simplify Deployment Pipeline by Removing Unnecessary Steps](https://github.com/archubbuck/enterprise-support/issues/)
+**Issue:** Simplify Deployment Pipeline by Removing Unnecessary Steps
 
 ## Executive Summary
 
