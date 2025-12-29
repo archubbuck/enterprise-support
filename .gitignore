@@ -24,6 +24,14 @@ dist-ssr
 *.sln
 *.sw?
 
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*~
+
 .env
 **/agent-eval-report*
 packages
@@ -32,6 +40,8 @@ pids
 .devcontainer/
 
 .spark-workbench-id
+.spark-initial-sha
+spark.meta.json
 
 # Capacitor
 ios/App/Pods
