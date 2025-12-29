@@ -6,7 +6,7 @@ App metadata (copyright and screenshots) was not being uploaded to Apple Connect
 
 ## Root Cause
 
-The Fastlane `release` lane in `ios/App/fastlane/Fastfile` had an incorrect path configuration for the copyright automation:
+The fastlane `release` lane in `ios/App/fastlane/Fastfile` had an incorrect path configuration for the copyright automation:
 
 ```ruby
 # INCORRECT - Missing "fastlane/" prefix
@@ -54,7 +54,7 @@ upload_to_app_store(
 )
 ```
 
-This explicitly tells Fastlane where to find the metadata files, removing any ambiguity.
+This explicitly tells fastlane where to find the metadata files, removing any ambiguity.
 
 ### 3. Enhanced Logging
 
@@ -223,6 +223,6 @@ After deployment, verify the fix by:
 If you encounter any issues after this fix:
 
 1. Check the GitHub Actions logs for the deploy workflow
-2. Look for error messages in the Fastlane output
+2. Look for error messages in the fastlane output
 3. Verify that the metadata files exist in the repository
 4. See [SUPPORT.md](SUPPORT.md) for additional help
