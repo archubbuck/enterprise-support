@@ -119,29 +119,6 @@ jobs:
         with:
           xcode-version: '16'
 
-      - name: Verify Xcode setup
-        run: |
-          echo "✅ Xcode Configuration:"
-          echo "  DEVELOPER_DIR: $DEVELOPER_DIR"
-          echo "  Xcode path: $(xcode-select -p)"
-          echo "  Xcode version: $(xcodebuild -version)"
-
-      - name: Verify xcrun availability
-        run: |
-          echo "✅ Checking xcrun..."
-          xcrun --version
-
-      - name: Check iTMSTransporter location
-        run: |
-          echo "🔍 Checking iTMSTransporter..."
-          if [ -f "$DEVELOPER_DIR/usr/bin/iTMSTransporter" ]; then
-            echo "✅ iTMSTransporter found at: $DEVELOPER_DIR/usr/bin/iTMSTransporter"
-          else
-            echo "⚠️  iTMSTransporter not found at expected location"
-            echo "Searching for iTMSTransporter in Xcode installations..."
-            find /Applications/Xcode*.app -name "iTMSTransporter" -type f 2>/dev/null | head -5 || echo "Not found in Xcode installations"
-          fi
-
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -197,16 +174,6 @@ jobs:
             ls -lh "/usr/local/itms/bin/iTMSTransporter"
           else
             echo "❌ Transporter installation failed - binary not found or not executable"
-            exit 1
-          fi
-
-      - name: Verify Transporter CLI
-        run: |
-          if [ -x "/usr/local/itms/bin/iTMSTransporter" ]; then
-            echo "✅ Transporter CLI ready at /usr/local/itms/bin/iTMSTransporter"
-            ls -lh "/usr/local/itms/bin/iTMSTransporter"
-          else
-            echo "❌ Transporter CLI not available"
             exit 1
           fi
 

@@ -40,20 +40,3 @@ jobs:
       
       - name: Build application
         run: npm run build
-      
-      - name: Report success
-        if: success()
-        run: |
-          echo "✅ All CI checks passed!"
-          echo "- JSON validation: ✓"
-          echo "- Linting: ✓"
-          echo "- Build: ✓"
-      
-      - name: Report failure
-        if: failure()
-        run: |
-          echo "❌ CI checks failed!"
-          echo ""
-          echo "Please review the errors above and fix them."
-          echo "See docs/TROUBLESHOOTING.md for common issues."
-          exit 1
