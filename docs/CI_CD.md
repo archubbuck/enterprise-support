@@ -26,23 +26,7 @@ This repository uses GitHub Actions for continuous integration and deployment. T
 
 **Purpose:** Prevents broken code from being merged into the main branch
 
-### 2. JSON Validation
-
-**File:** `.github/workflows/json-validation.yml`
-
-**Triggers:**
-- Pull requests that modify JSON files
-- Pushes to `main` that modify JSON files
-
-**What it does:**
-1. Validates syntax of all JSON files in the repository
-2. Reports detailed error messages if validation fails
-
-**Duration:** ~1 minute
-
-**Purpose:** Catches JSON syntax errors early in development
-
-### 3. Deploy to App Store
+### 2. Deploy to App Store
 
 **File:** `.github/workflows/deploy.yml`
 
@@ -61,7 +45,9 @@ This repository uses GitHub Actions for continuous integration and deployment. T
 - Repository secrets must be configured (see iOS deployment docs)
 - Certificate setup must be completed first
 
-### 4. iOS One-Time Match Setup
+**Note:** This workflow has been optimized by removing redundant verification steps that added unnecessary time to the deployment process.
+
+### 3. iOS One-Time Match Setup
 
 **File:** `.github/workflows/setup_match.yml`
 
