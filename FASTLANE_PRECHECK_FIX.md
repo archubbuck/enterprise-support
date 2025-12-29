@@ -60,13 +60,14 @@ The URLs in the App Store Connect metadata were pointing to the repository root 
   - **Old:** `https://github.com/archubbuck/enterprise-support`
   - **New:** `https://github.com/archubbuck/enterprise-support/blob/main/README.md`
 
-### 4. Cleaned Up Copyright Format
+### 4. Updated Copyright Format to Include © Symbol
 
 **File Updated:** `ios/App/fastlane/metadata/en-US/copyright.txt`
 
-- Removed trailing newline for clean formatting
-- Verified format: `2025 Enterprise Support`
-- Note: Copyright year is automatically updated by Fastlane automation during deployment (see Fastfile)
+- Added © symbol as required by Apple
+- Updated format to: `© 2025 Enterprise Support`
+- Updated Fastfile automation to preserve © symbol
+- Note: Copyright year and © symbol are automatically managed by Fastlane automation during deployment (see Fastfile)
 
 ## Expected Results
 

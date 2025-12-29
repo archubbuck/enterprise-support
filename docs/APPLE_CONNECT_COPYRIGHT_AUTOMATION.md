@@ -43,17 +43,21 @@ ios/App/fastlane/metadata/en-US/copyright.txt
 
 ### Supported Formats
 
-The automation supports multiple copyright formats:
+The automation supports multiple copyright formats and always outputs Apple's required format with the © symbol:
 
 | Input Format | Extracted Company Name | Output (2025) |
 |--------------|------------------------|---------------|
-| `2025 Enterprise Support` | `Enterprise Support` | `2025 Enterprise Support` |
-| `2024 My Company` | `My Company` | `2025 My Company` |
-| `2020 Acme Corporation` | `Acme Corporation` | `2025 Acme Corporation` |
-| `My Company Name` | `My Company Name` | `2025 My Company Name` |
-| `2025` | Uses default | `2025 Enterprise Support` |
-| Empty string | Uses default | `2025 Enterprise Support` |
-| `Enterprise Support` | `Enterprise Support` | `2025 Enterprise Support` |
+| `© 2025 Enterprise Support` | `Enterprise Support` | `© 2025 Enterprise Support` |
+| `© 2024 My Company` | `My Company` | `© 2025 My Company` |
+| `2025 Enterprise Support` | `Enterprise Support` | `© 2025 Enterprise Support` |
+| `2024 Acme Corporation` | `Acme Corporation` | `© 2025 Acme Corporation` |
+| `© My Company Name` | `My Company Name` | `© 2025 My Company Name` |
+| `My Company Name` | `My Company Name` | `© 2025 My Company Name` |
+| `© 2025` | Uses default | `© 2025 Enterprise Support` |
+| `2025` | Uses default | `© 2025 Enterprise Support` |
+| Empty string | Uses default | `© 2025 Enterprise Support` |
+
+**Note:** Apple requires the copyright format to be `© YYYY Company Name` with the © symbol. The automation ensures this format is always used.
 
 ### Automation Logic
 
@@ -61,22 +65,37 @@ The automation supports multiple copyright formats:
 # Read existing copyright
 existing_copyright = File.read(copyright_path).strip
 
-# Extract company name
-parts = existing_copyright.split(' ', 2)
-if parts[0] =~ /^\d{4}$/ && parts.length > 1
-  # Year followed by company name
-  company_name = parts[1]
-elsif parts[0] =~ /^\d{4}$/ && parts.length == 1
-  # Only year, use default
-  company_name = "Enterprise Support"
-else
-  # No year, treat entire text as company name
+# Extract company name by removing the leading year and © symbol if present
+# Supported formats:
+# - "© YYYY Company Name" (Apple's recommended format)
+# - "YYYY Company Name" (legacy format)
+# - "Company Name" (company name only)
+parts = existing_copyright.split(' ')
+
+# Check if first part is copyright symbol
+has_copyright_symbol = parts[0] == '©'
+offset = has_copyright_symbol ? 1 : 0
+
+# Check if we have a year after the optional © symbol
+if parts.length > offset && parts[offset] =~ /^\d{4}$/
+  # Format: "© YYYY Company Name" or "YYYY Company Name"
+  company_name = parts[(offset + 1)..-1].join(' ')
+elsif has_copyright_symbol && parts.length > 1
+  # Format: "© Company Name" (no year)
+  company_name = parts[1..-1].join(' ')
+elsif !has_copyright_symbol && parts.length >= 1
+  # Format: "Company Name" (no © symbol, no year)
   company_name = existing_copyright
+else
+  company_name = nil
 end
 
-# Generate new copyright with current year
+# Ensure company name is not empty
+company_name = "Enterprise Support" if company_name.nil? || company_name.strip.empty?
+
+# Generate new copyright with current year and © symbol
 current_year = Time.now.year
-copyright_text = "#{current_year} #{company_name}"
+copyright_text = "© #{current_year} #{company_name}"
 ```
 
 ## Configuration
@@ -90,16 +109,20 @@ To customize the copyright for your organization:
    nano ios/App/fastlane/metadata/en-US/copyright.txt
    ```
 
-2. Set your company name (with or without a year):
+2. Set your company name (the © symbol and year will be added automatically):
    ```
    Your Company Name
    ```
+   or include the © symbol and/or year (both will be updated automatically):
+   ```
+   © 2025 Your Company Name
+   ```
    or
    ```
-   2025 Your Company Name
+   © Your Company Name
    ```
 
-3. The automation will preserve your company name and update the year automatically on each release.
+3. The automation will preserve your company name and ensure the copyright format is `© YYYY Company Name` on each release.
 
 ### Default Company Name
 

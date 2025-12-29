@@ -132,11 +132,15 @@ All requirements have been successfully implemented and documented.
 
 | Input | Company Name | Output (2025) |
 |-------|--------------|---------------|
-| "2025 Enterprise Support" | Enterprise Support | "2025 Enterprise Support" |
-| "2024 My Company" | My Company | "2025 My Company" |
-| "My Company Name" | My Company Name | "2025 My Company Name" |
-| "2025" | Uses default | "2025 Enterprise Support" |
-| Empty | Uses default | "2025 Enterprise Support" |
+| "© 2025 Enterprise Support" | Enterprise Support | "© 2025 Enterprise Support" |
+| "© 2024 My Company" | My Company | "© 2025 My Company" |
+| "2025 Enterprise Support" | Enterprise Support | "© 2025 Enterprise Support" |
+| "My Company Name" | My Company Name | "© 2025 My Company Name" |
+| "© 2025" | Uses default | "© 2025 Enterprise Support" |
+| "2025" | Uses default | "© 2025 Enterprise Support" |
+| Empty | Uses default | "© 2025 Enterprise Support" |
+
+**Note:** Apple requires the copyright format `© YYYY Company Name`. The automation ensures this format is always used.
 
 ### Configuration
 
