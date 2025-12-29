@@ -235,7 +235,7 @@ platform :ios do
     # Apple requires copyright in format: "© YYYY Company Name" for validation
     # 
     # How it works:
-    # 1. Reads existing copyright from fastlane/metadata/en-US/copyright.txt
+    # 1. Reads existing copyright from metadata/en-US/copyright.txt
     # 2. Extracts company name (preserving it across updates)
     # 3. Updates year to current year and ensures © symbol is present
     # 4. Writes updated copyright back to file in format: "© YYYY Company Name"
