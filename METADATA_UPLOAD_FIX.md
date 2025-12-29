@@ -9,13 +9,13 @@ App metadata (copyright and screenshots) was not being uploaded to Apple Connect
 The fastlane `release` lane in `ios/App/fastlane/Fastfile` had an incorrect path configuration for the copyright automation:
 
 ```ruby
-# INCORRECT - Missing "fastlane/" prefix
-copyright_path = File.join(Dir.pwd, "metadata", "en-US", "copyright.txt")
+# INCORRECT - Includes extra "fastlane/" prefix
+copyright_path = File.join(Dir.pwd, "fastlane", "metadata", "en-US", "copyright.txt")
 ```
 
-When the GitHub Actions workflow runs with `working-directory: ios/App`, the `Dir.pwd` evaluates to `/path/to/repo/ios/App`. This caused the copyright automation to look for the file at:
+When fastlane runs from `working-directory: ios/App`, it automatically changes into the `fastlane` subdirectory. Therefore, `Dir.pwd` evaluates to `/path/to/repo/ios/App/fastlane`. Adding another "fastlane/" to the path caused the copyright automation to look for the file at:
 ```
-/path/to/repo/ios/App/metadata/en-US/copyright.txt
+/path/to/repo/ios/App/fastlane/fastlane/metadata/en-US/copyright.txt (WRONG - double "fastlane")
 ```
 
 However, the actual metadata directory is located at:
@@ -30,8 +30,8 @@ Since the file couldn't be found, the copyright automation would fail, and metad
 ### 1. Fixed Copyright Path (Line 247)
 
 ```ruby
-# CORRECT - Includes "fastlane/" prefix
-copyright_path = File.join(Dir.pwd, "fastlane", "metadata", "en-US", "copyright.txt")
+# CORRECT - Without extra "fastlane/" prefix since Dir.pwd is already in fastlane directory
+copyright_path = File.join(Dir.pwd, "metadata", "en-US", "copyright.txt")
 ```
 
 This ensures the copyright file is found at the correct location:
@@ -65,7 +65,7 @@ Added comprehensive logging to help debug and verify the upload process:
 UI.message("📂 Copyright file located at: #{copyright_path}")
 
 # Screenshots verification
-screenshots_path = File.join(Dir.pwd, "fastlane", "metadata", "en-US", "screenshots")
+screenshots_path = File.join(Dir.pwd, "metadata", "en-US", "screenshots")
 if Dir.exist?(screenshots_path)
   screenshot_files = Dir.glob(File.join(screenshots_path, "*.{png,jpg,jpeg}")).sort
   UI.message("📸 Found #{screenshot_files.length} screenshot(s) in: #{screenshots_path}")
@@ -95,12 +95,12 @@ UI.important("📸 Screenshots path: ./fastlane/metadata/en-US/screenshots")
 Verified the fix by testing path resolution:
 
 ```bash
-cd ios/App
+cd ios/App/fastlane
 ruby -e "
-  copyright_path = File.join(Dir.pwd, 'fastlane', 'metadata', 'en-US', 'copyright.txt')
+  copyright_path = File.join(Dir.pwd, 'metadata', 'en-US', 'copyright.txt')
   puts \"Copyright file exists: #{File.exist?(copyright_path)}\"
   
-  screenshots_path = File.join(Dir.pwd, 'fastlane', 'metadata', 'en-US', 'screenshots')
+  screenshots_path = File.join(Dir.pwd, 'metadata', 'en-US', 'screenshots')
   screenshot_files = Dir.glob(File.join(screenshots_path, '*.{png,jpg,jpeg}'))
   puts \"Found #{screenshot_files.length} screenshots\"
 "
