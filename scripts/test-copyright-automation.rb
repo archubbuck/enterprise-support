@@ -11,21 +11,36 @@ def update_copyright(existing_copyright)
   
   puts "Input copyright: '#{existing_copyright}'"
   
-  # Extract company name by removing the leading year if present
-  # Format is expected to be: "YYYY Company Name" or "Company Name"
-  parts = existing_copyright.split(' ', 2)
-  if parts[0] =~ year_regex && parts.length > 1
-    # First part is a year, use the rest as company name
-    company_name = parts[1]
-    puts "✓ Detected format: Year + Company (#{parts[0]} #{company_name})"
-  elsif parts[0] =~ year_regex && parts.length == 1
-    # Only a year is present, use default company name
-    company_name = default_company_name
-    puts "⚠ Detected format: Year only (#{parts[0]}), using default: #{default_company_name}"
-  else
-    # No year found, use the entire text as company name
+  # Extract company name by removing the leading year and © symbol if present
+  # Supported formats:
+  # - "© YYYY Company Name" (Apple's recommended format)
+  # - "YYYY Company Name" (legacy format)
+  # - "Company Name" (company name only)
+  parts = existing_copyright.split(' ')
+  
+  # Check if first part is copyright symbol
+  has_copyright_symbol = parts[0] == '©'
+  offset = has_copyright_symbol ? 1 : 0
+  
+  # Check if we have a year after the optional © symbol
+  if parts.length > offset && parts[offset] =~ year_regex
+    # Format: "© YYYY Company Name" or "YYYY Company Name"
+    # Extract everything after the year as company name
+    company_name = parts[(offset + 1)..-1].join(' ')
+    year_part = parts[offset]
+    copyright_symbol = has_copyright_symbol ? "© " : ""
+    puts "✓ Detected format: #{copyright_symbol}Year + Company (#{year_part} #{company_name})"
+  elsif has_copyright_symbol && parts.length > 1
+    # Format: "© Company Name" (no year)
+    company_name = parts[1..-1].join(' ')
+    puts "✓ Detected format: © Company name only (#{company_name})"
+  elsif !has_copyright_symbol && parts.length >= 1
+    # Format: "Company Name" (no © symbol, no year)
     company_name = existing_copyright
     puts "✓ Detected format: Company name only (#{company_name})"
+  else
+    company_name = nil
+    puts "⚠ Empty or invalid format"
   end
   
   # Ensure company name is not empty
@@ -35,7 +50,7 @@ def update_copyright(existing_copyright)
   end
   
   current_year = Time.now.year
-  copyright_text = "#{current_year} #{company_name}"
+  copyright_text = "© #{current_year} #{company_name}"
   
   puts "Output copyright: '#{copyright_text}'"
   
@@ -44,15 +59,20 @@ end
 
 # Test cases covering different scenarios
 test_cases = {
-  "Standard current year" => "2025 Enterprise Support",
-  "Outdated year" => "2024 My Company",
+  "Standard format with © symbol" => "© 2025 Enterprise Support",
+  "© symbol with outdated year" => "© 2024 My Company",
+  "Legacy format without ©" => "2025 Enterprise Support",
+  "Outdated year without ©" => "2024 My Company",
   "Very old year" => "2020 Acme Corporation",
+  "© with company name only" => "© My Company Name",
   "Company name only" => "My Company Name",
+  "© with year only" => "© 2025",
   "Year only" => "2025",
+  "© symbol only" => "©",
   "Empty string" => "",
   "Default company name" => "Enterprise Support",
-  "Multi-word company" => "2023 Acme Corporation International Inc.",
-  "Whitespace handling" => "  2024  My Company  ",
+  "Multi-word company" => "© 2023 Acme Corporation International Inc.",
+  "Whitespace handling" => "  © 2024  My Company  ",
   "No year prefix" => "Acme International"
 }
 
