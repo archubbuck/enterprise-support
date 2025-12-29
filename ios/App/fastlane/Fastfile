@@ -308,8 +308,8 @@ platform :ios do
     UI.important("🚀 Starting App Store upload...")
     UI.important("📦 IPA path: #{ipa_path}")
     UI.important("🔑 API Key configured: #{!api_key.nil?}")
-    UI.important("📁 Metadata path: ./fastlane/metadata")
-    UI.important("📸 Screenshots path: ./fastlane/metadata/en-US/screenshots")
+    UI.important("📁 Metadata path: ./metadata")
+    UI.important("📸 Screenshots path: ./metadata/en-US/screenshots")
     
     # Retry configuration - can be customized via environment variables
     max_retries = ENV["FASTLANE_UPLOAD_MAX_RETRIES"] ? ENV["FASTLANE_UPLOAD_MAX_RETRIES"].to_i : 3
@@ -323,7 +323,7 @@ platform :ios do
         app_identifier: APP_IDENTIFIER,
         skip_metadata: false,
         skip_screenshots: false,
-        metadata_path: "./fastlane/metadata",  # Relative path is standard fastlane convention
+        metadata_path: "./metadata",  # Relative path from fastlane directory
         submit_for_review: false,
         precheck_include_in_app_purchases: false,
         force: true,

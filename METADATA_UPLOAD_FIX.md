@@ -39,9 +39,9 @@ This ensures the copyright file is found at the correct location:
 /path/to/repo/ios/App/fastlane/metadata/en-US/copyright.txt
 ```
 
-### 2. Added Explicit Metadata Path (Line 314)
+### 2. Fixed Metadata Path Parameter (Line 326)
 
-Added the `metadata_path` parameter to the `upload_to_app_store` call:
+Updated the `metadata_path` parameter in the `upload_to_app_store` call:
 
 ```ruby
 upload_to_app_store(
@@ -49,12 +49,12 @@ upload_to_app_store(
   app_identifier: APP_IDENTIFIER,
   skip_metadata: false,
   skip_screenshots: false,
-  metadata_path: "./fastlane/metadata",  # ← ADDED
+  metadata_path: "./metadata",  # CORRECT - Relative from fastlane directory
   # ... other parameters
 )
 ```
 
-This explicitly tells fastlane where to find the metadata files, removing any ambiguity.
+Since fastlane runs from the `ios/App/fastlane` directory, the metadata path should be relative to that location, not include an extra "fastlane/" prefix.
 
 ### 3. Enhanced Logging
 
@@ -75,8 +75,8 @@ else
 end
 
 # Upload logging
-UI.important("📁 Metadata path: ./fastlane/metadata")
-UI.important("📸 Screenshots path: ./fastlane/metadata/en-US/screenshots")
+UI.important("📁 Metadata path: ./metadata")
+UI.important("📸 Screenshots path: ./metadata/en-US/screenshots")
 ```
 
 ## Changes Made
@@ -84,11 +84,12 @@ UI.important("📸 Screenshots path: ./fastlane/metadata/en-US/screenshots")
 ### File Modified: `ios/App/fastlane/Fastfile`
 
 1. **Line 238**: Updated comment to reflect correct path
-2. **Line 247**: Fixed copyright_path to include "fastlane/" prefix
+2. **Line 247**: Fixed copyright_path to remove extra "fastlane/" prefix
 3. **Line 253**: Added logging for copyright file location
-4. **Lines 283-292**: Added screenshots verification and logging
-5. **Lines 299-300**: Added metadata and screenshots path logging
-6. **Line 314**: Added explicit `metadata_path` parameter
+4. **Line 296**: Fixed screenshots_path to remove extra "fastlane/" prefix
+5. **Lines 297-304**: Added screenshots verification and logging
+6. **Lines 311-312**: Updated metadata and screenshots path logging
+7. **Line 326**: Fixed metadata_path parameter to remove extra "fastlane/" prefix
 
 ## Testing
 
@@ -147,8 +148,8 @@ When the deployment pipeline runs:
 🚀 Starting App Store upload...
 📦 IPA path: /path/to/App.ipa
 🔑 API Key configured: true
-📁 Metadata path: ./fastlane/metadata
-📸 Screenshots path: ./fastlane/metadata/en-US/screenshots
+📁 Metadata path: ./metadata
+📸 Screenshots path: ./metadata/en-US/screenshots
 ✅ Upload completed successfully!
 ```
 
