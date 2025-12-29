@@ -116,7 +116,7 @@ platform :ios do
     UI.important("🕐 Release lane started at #{start_time.strftime('%Y-%m-%d %H:%M:%S')}")
     
     # Explicitly select Xcode using the DEVELOPER_DIR environment variable
-    # This ensures Fastlane uses the correct Xcode installation for finding tools like iTMSTransporter
+    # This ensures fastlane uses the correct Xcode installation for finding tools like iTMSTransporter
     # The DEVELOPER_DIR is set by the setup-xcode GitHub Action
     if ENV["DEVELOPER_DIR"] && !ENV["DEVELOPER_DIR"].empty?
       xcode_path = ENV["DEVELOPER_DIR"]
@@ -311,7 +311,7 @@ platform :ios do
         app_identifier: APP_IDENTIFIER,
         skip_metadata: false,
         skip_screenshots: false,
-        metadata_path: "./fastlane/metadata",  # Relative path is standard Fastlane convention
+        metadata_path: "./fastlane/metadata",  # Relative path is standard fastlane convention
         submit_for_review: false,
         precheck_include_in_app_purchases: false,
         force: true,
