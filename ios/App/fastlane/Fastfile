@@ -244,7 +244,7 @@ platform :ios do
     # See: docs/APPLE_CONNECT_COPYRIGHT_AUTOMATION.md for full documentation
     copyright_start = Time.now
     UI.important("🕐 Updating copyright metadata...")
-    copyright_path = File.join(Dir.pwd, "fastlane", "metadata", "en-US", "copyright.txt")
+    copyright_path = File.join(Dir.pwd, "metadata", "en-US", "copyright.txt")
     default_company_name = "Enterprise Support"
     year_regex = /^\d{4}$/
     
@@ -293,7 +293,7 @@ platform :ios do
     UI.success("✅ Copyright updated in #{(Time.now - copyright_start).round(1)}s")
 
     # Verify screenshots directory exists and contains files
-    screenshots_path = File.join(Dir.pwd, "fastlane", "metadata", "en-US", "screenshots")
+    screenshots_path = File.join(Dir.pwd, "metadata", "en-US", "screenshots")
     if Dir.exist?(screenshots_path)
       screenshot_files = Dir.glob(File.join(screenshots_path, "*.{png,jpg,jpeg}")).sort
       UI.message("📸 Found #{screenshot_files.length} screenshot(s) in: #{screenshots_path}")
