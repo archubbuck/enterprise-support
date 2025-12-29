@@ -33,7 +33,7 @@ def update_copyright(existing_copyright)
   elsif has_copyright_symbol && parts.length > 1
     # Format: "© Company Name" (no year)
     company_name = parts[1..-1].join(' ')
-    puts "✓ Detected format: © Company name only (#{company_name})"
+    puts "✓ Detected format: © Company Name only (#{company_name})"
   elsif !has_copyright_symbol && parts.length >= 1
     # Format: "Company Name" (no © symbol, no year)
     company_name = existing_copyright
