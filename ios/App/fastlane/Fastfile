@@ -231,14 +231,14 @@ platform :ios do
     UI.success("✅ IPA validation passed")
 
     # Update copyright with current year for App Store metadata
-    # This automation ensures the copyright field always has the current year
-    # Apple requires copyright year to match current year for validation
+    # This automation ensures the copyright field always has the current year and © symbol
+    # Apple requires copyright in format: "© YYYY Company Name" for validation
     # 
     # How it works:
     # 1. Reads existing copyright from fastlane/metadata/en-US/copyright.txt
     # 2. Extracts company name (preserving it across updates)
-    # 3. Updates year to current year
-    # 4. Writes updated copyright back to file
+    # 3. Updates year to current year and ensures © symbol is present
+    # 4. Writes updated copyright back to file in format: "© YYYY Company Name"
     # 5. Uploads with metadata to App Store Connect
     #
     # See: docs/APPLE_CONNECT_COPYRIGHT_AUTOMATION.md for full documentation
@@ -256,25 +256,37 @@ platform :ios do
     # This preserves the company name even if it changes in the future
     existing_copyright = File.read(copyright_path).strip
     
-    # Extract company name by removing the leading year if present
-    # Format is expected to be: "YYYY Company Name" or "Company Name"
-    parts = existing_copyright.split(' ', 2)
-    if parts[0] =~ year_regex && parts.length > 1
-      # First part is a year, use the rest as company name
-      company_name = parts[1]
-    elsif parts[0] =~ year_regex && parts.length == 1
-      # Only a year is present, use default company name
-      company_name = default_company_name
-    else
-      # No year found, use the entire text as company name
+    # Extract company name by removing the leading year and © symbol if present
+    # Supported formats:
+    # - "© YYYY Company Name" (Apple's recommended format)
+    # - "YYYY Company Name" (legacy format)
+    # - "Company Name" (company name only)
+    parts = existing_copyright.split(' ')
+    
+    # Check if first part is copyright symbol
+    has_copyright_symbol = parts[0] == '©'
+    offset = has_copyright_symbol ? 1 : 0
+    
+    # Check if we have a year after the optional © symbol
+    if parts.length > offset && parts[offset] =~ year_regex
+      # Format: "© YYYY Company Name" or "YYYY Company Name"
+      # Extract everything after the year as company name
+      company_name = parts[(offset + 1)..-1].join(' ')
+    elsif has_copyright_symbol && parts.length > 1
+      # Format: "© Company Name" (no year)
+      company_name = parts[1..-1].join(' ')
+    elsif !has_copyright_symbol && parts.length >= 1
+      # Format: "Company Name" (no © symbol, no year)
       company_name = existing_copyright
+    else
+      company_name = nil
     end
     
     # Ensure company name is not empty
     company_name = default_company_name if company_name.nil? || company_name.strip.empty?
     
     current_year = Time.now.year
-    copyright_text = "#{current_year} #{company_name}"
+    copyright_text = "© #{current_year} #{company_name}"
     
     File.write(copyright_path, copyright_text)
     UI.important("📝 Updated copyright to: #{copyright_text}")
