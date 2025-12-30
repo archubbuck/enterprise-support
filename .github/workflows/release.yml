@@ -26,10 +26,10 @@ jobs:
         run: |
           # Generate a date-based semantic version (YYYY.MM.DD.BUILD)
           # This ensures unique, monotonically increasing versions
-          DATE=$(date +'%Y.%m.%d')
+          DATE=$(date -u +'%Y.%m.%d')
           
-          # Count commits today to handle multiple releases on the same day
-          BUILD_NUMBER=$(git log --since="00:00:00" --oneline | wc -l | tr -d ' ')
+          # Count commits today (UTC) to handle multiple releases on the same day
+          BUILD_NUMBER=$(git log --since="today 00:00:00 UTC" --oneline | wc -l | tr -d ' ')
           
           # Create version tag
           VERSION="v${DATE}.${BUILD_NUMBER}"
@@ -61,8 +61,8 @@ jobs:
         id: release_notes
         if: steps.check_tag.outputs.exists == 'false'
         run: |
-          # Get commits since last tag, or all commits if no tags exist
-          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          # Get the most recent tag that's merged into the current branch
+          LAST_TAG=$(git tag --sort=-version:refname --merged HEAD | head -n1 || echo "")
           
           if [ -z "$LAST_TAG" ]; then
             echo "📝 Generating release notes from all commits (no previous tags)"
