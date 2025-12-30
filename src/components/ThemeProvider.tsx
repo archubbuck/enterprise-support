@@ -1,6 +1,6 @@
 import { ThemeProvider as NextThemesProvider } from 'next-themes';
 import { ReactNode } from 'react';
-import { getDefaultTheme } from '@/lib/theme-config';
+import { getDefaultTheme, getAvailableThemes } from '@/lib/theme-config';
 
 interface ThemeProviderProps {
   children: ReactNode;
@@ -8,6 +8,8 @@ interface ThemeProviderProps {
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
   const defaultTheme = getDefaultTheme();
+  const availableThemes = getAvailableThemes();
+  const themeIds = availableThemes.map(theme => theme.id);
   
   return (
     <NextThemesProvider
@@ -15,7 +17,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       defaultTheme={defaultTheme}
       enableSystem={true}
       storageKey="enterprise-support-theme"
-      themes={['light', 'dark', 'blue', 'green', 'purple']}
+      themes={themeIds}
     >
       {children}
     </NextThemesProvider>
