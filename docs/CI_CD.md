@@ -34,7 +34,7 @@ This repository uses GitHub Actions for continuous integration and deployment. T
 - Pushes to `main` branch (automatic)
 
 **What it does:**
-1. Generates a date-based semantic version tag (format: `vYYYY.MM.DD.BUILD`)
+1. Generates a date-based semantic version tag (format: `release/YYYY.MM.DD.BUILD`)
 2. Creates and pushes the version tag
 3. Generates release notes from commit messages since the last release
 4. Creates a GitHub release with the generated notes
@@ -43,12 +43,12 @@ This repository uses GitHub Actions for continuous integration and deployment. T
 
 **Purpose:** Automatically creates a release for every change merged to main, eliminating manual release tag creation and ensuring all changes are properly versioned and released.
 
-**Version Format:** The workflow uses date-based semantic versioning:
-- `v2025.12.30.1` - First release on December 30, 2025
-- `v2025.12.30.2` - Second release on the same day
+**Version Format:** The workflow uses date-based semantic versioning with `release/` prefix:
+- `release/2025.12.30.1` - First release on December 30, 2025
+- `release/2025.12.30.2` - Second release on the same day
 - Build number increments for multiple releases on the same day
 
-**Note:** This workflow only creates GitHub releases and tags. For App Store deployment, use the separate Deploy to App Store workflow (below).
+**Important:** Automated releases use the `release/*` tag pattern and **do not** trigger App Store deployment. To deploy to the App Store, manually create a tag with the `v*` pattern (see App Store Deployment section below).
 
 ### 3. Deploy to App Store
 
@@ -180,29 +180,35 @@ nvm use
 6. **Automatic:** Release notes are generated from commit messages
 
 **No manual tagging required!** The system automatically:
-- Creates version tags (e.g., `v2025.12.30.1`)
+- Creates version tags with `release/` prefix (e.g., `release/2025.12.30.1`)
 - Generates release notes from commits
 - Publishes the release on GitHub
 
+**Important:** Automated releases are for tracking changes on GitHub only and **do not** trigger App Store deployment.
+
 ### App Store Deployment
 
-**To deploy to the App Store, use the automated release tags:**
+**Automated releases do NOT deploy to the App Store.** To deploy to the App Store, you must manually create a version tag:
 
-1. After a PR is merged to `main`, the automated release workflow creates a version tag
-2. **Optional:** If you want to deploy to the App Store, wait for the automated release to complete
-3. The automated version tag (e.g., `v2025.12.30.1`) will trigger the App Store deployment workflow
-4. The app is automatically built and uploaded to App Store Connect
+**Manual tagging for App Store deployment:**
 
-**Alternative: Manual tagging for App Store deployment**
-
-If you need a specific version tag for App Store deployment:
+When you're ready to deploy a specific commit to the App Store:
    ```bash
+   git checkout main
+   git pull
    git tag v1.0.0
    git push origin v1.0.0
    ```
 The deploy workflow will run automatically and upload the app to App Store Connect.
 
-**Note:** The automated release workflow creates releases on GitHub, while tags matching the pattern `v*` trigger App Store deployment. All automated release tags will trigger both the release creation and App Store deployment.
+**Tag Patterns:**
+- `release/*` - Automated GitHub releases only (no App Store deployment)
+- `v*` - Manual tags that trigger App Store deployment
+
+This separation ensures that:
+- Every commit to main is tracked as a release on GitHub
+- Only explicitly tagged versions are deployed to the App Store
+- You have full control over which versions go to production
 
 ### Emergency Fixes
 
