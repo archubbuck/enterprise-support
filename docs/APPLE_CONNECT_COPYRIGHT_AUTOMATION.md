@@ -181,14 +181,52 @@ The automation runs automatically during GitHub Actions deployments. Check the w
 
 ## Validation
 
-The automation includes several validation checks:
+The automation includes validation checks at two stages:
+
+### Pre-deployment Validation (GitHub Action)
+
+A GitHub Action (`verify-copyright`) runs before the Fastlane deployment to validate the copyright file format. This ensures early detection of format issues before the build process starts.
+
+**Location**: `.github/actions/verify-copyright/action.yml`
+
+**Validation checks:**
+
+1. **File existence**: Verifies the copyright file exists
+2. **Non-empty content**: Ensures the file is not empty
+3. **Format validation**: Checks that the format is parseable by Fastlane
+4. **Company name extraction**: Validates that a company name can be extracted
+
+**Supported formats validated:**
+- `© YYYY Company Name` - Full format with copyright symbol and year
+- `© Company Name` - Copyright symbol without year (year added automatically)
+- `YYYY Company Name` - Year without copyright symbol (symbol added automatically)
+- `Company Name` - Company name only (both symbol and year added automatically)
+
+**Rejected formats:**
+- `© YYYY` - Missing company name after year
+- `YYYY` - Year only, no company name
+- `©` - Copyright symbol only
+- Empty file
+
+Example validation output:
+```
+📋 Checking copyright file...
+✅ Copyright file exists at: fastlane/metadata/en-US/copyright.txt
+📝 Copyright value: © 2025 Enterprise Support
+✅ Copyright format valid: © 2025 Enterprise Support
+✅ Copyright metadata validation passed
+```
+
+### Deployment Validation (Fastlane)
+
+The Fastlane script includes additional validation during deployment:
 
 1. **File existence**: Verifies the copyright file exists
    ```ruby
    UI.user_error!("Copyright file not found at: #{copyright_path}") unless File.exist?(copyright_path)
    ```
 
-2. **Non-empty company name**: Ensures company name is not empty
+2. **Non-empty company name**: Ensures company name is not empty (fallback to default)
    ```ruby
    company_name = default_company_name if company_name.nil? || company_name.strip.empty?
    ```
@@ -245,7 +283,27 @@ The following metadata fields can be automated via the API:
 
 ## Workflow Integration
 
-The copyright automation is integrated into the GitHub Actions deployment workflow:
+The copyright automation is integrated into the GitHub Actions deployment workflow with two stages:
+
+### Stage 1: Pre-deployment Validation
+
+The workflow validates the copyright file format before starting the build:
+
+```yaml
+# .github/workflows/deploy.yml
+- name: Verify copyright file
+  uses: ./.github/actions/verify-copyright
+```
+
+This step:
+- Checks that the copyright file exists
+- Validates the format is parseable
+- Ensures a company name can be extracted
+- Fails fast if the format is invalid
+
+### Stage 2: Copyright Update and Deployment
+
+The `release` lane then updates and uploads the copyright:
 
 ```yaml
 # .github/workflows/deploy.yml
@@ -281,6 +339,39 @@ The API key must have the following permissions:
 - Ability to upload builds and metadata
 
 ## Troubleshooting
+
+### Precheck Validation Failures
+
+**Symptoms:**
+- Error: "Copyright format invalid: Company name missing after year"
+- Error: "Copyright format invalid: Company name missing after © symbol"
+- Error: "Copyright file is empty"
+
+**Solutions:**
+1. Check the copyright file format:
+   ```bash
+   cat ios/App/fastlane/metadata/en-US/copyright.txt
+   ```
+
+2. Ensure the file contains a valid format:
+   ```bash
+   # Valid examples:
+   echo "© 2025 Your Company Name" > ios/App/fastlane/metadata/en-US/copyright.txt
+   # or
+   echo "Your Company Name" > ios/App/fastlane/metadata/en-US/copyright.txt
+   ```
+
+3. Avoid invalid formats:
+   ```bash
+   # Invalid: year only
+   echo "2025" > ios/App/fastlane/metadata/en-US/copyright.txt
+   
+   # Invalid: copyright symbol only
+   echo "©" > ios/App/fastlane/metadata/en-US/copyright.txt
+   
+   # Invalid: copyright and year without company name
+   echo "© 2025" > ios/App/fastlane/metadata/en-US/copyright.txt
+   ```
 
 ### Copyright Not Updating
 
