@@ -19,7 +19,7 @@ runs:
         echo "✅ Copyright file exists at: $COPYRIGHT_FILE"
         
         # Read and validate copyright content
-        COPYRIGHT_CONTENT=$(cat "$COPYRIGHT_FILE" | tr -d '\n' | xargs)
+        COPYRIGHT_CONTENT=$(xargs < "$COPYRIGHT_FILE")
         echo "📝 Copyright value: $COPYRIGHT_CONTENT"
         
         # Validate that content is not empty
