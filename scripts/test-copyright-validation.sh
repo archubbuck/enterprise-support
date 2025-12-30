@@ -83,6 +83,10 @@ test_copyright_validation "Single character (no letter)" "1" "false"
 test_copyright_validation "Single special character" "@" "false"
 test_copyright_validation "Two numbers (no letter)" "12" "false"
 test_copyright_validation "Special characters only" "©©" "false"
+test_copyright_validation "© with single char company" "© 1" "false"
+test_copyright_validation "© year with single char company" "© 2025 1" "false"
+test_copyright_validation "Year with single char company" "2025 @" "false"
+test_copyright_validation "© year with invalid company" "© 2025 @@" "false"
 
 # Summary
 echo "=========================================="
