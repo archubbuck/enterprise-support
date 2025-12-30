@@ -177,19 +177,8 @@ jobs:
             exit 1
           fi
 
-      - name: Log copyright value
-        working-directory: ios/App
-        run: |
-          echo "📋 Checking copyright file..."
-          COPYRIGHT_FILE="fastlane/metadata/en-US/copyright.txt"
-          if [ -f "$COPYRIGHT_FILE" ]; then
-            echo "✅ Copyright file exists at: $COPYRIGHT_FILE"
-            echo "📝 Copyright value:"
-            cat "$COPYRIGHT_FILE"
-          else
-            echo "❌ Copyright file not found at: $COPYRIGHT_FILE"
-            exit 1
-          fi
+      - name: Verify copyright file
+        uses: ./.github/actions/verify-copyright
 
       - name: Run Fastlane release
         env:
