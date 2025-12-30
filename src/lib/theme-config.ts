@@ -13,31 +13,37 @@ export interface ThemeConfig {
   themes: ThemeOption[];
 }
 
-function isValidThemeConfig(config: any): config is ThemeConfig {
+function isValidThemeConfig(config: unknown): config is ThemeConfig {
   if (!config || typeof config !== 'object') {
     return false;
   }
   
-  if (typeof config.defaultTheme !== 'string' || !config.defaultTheme) {
+  const cfg = config as Record<string, unknown>;
+  
+  if (typeof cfg.defaultTheme !== 'string' || !cfg.defaultTheme) {
     return false;
   }
   
-  if (typeof config.enableThemeSwitcher !== 'boolean') {
+  if (typeof cfg.enableThemeSwitcher !== 'boolean') {
     return false;
   }
   
-  if (!Array.isArray(config.themes)) {
+  if (!Array.isArray(cfg.themes)) {
     return false;
   }
   
-  return config.themes.every((theme: any) => 
-    theme &&
-    typeof theme === 'object' &&
-    typeof theme.id === 'string' &&
-    typeof theme.name === 'string' &&
-    typeof theme.description === 'string' &&
-    (theme.enabled === undefined || typeof theme.enabled === 'boolean')
-  );
+  return cfg.themes.every((theme: unknown) => {
+    if (!theme || typeof theme !== 'object') {
+      return false;
+    }
+    const t = theme as Record<string, unknown>;
+    return (
+      typeof t.id === 'string' &&
+      typeof t.name === 'string' &&
+      typeof t.description === 'string' &&
+      (t.enabled === undefined || typeof t.enabled === 'boolean')
+    );
+  });
 }
 
 export function getThemeConfig(): ThemeConfig {
