@@ -8,6 +8,11 @@ on:
     branches:
       - main
 
+# Prevent multiple releases from being created simultaneously
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   release:
     name: Create Automated Release
@@ -29,13 +34,29 @@ jobs:
           DATE=$(date -u +'%Y.%m.%d')
           
           # Count commits today (UTC) to handle multiple releases on the same day
-          BUILD_NUMBER=$(git log --since="today 00:00:00 UTC" --oneline | wc -l | tr -d ' ')
+          # Use explicit date format for reliable cross-platform behavior
+          TODAY_UTC=$(date -u +'%Y-%m-%d')
+          BUILD_NUMBER=$(git log --since="${TODAY_UTC} 00:00:00" --oneline | wc -l | tr -d ' ')
           
-          # Create version tag
-          VERSION="v${DATE}.${BUILD_NUMBER}"
+          # Create version tag with 'release/' prefix to avoid triggering App Store deployment
+          # This decouples automated GitHub releases from manual App Store deployments
+          VERSION="release/${DATE}.${BUILD_NUMBER}"
           
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
           echo "📦 Generated version: ${VERSION}"
+      
+      - name: Get previous tag for release notes
+        id: previous_tag
+        run: |
+          # Get the most recent tag (by creation date) before generating release notes
+          # Use creatordate for reliable chronological sorting regardless of version format
+          LAST_TAG=$(git tag --sort=-creatordate --merged HEAD | grep "^release/" | head -n1 || echo "")
+          echo "last_tag=${LAST_TAG}" >> $GITHUB_OUTPUT
+          if [ -z "$LAST_TAG" ]; then
+            echo "📝 No previous release tags found"
+          else
+            echo "📝 Previous tag: ${LAST_TAG}"
+          fi
       
       - name: Check if tag exists
         id: check_tag
@@ -47,6 +68,11 @@ jobs:
             echo "exists=false" >> $GITHUB_OUTPUT
             echo "✅ Tag ${{ steps.version.outputs.version }} is new"
           fi
+      
+      - name: Skip release (tag already exists)
+        if: steps.check_tag.outputs.exists == 'true'
+        run: |
+          echo "ℹ️ Skipping release because tag ${{ steps.version.outputs.version }} already exists. No new tag or release will be created."
       
       - name: Create and push tag
         if: steps.check_tag.outputs.exists == 'false'
@@ -61,8 +87,8 @@ jobs:
         id: release_notes
         if: steps.check_tag.outputs.exists == 'false'
         run: |
-          # Get the most recent tag that's merged into the current branch
-          LAST_TAG=$(git tag --sort=-version:refname --merged HEAD | head -n1 || echo "")
+          # Use the previous tag identified earlier (before creating the new tag)
+          LAST_TAG="${{ steps.previous_tag.outputs.last_tag }}"
           
           if [ -z "$LAST_TAG" ]; then
             echo "📝 Generating release notes from all commits (no previous tags)"
@@ -83,6 +109,8 @@ jobs:
           echo "" >> release_notes.md
           echo "---" >> release_notes.md
           echo "_This release was automatically generated from the main branch_" >> release_notes.md
+          echo "" >> release_notes.md
+          echo "**Note:** This is an automated GitHub release only. To deploy to the App Store, manually create a tag with pattern \`v*\` (e.g., \`v1.0.0\`)." >> release_notes.md
           
           cat release_notes.md
       
