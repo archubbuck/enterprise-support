@@ -34,14 +34,16 @@ This repository uses GitHub Actions for continuous integration and deployment. T
 - Pushes to `main` branch (automatic)
 
 **What it does:**
-1. Generates a date-based semantic version tag (format: `release/YYYY.MM.DD.BUILD`)
-2. Creates and pushes the version tag
-3. Generates release notes from commit messages since the last release
-4. Creates a GitHub release with the generated notes
+1. Builds the web application to validate it's production-ready
+2. Syncs with Capacitor to ensure iOS compatibility
+3. Generates a date-based semantic version tag (format: `release/YYYY.MM.DD.BUILD`)
+4. Creates and pushes the version tag
+5. Generates release notes from commit messages since the last release
+6. Creates a GitHub release with the generated notes
 
-**Duration:** ~1-2 minutes
+**Duration:** ~3-5 minutes
 
-**Purpose:** Automatically creates a release for every change merged to main, eliminating manual release tag creation and ensuring all changes are properly versioned and released.
+**Purpose:** Automatically creates a release for every change merged to main, eliminating manual release tag creation and ensuring all changes are properly versioned, built, and released. The build and sync steps validate that the code is deployment-ready.
 
 **Version Format:** The workflow uses date-based semantic versioning with `release/` prefix:
 - `release/2025.12.30.1` - First release on December 30, 2025
