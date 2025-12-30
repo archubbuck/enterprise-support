@@ -18,7 +18,7 @@ concurrency:
 jobs:
   release:
     name: Create Automated Release
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     permissions:
       contents: write
     
