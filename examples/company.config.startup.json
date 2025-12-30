@@ -1,0 +1,13 @@
+{
+  "$schema": "../company.config.schema.json",
+  "companyName": "StartupCo",
+  "appName": "StartupCo Support",
+  "appId": "com.startupco.support",
+  "appSubtitle": "Quick IT Help",
+  "domain": "startupco.io",
+  "vpnPortal": "vpn.startupco.io",
+  "contacts": {
+    "email": "help@startupco.io",
+    "emergencyEmail": "urgent@startupco.io"
+  }
+}

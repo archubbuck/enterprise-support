@@ -1,0 +1,129 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/archubbuck/enterprise-support/company.config.schema.json",
+  "title": "Company Configuration Schema",
+  "description": "Configuration schema for enterprise-specific settings in the Enterprise Support application. This file controls branding, contact information, and regional office details.",
+  "type": "object",
+  "required": ["companyName", "appName", "appId", "domain", "contacts"],
+  "properties": {
+    "companyName": {
+      "type": "string",
+      "description": "Your company's official name. Used throughout the application and in document content. Keep it concise for better readability.",
+      "minLength": 1,
+      "maxLength": 100,
+      "examples": ["Acme Corporation", "TechStart Inc", "Global Finance Ltd"]
+    },
+    "appName": {
+      "type": "string",
+      "description": "Full application name shown in the app header and iOS app. Typically includes your company name and 'Support' or similar.",
+      "minLength": 1,
+      "maxLength": 50,
+      "examples": ["Acme Support", "TechStart Help Center", "Global Finance IT Support"]
+    },
+    "appId": {
+      "type": "string",
+      "description": "iOS bundle identifier using reverse domain notation (e.g., com.company.app). CRITICAL: Must be unique in App Store and cannot be changed after submission. Must match your Apple Developer provisioning profile.",
+      "pattern": "^[a-z][a-z0-9-]*(\\.[a-z][a-z0-9-]*)+$",
+      "examples": ["com.acmecorp.support", "com.techstart.helpdesk", "com.globalfinance.itsupport"]
+    },
+    "appSubtitle": {
+      "type": "string",
+      "description": "Optional subtitle displayed in the app header, providing context about the app's purpose.",
+      "maxLength": 100,
+      "examples": ["IT Help & Documentation", "Employee Support Portal", "Technical Resources"]
+    },
+    "domain": {
+      "type": "string",
+      "description": "Your company's primary email domain (without @ symbol). Used in documentation and email references.",
+      "pattern": "^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)*$",
+      "examples": ["acmecorp.com", "techstart.io", "globalfinance.co.uk"]
+    },
+    "vpnPortal": {
+      "type": "string",
+      "description": "Optional VPN portal address. If provided, used in VPN setup documentation. Can be a full URL or hostname.",
+      "examples": ["vpn.acmecorp.com", "https://vpn.techstart.io", "remote.globalfinance.co.uk"]
+    },
+    "contacts": {
+      "type": "object",
+      "description": "Contact information for IT support and emergency services. All email addresses should be monitored mailboxes.",
+      "required": ["email"],
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": "Primary IT helpdesk email address. This is the main contact point for support requests.",
+          "format": "email",
+          "examples": ["ithelpdesk@acmecorp.com", "support@techstart.io", "ithelp@globalfinance.co.uk"]
+        },
+        "emergencyEmail": {
+          "type": "string",
+          "description": "Optional emergency or security team email for urgent issues. Used for security incidents and critical problems.",
+          "format": "email",
+          "examples": ["security@acmecorp.com", "emergency@techstart.io", "secops@globalfinance.co.uk"]
+        },
+        "regions": {
+          "type": "array",
+          "description": "Array of regional office contact information. Add as many regions as your organization has offices. Leave empty if you have only one location or prefer not to list regional contacts.",
+          "items": {
+            "type": "object",
+            "required": ["region", "city", "phone", "hours"],
+            "properties": {
+              "region": {
+                "type": "string",
+                "description": "Geographic region name (e.g., Americas, EMEA, Asia Pacific, or more specific like North America, Europe).",
+                "minLength": 1,
+                "maxLength": 50,
+                "examples": ["Americas", "EMEA", "Asia Pacific", "North America", "Europe", "APAC"]
+              },
+              "city": {
+                "type": "string",
+                "description": "City and state/country for this office. Add '(HQ)' suffix for headquarters location.",
+                "minLength": 1,
+                "maxLength": 100,
+                "examples": ["New York, NY (HQ)", "London, UK", "Tokyo, Japan", "Sydney, Australia"]
+              },
+              "phone": {
+                "type": "string",
+                "description": "Phone number with country code. Format: +[country code] ([area code]) [number]. Use international format for clarity.",
+                "pattern": "^\\+?[0-9\\s\\(\\)\\-\\.]+$",
+                "examples": ["+1 (555) 123-4567", "+44 20 7946 0958", "+81 3 1234 5678"]
+              },
+              "hours": {
+                "type": "string",
+                "description": "Business hours with timezone. Be specific about timezone abbreviations (EST, GMT, JST, etc.) or use UTC offsets.",
+                "minLength": 1,
+                "maxLength": 100,
+                "examples": ["8:00 AM - 6:00 PM EST", "9:00 AM - 5:00 PM GMT", "24/7", "Mon-Fri 9:00-17:00 UTC+9"]
+              }
+            },
+            "additionalProperties": false
+          },
+          "default": []
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "companyName": "Acme Corporation",
+      "appName": "Acme Support",
+      "appId": "com.acmecorp.support",
+      "appSubtitle": "IT Help & Documentation",
+      "domain": "acmecorp.com",
+      "vpnPortal": "vpn.acmecorp.com",
+      "contacts": {
+        "email": "ithelpdesk@acmecorp.com",
+        "emergencyEmail": "security@acmecorp.com",
+        "regions": [
+          {
+            "region": "Americas",
+            "city": "New York, NY (HQ)",
+            "phone": "+1 (555) 123-4567",
+            "hours": "8:00 AM - 6:00 PM EST"
+          }
+        ]
+      }
+    }
+  ]
+}
