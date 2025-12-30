@@ -25,6 +25,9 @@
 
 This application is built as a React web application that is packaged as a native iOS app using Capacitor. This allows the app to be distributed through the App Store while maintaining a single codebase.
 
+![Main Dashboard](./docs/screenshots/main-dashboard.png)
+*Main dashboard showing document categories and navigation*
+
 **Key Benefits:**
 - ✅ Single codebase for web and iOS
 - ✅ Enterprise-agnostic and easily customizable
@@ -86,6 +89,24 @@ This app is designed to be enterprise-agnostic. To customize it for your organiz
 - 🌐 **Offline Support** - All content available offline
 - 🎨 **Modern UI** - Clean, iOS-native design
 - 🎨 **Theme Customization** - Multiple color themes with user selection
+
+#### Document Viewer
+Browse and read support documents with a clean, easy-to-read interface:
+
+![Document Viewer](./docs/screenshots/document-viewer.png)
+*Document viewer showing formatted content with navigation*
+
+#### Search Functionality
+Quickly find documents using the search feature:
+
+![Search Feature](./docs/screenshots/search-feature.png)
+*Search filtering documents in real-time*
+
+#### Contact Directory
+Access IT support contacts organized by region:
+
+![Contacts View](./docs/screenshots/contacts-view.png)
+*Contact directory with regional support teams*
 
 ### Developer Features
 
