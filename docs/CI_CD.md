@@ -41,9 +41,11 @@ This repository uses GitHub Actions for continuous integration and deployment. T
 5. Generates release notes from commit messages since the last release
 6. Creates a GitHub release with the generated notes
 
-**Duration:** ~3-5 minutes
+**Duration:** ~5-8 minutes
 
-**Purpose:** Automatically creates a release for every change merged to main, eliminating manual release tag creation and ensuring all changes are properly versioned, built, and released. The build and sync steps validate that the code is deployment-ready.
+**Runner:** macOS (for full iOS validation including CocoaPods integration)
+
+**Purpose:** Automatically creates a release for every change merged to main, eliminating manual release tag creation and ensuring all changes are properly versioned, built, and released. The build and sync steps validate that the code is deployment-ready. Runs on macOS to ensure complete iOS validation including native dependencies.
 
 **Version Format:** The workflow uses date-based semantic versioning with `release/` prefix:
 - `release/2025.12.30.1` - First release on December 30, 2025
