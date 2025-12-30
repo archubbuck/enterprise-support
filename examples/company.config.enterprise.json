@@ -1,0 +1,51 @@
+{
+  "$schema": "../company.config.schema.json",
+  "companyName": "Global Finance Corp",
+  "appName": "Global Finance IT Support",
+  "appId": "com.globalfinance.itsupport",
+  "appSubtitle": "Enterprise IT Services",
+  "domain": "globalfinance.com",
+  "vpnPortal": "https://vpn.globalfinance.com",
+  "contacts": {
+    "email": "ithelpdesk@globalfinance.com",
+    "emergencyEmail": "security@globalfinance.com",
+    "regions": [
+      {
+        "region": "Americas",
+        "city": "New York, NY (HQ)",
+        "phone": "+1 (212) 555-1000",
+        "hours": "24/7"
+      },
+      {
+        "region": "Americas",
+        "city": "Toronto, Canada",
+        "phone": "+1 (416) 555-2000",
+        "hours": "8:00 AM - 8:00 PM EST"
+      },
+      {
+        "region": "EMEA",
+        "city": "London, UK",
+        "phone": "+44 20 7946 0958",
+        "hours": "8:00 AM - 6:00 PM GMT"
+      },
+      {
+        "region": "EMEA",
+        "city": "Frankfurt, Germany",
+        "phone": "+49 69 7169 0",
+        "hours": "8:00 AM - 6:00 PM CET"
+      },
+      {
+        "region": "Asia Pacific",
+        "city": "Tokyo, Japan",
+        "phone": "+81 3 4578 7400",
+        "hours": "9:00 AM - 6:00 PM JST"
+      },
+      {
+        "region": "Asia Pacific",
+        "city": "Singapore",
+        "phone": "+65 6622 2000",
+        "hours": "9:00 AM - 6:00 PM SGT"
+      }
+    ]
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "$schema": "../company.config.schema.json",
+  "companyName": "Regional Healthcare",
+  "appName": "Healthcare IT Support",
+  "appId": "com.regionalhealthcare.support",
+  "appSubtitle": "Medical IT Services",
+  "domain": "regionalhealthcare.org",
+  "vpnPortal": "vpn.regionalhealthcare.org",
+  "contacts": {
+    "email": "it-support@regionalhealthcare.org",
+    "emergencyEmail": "emergency-it@regionalhealthcare.org",
+    "regions": [
+      {
+        "region": "North Region",
+        "city": "Seattle, WA (HQ)",
+        "phone": "+1 (206) 555-3000",
+        "hours": "7:00 AM - 9:00 PM PST"
+      },
+      {
+        "region": "South Region",
+        "city": "San Diego, CA",
+        "phone": "+1 (619) 555-4000",
+        "hours": "7:00 AM - 9:00 PM PST"
+      }
+    ]
+  }
+}
