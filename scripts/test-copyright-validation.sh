@@ -4,7 +4,7 @@
 # This script tests the copyright validation logic from .github/actions/verify-copyright/action.yml
 # Usage: ./scripts/test-copyright-validation.sh
 
-set -e
+set -euo pipefail
 
 echo "=========================================="
 echo "Copyright Validation Test Suite"
