@@ -41,7 +41,8 @@ runs:
           echo "     - © YYYY Company Name (recommended)"
           echo "     - © Company Name (year added automatically)"
           echo "     - YYYY Company Name (© added automatically)"
-          echo "     - Company Name (both © and year added automatically, min 2 chars with at least one letter)"
+          echo "     - Company Name (both © and year added automatically)"
+          echo "   Note: Company names must be at least 2 characters and contain at least one letter"
           echo "   Found: $COPYRIGHT_CONTENT"
           exit 1
         fi
