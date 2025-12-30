@@ -19,12 +19,30 @@ runs:
         echo "✅ Copyright file exists at: $COPYRIGHT_FILE"
         
         # Read and validate copyright content
-        COPYRIGHT_CONTENT=$(xargs < "$COPYRIGHT_FILE")
+        # Use tr to remove newlines/carriage returns while preserving intentional spaces
+        COPYRIGHT_CONTENT=$(tr -d '\n\r' < "$COPYRIGHT_FILE" | xargs)
         echo "📝 Copyright value: $COPYRIGHT_CONTENT"
         
         # Validate that content is not empty
         if [ -z "$COPYRIGHT_CONTENT" ]; then
           echo "❌ Copyright file is empty"
+          exit 1
+        fi
+        
+        # Source shared validation logic
+        source "$GITHUB_WORKSPACE/scripts/lib/validate-copyright.sh"
+        
+        # Validate copyright format
+        validate_copyright_content "$COPYRIGHT_CONTENT"
+        
+        if [ "$VALIDATION_PASSED" = "false" ]; then
+          echo "❌ Copyright format invalid: $ERROR_MSG"
+          echo "   Expected formats:"
+          echo "     - © YYYY Company Name (recommended)"
+          echo "     - © Company Name (year added automatically)"
+          echo "     - YYYY Company Name (© added automatically)"
+          echo "     - Company Name (both © and year added automatically, min 2 chars with at least one letter)"
+          echo "   Found: $COPYRIGHT_CONTENT"
           exit 1
         fi
         
@@ -44,42 +62,20 @@ runs:
         
         # Check if it starts with copyright symbol or is parseable
         if [[ "$FIRST_WORD" == "©" ]]; then
-          # Has copyright symbol - need at least one more word
-          if [ $WORD_COUNT -lt 2 ]; then
-            echo "❌ Copyright format invalid: Company name missing after © symbol"
-            echo "   Expected format: © Company Name or © YYYY Company Name"
-            echo "   Found: $COPYRIGHT_CONTENT"
-            exit 1
-          fi
-          
           SECOND_WORD="${WORDS[1]}"
           
           # Check if second word is a year (4 digits)
           if [[ "$SECOND_WORD" =~ ^[0-9]{4}$ ]]; then
-            # Format: "© YYYY Company Name" - need at least 3 words
-            if [ $WORD_COUNT -lt 3 ]; then
-              echo "❌ Copyright format invalid: Company name missing after year"
-              echo "   Expected format: © YYYY Company Name"
-              echo "   Found: $COPYRIGHT_CONTENT"
-              exit 1
-            fi
-            # Extract company name (everything after © and year)
+            # Format: "© YYYY Company Name"
             COMPANY_NAME="${WORDS[@]:2}"
             echo "✅ Copyright format valid: © $SECOND_WORD $COMPANY_NAME"
           else
-            # Format: "© Company Name" (no year) - everything after © is company name
+            # Format: "© Company Name" (no year)
             COMPANY_NAME="${WORDS[@]:1}"
             echo "✅ Copyright format valid: © $COMPANY_NAME (year will be added automatically)"
           fi
         elif [[ "$FIRST_WORD" =~ ^[0-9]{4}$ ]]; then
-          # Format: "YYYY Company Name" (legacy, no © symbol) - need at least 2 words
-          if [ $WORD_COUNT -lt 2 ]; then
-            echo "❌ Copyright format invalid: Company name missing after year"
-            echo "   Expected format: YYYY Company Name or © YYYY Company Name"
-            echo "   Found: $COPYRIGHT_CONTENT"
-            exit 1
-          fi
-          # Extract company name (everything after year)
+          # Format: "YYYY Company Name" (legacy, no © symbol)
           COMPANY_NAME="${WORDS[@]:1}"
           echo "✅ Copyright format valid: $FIRST_WORD $COMPANY_NAME (© symbol will be added automatically)"
         else

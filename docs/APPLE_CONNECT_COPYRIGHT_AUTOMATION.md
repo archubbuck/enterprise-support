@@ -200,7 +200,7 @@ A GitHub Action (`verify-copyright`) runs before the Fastlane deployment to vali
 - `© YYYY Company Name` - Full format with copyright symbol and year
 - `© Company Name` - Copyright symbol without year (year added automatically)
 - `YYYY Company Name` - Year without copyright symbol (symbol added automatically)
-- `Company Name` - Company name only (both symbol and year added automatically)
+- `Company Name` - Company name only (both symbol and year added automatically). For this variant, any string with at least 2 characters and at least one letter is treated as the company name.
 
 **Rejected formats:**
 - `© YYYY` - Missing company name after year
