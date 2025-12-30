@@ -83,8 +83,9 @@
               },
               "phone": {
                 "type": "string",
-                "description": "Phone number with country code. Format: +[country code] ([area code]) [number]. Use international format for clarity.",
+                "description": "Phone number with country code. Format: +[country code] ([area code]) [number]. Use international format for clarity. Must contain at least 10 digits.",
                 "pattern": "^\\+?[0-9\\s\\(\\)\\-\\.]+$",
+                "minLength": 10,
                 "examples": ["+1 (555) 123-4567", "+44 20 7946 0958", "+81 3 1234 5678"]
               },
               "hours": {

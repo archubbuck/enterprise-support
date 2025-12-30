@@ -180,7 +180,7 @@ export function validateCompanyConfig(config: unknown): asserts config is Compan
   
   // Validate domain format
   const domainPattern = /^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)*$/;
-  if (!domainPattern.test(config.domain)) {
+  if (!domainPattern.test(config.domain.toLowerCase())) {
     throw new Error(
       `Invalid domain format: "${config.domain}". Must be a valid domain name without @ symbol`
     );
