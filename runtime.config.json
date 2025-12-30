@@ -13,27 +13,32 @@
       {
         "id": "light",
         "name": "Light",
-        "description": "Clean light theme"
+        "description": "Clean light theme",
+        "enabled": true
       },
       {
         "id": "dark",
         "name": "Dark",
-        "description": "Dark mode theme"
+        "description": "Dark mode theme",
+        "enabled": true
       },
       {
         "id": "blue",
         "name": "Ocean Blue",
-        "description": "Professional blue theme"
+        "description": "Professional blue theme",
+        "enabled": true
       },
       {
         "id": "green",
         "name": "Forest Green",
-        "description": "Natural green theme"
+        "description": "Natural green theme",
+        "enabled": true
       },
       {
         "id": "purple",
         "name": "Royal Purple",
-        "description": "Elegant purple theme"
+        "description": "Elegant purple theme",
+        "enabled": true
       }
     ]
   }

@@ -29,27 +29,32 @@ Theme settings are configured in `runtime.config.json`:
       {
         "id": "light",
         "name": "Light",
-        "description": "Clean light theme"
+        "description": "Clean light theme",
+        "enabled": true
       },
       {
         "id": "dark",
         "name": "Dark",
-        "description": "Dark mode theme"
+        "description": "Dark mode theme",
+        "enabled": true
       },
       {
         "id": "blue",
         "name": "Ocean Blue",
-        "description": "Professional blue theme"
+        "description": "Professional blue theme",
+        "enabled": true
       },
       {
         "id": "green",
         "name": "Forest Green",
-        "description": "Natural green theme"
+        "description": "Natural green theme",
+        "enabled": true
       },
       {
         "id": "purple",
         "name": "Royal Purple",
-        "description": "Elegant purple theme"
+        "description": "Elegant purple theme",
+        "enabled": true
       }
     ]
   }
@@ -72,13 +77,15 @@ Each theme in the `themes` array should have:
 {
   "id": "unique-theme-id",
   "name": "Display Name",
-  "description": "Brief description"
+  "description": "Brief description",
+  "enabled": true
 }
 ```
 
 - **id**: Unique identifier matching CSS class name (e.g., "light", "dark", "blue")
 - **name**: User-friendly display name shown in the theme selector
 - **description**: Short description shown below the theme name
+- **enabled**: Optional boolean flag to enable/disable a theme (default: `true`). Disabled themes won't appear in the theme selector.
 
 ## Usage
 
@@ -116,7 +123,8 @@ Add a new theme object to `runtime.config.json`:
 {
   "id": "custom",
   "name": "Custom Theme",
-  "description": "My custom color theme"
+  "description": "My custom color theme",
+  "enabled": true
 }
 ```
 
@@ -148,20 +156,16 @@ Add CSS variables in `src/main.css`:
 }
 ```
 
-### 3. Register Theme in Provider
+### 3. Test the Theme
 
-Update `src/components/ThemeProvider.tsx` to include the new theme:
-
-```typescript
-themes={['light', 'dark', 'blue', 'green', 'purple', 'custom']}
-```
-
-### 4. Test the Theme
+The theme will be automatically available in the theme selector once you:
 
 1. Restart the development server
 2. Open the theme selector
 3. Select your custom theme
 4. Verify all UI elements render correctly
+
+**Note**: You don't need to manually register the theme in code - it's automatically loaded from the configuration.
 
 ## Available Themes
 
@@ -198,6 +202,51 @@ When designing custom themes:
 2. **Color Blindness**: Test themes with color blindness simulators
 3. **Focus Indicators**: Ensure focus rings are visible on all themes
 4. **Semantic Colors**: Maintain consistent meaning for colors (red for errors, green for success)
+
+## Enabling/Disabling Themes
+
+You can enable or disable individual themes by setting the `enabled` property in the configuration:
+
+### Disable a Specific Theme
+
+To hide a theme from the theme selector without removing its CSS:
+
+```json
+{
+  "themes": [
+    {
+      "id": "light",
+      "name": "Light",
+      "description": "Clean light theme",
+      "enabled": true
+    },
+    {
+      "id": "purple",
+      "name": "Royal Purple",
+      "description": "Elegant purple theme",
+      "enabled": false
+    }
+  ]
+}
+```
+
+In this example, the Purple theme won't appear in the theme selector, even though the CSS is still available. This is useful for:
+- Temporarily disabling themes during testing
+- Limiting theme choices for specific deployments
+- Gradually rolling out new themes
+
+### Re-enable a Theme
+
+Simply set `enabled` to `true` or remove the property (defaults to `true`):
+
+```json
+{
+  "id": "purple",
+  "name": "Royal Purple",
+  "description": "Elegant purple theme",
+  "enabled": true
+}
+```
 
 ## Disabling Theme Switching
 
