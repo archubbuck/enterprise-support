@@ -53,7 +53,8 @@ function isValidAppId(appId) {
  */
 function isValidPhone(phone) {
   const phonePattern = /^[+]?[0-9\s\(\)\-\.]+$/;
-  return phonePattern.test(phone) && phone.length >= 10;
+  const digitCount = phone.replace(/[^0-9]/g, '').length;
+  return phonePattern.test(phone) && digitCount >= 10;
 }
 
 /**
@@ -175,10 +176,11 @@ function validateConfig(config, filePath) {
               );
             }
             
-            // Check if hours includes timezone
-            if (region.hours && !/(EST|EDT|PST|PDT|CST|CDT|MST|MDT|GMT|UTC|BST|CET|CEST|JST|KST|SGT|HKT|AEST|AEDT|24\/7)/i.test(region.hours)) {
+            // Check if hours includes timezone or 24/7
+            // Use a flexible pattern that catches most common timezone formats
+            if (region.hours && !/((GMT|UTC|EST|EDT|PST|PDT|CST|CDT|MST|MDT|BST|CET|CEST|JST|KST|SGT|HKT|AEST|AEDT|IST|AST|NST)|24\/7|\+\d{1,2}:\d{2}|\-\d{1,2}:\d{2})/i.test(region.hours)) {
               warnings.push(
-                `${regionPath}.hours "${region.hours}" should include timezone (e.g., EST, GMT, JST)`
+                `${regionPath}.hours "${region.hours}" should include timezone (e.g., EST, GMT, JST, UTC+9) or specify 24/7`
               );
             }
           });
