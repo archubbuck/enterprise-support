@@ -19,7 +19,7 @@ runs:
         echo "✅ Copyright file exists at: $COPYRIGHT_FILE"
         
         # Read and validate copyright content
-        # Use tr to remove newlines/carriage returns while preserving intentional spaces
+        # Note: tr removes newlines/returns, xargs normalizes whitespace (collapses multiple spaces)
         COPYRIGHT_CONTENT=$(tr -d '\n\r' < "$COPYRIGHT_FILE" | xargs)
         echo "📝 Copyright value: $COPYRIGHT_CONTENT"
         
