@@ -25,6 +25,13 @@ const colors = {
 };
 
 /**
+ * Common timezone abbreviations pattern
+ * Matches 2-4 uppercase letters (most timezone abbreviations) or 24/7
+ * Also matches UTC offset formats like UTC+9 or GMT-5
+ */
+const TIMEZONE_PATTERN = /([A-Z]{2,4}|24\/7|UTC[+-]\d{1,2}|GMT[+-]\d{1,2})/;
+
+/**
  * Validate email format
  */
 function isValidEmail(email) {
@@ -36,8 +43,8 @@ function isValidEmail(email) {
  * Validate domain format
  */
 function isValidDomain(domain) {
-  const domainPattern = /^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)*$/i;
-  return domainPattern.test(domain);
+  const domainPattern = /^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)*$/;
+  return domainPattern.test(domain.toLowerCase());
 }
 
 /**
@@ -52,9 +59,10 @@ function isValidAppId(appId) {
  * Validate phone number format
  */
 function isValidPhone(phone) {
+  const trimmedPhone = typeof phone === 'string' ? phone.trim() : '';
   const phonePattern = /^[+]?[0-9\s\(\)\-\.]+$/;
-  const digitCount = phone.replace(/[^0-9]/g, '').length;
-  return phonePattern.test(phone) && digitCount >= 10;
+  const digitCount = trimmedPhone.replace(/[^0-9]/g, '').length;
+  return phonePattern.test(trimmedPhone) && digitCount >= 10;
 }
 
 /**
@@ -177,8 +185,8 @@ function validateConfig(config, filePath) {
             }
             
             // Check if hours includes timezone or 24/7
-            // Use a flexible pattern that catches most common timezone formats
-            if (region.hours && !/((GMT|UTC|EST|EDT|PST|PDT|CST|CDT|MST|MDT|BST|CET|CEST|JST|KST|SGT|HKT|AEST|AEDT|IST|AST|NST)|24\/7|\+\d{1,2}:\d{2}|\-\d{1,2}:\d{2})/i.test(region.hours)) {
+            // Pattern matches common timezone abbreviations (2-4 uppercase letters) or UTC/GMT offsets
+            if (region.hours && !TIMEZONE_PATTERN.test(region.hours)) {
               warnings.push(
                 `${regionPath}.hours "${region.hours}" should include timezone (e.g., EST, GMT, JST, UTC+9) or specify 24/7`
               );
