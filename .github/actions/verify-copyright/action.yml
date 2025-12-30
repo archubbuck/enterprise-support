@@ -1,19 +1,91 @@
 name: 'Verify Copyright File'
-description: 'Verifies that the copyright file exists and logs its contents for debugging'
+description: 'Verifies that the copyright file exists and validates its format for App Store metadata'
 runs:
   using: 'composite'
   steps:
-    - name: Log copyright value
+    - name: Validate copyright metadata
       shell: bash
       working-directory: ios/App
       run: |
         echo "📋 Checking copyright file..."
         COPYRIGHT_FILE="fastlane/metadata/en-US/copyright.txt"
-        if [ -f "$COPYRIGHT_FILE" ]; then
-          echo "✅ Copyright file exists at: $COPYRIGHT_FILE"
-          echo "📝 Copyright value:"
-          cat "$COPYRIGHT_FILE"
-        else
+        
+        # Check if file exists
+        if [ ! -f "$COPYRIGHT_FILE" ]; then
           echo "❌ Copyright file not found at: $COPYRIGHT_FILE"
           exit 1
         fi
+        
+        echo "✅ Copyright file exists at: $COPYRIGHT_FILE"
+        
+        # Read and validate copyright content
+        COPYRIGHT_CONTENT=$(cat "$COPYRIGHT_FILE" | tr -d '\n' | xargs)
+        echo "📝 Copyright value: $COPYRIGHT_CONTENT"
+        
+        # Validate that content is not empty
+        if [ -z "$COPYRIGHT_CONTENT" ]; then
+          echo "❌ Copyright file is empty"
+          exit 1
+        fi
+        
+        # Parse copyright to validate format
+        # The Fastlane script expects formats like:
+        # - "© YYYY Company Name" (recommended)
+        # - "YYYY Company Name" (legacy)
+        # - "© Company Name" (no year)
+        # - "Company Name" (fallback)
+        
+        # Split content into words for parsing
+        read -ra WORDS <<< "$COPYRIGHT_CONTENT"
+        WORD_COUNT=${#WORDS[@]}
+        
+        # Extract the first word to check for copyright symbol
+        FIRST_WORD="${WORDS[0]}"
+        
+        # Check if it starts with copyright symbol or is parseable
+        if [[ "$FIRST_WORD" == "©" ]]; then
+          # Has copyright symbol - need at least one more word
+          if [ $WORD_COUNT -lt 2 ]; then
+            echo "❌ Copyright format invalid: Company name missing after © symbol"
+            echo "   Expected format: © Company Name or © YYYY Company Name"
+            echo "   Found: $COPYRIGHT_CONTENT"
+            exit 1
+          fi
+          
+          SECOND_WORD="${WORDS[1]}"
+          
+          # Check if second word is a year (4 digits)
+          if [[ "$SECOND_WORD" =~ ^[0-9]{4}$ ]]; then
+            # Format: "© YYYY Company Name" - need at least 3 words
+            if [ $WORD_COUNT -lt 3 ]; then
+              echo "❌ Copyright format invalid: Company name missing after year"
+              echo "   Expected format: © YYYY Company Name"
+              echo "   Found: $COPYRIGHT_CONTENT"
+              exit 1
+            fi
+            # Extract company name (everything after © and year)
+            COMPANY_NAME="${WORDS[@]:2}"
+            echo "✅ Copyright format valid: © $SECOND_WORD $COMPANY_NAME"
+          else
+            # Format: "© Company Name" (no year) - everything after © is company name
+            COMPANY_NAME="${WORDS[@]:1}"
+            echo "✅ Copyright format valid: © $COMPANY_NAME (year will be added automatically)"
+          fi
+        elif [[ "$FIRST_WORD" =~ ^[0-9]{4}$ ]]; then
+          # Format: "YYYY Company Name" (legacy, no © symbol) - need at least 2 words
+          if [ $WORD_COUNT -lt 2 ]; then
+            echo "❌ Copyright format invalid: Company name missing after year"
+            echo "   Expected format: YYYY Company Name or © YYYY Company Name"
+            echo "   Found: $COPYRIGHT_CONTENT"
+            exit 1
+          fi
+          # Extract company name (everything after year)
+          COMPANY_NAME="${WORDS[@]:1}"
+          echo "✅ Copyright format valid: $FIRST_WORD $COMPANY_NAME (© symbol will be added automatically)"
+        else
+          # Format: "Company Name" (no © symbol, no year)
+          COMPANY_NAME="$COPYRIGHT_CONTENT"
+          echo "✅ Copyright format valid: $COMPANY_NAME (© symbol and year will be added automatically)"
+        fi
+        
+        echo "✅ Copyright metadata validation passed"
