@@ -6,6 +6,12 @@
 
 set -euo pipefail
 
+# Get the directory of this script
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Source shared validation logic
+source "$SCRIPT_DIR/lib/validate-copyright.sh"
+
 echo "=========================================="
 echo "Copyright Validation Test Suite"
 echo "=========================================="
@@ -32,57 +38,8 @@ test_copyright_validation() {
     echo "Input: '$test_content'"
     echo "Expected: $([ "$should_pass" = "true" ] && echo "PASS" || echo "FAIL")"
     
-    # Validate copyright content
-    COPYRIGHT_CONTENT="$test_content"
-    
-    # Run validation logic
-    if [ -z "$COPYRIGHT_CONTENT" ]; then
-        if [ "$should_pass" = "false" ]; then
-            echo -e "${GREEN}✓ PASS${NC} - Correctly rejected empty content"
-            TESTS_PASSED=$((TESTS_PASSED + 1))
-        else
-            echo -e "${RED}✗ FAIL${NC} - Should have accepted empty content"
-            TESTS_FAILED=$((TESTS_FAILED + 1))
-        fi
-        echo ""
-        return
-    fi
-    
-    # Split content into words for parsing
-    read -ra WORDS <<< "$COPYRIGHT_CONTENT"
-    WORD_COUNT=${#WORDS[@]}
-    
-    # Extract the first word to check for copyright symbol
-    FIRST_WORD="${WORDS[0]}"
-    
-    # Validation logic
-    VALIDATION_PASSED=true
-    ERROR_MSG=""
-    
-    if [[ "$FIRST_WORD" == "©" ]]; then
-        # Has copyright symbol - need at least one more word
-        if [ $WORD_COUNT -lt 2 ]; then
-            VALIDATION_PASSED=false
-            ERROR_MSG="Company name missing after © symbol"
-        else
-            SECOND_WORD="${WORDS[1]}"
-            
-            # Check if second word is a year (4 digits)
-            if [[ "$SECOND_WORD" =~ ^[0-9]{4}$ ]]; then
-                # Format: "© YYYY Company Name" - need at least 3 words
-                if [ $WORD_COUNT -lt 3 ]; then
-                    VALIDATION_PASSED=false
-                    ERROR_MSG="Company name missing after year"
-                fi
-            fi
-        fi
-    elif [[ "$FIRST_WORD" =~ ^[0-9]{4}$ ]]; then
-        # Format: "YYYY Company Name" (legacy, no © symbol) - need at least 2 words
-        if [ $WORD_COUNT -lt 2 ]; then
-            VALIDATION_PASSED=false
-            ERROR_MSG="Company name missing after year"
-        fi
-    fi
+    # Run shared validation logic
+    validate_copyright_content "$test_content"
     
     # Check test result
     if [ "$VALIDATION_PASSED" = "true" ] && [ "$should_pass" = "true" ]; then
@@ -113,15 +70,19 @@ test_copyright_validation "Format with © but no year" "© Enterprise Support" "
 test_copyright_validation "Format with © but no year (multi-word)" "© Acme Corporation Inc" "true"
 test_copyright_validation "Format with year but no ©" "2025 Enterprise Support" "true"
 test_copyright_validation "Format with year but no © (multi-word)" "2025 Acme Corporation Inc" "true"
-test_copyright_validation "Company name only" "Enterprise Support" "true"
+test_copyright_validation "Company name only (2+ words)" "Enterprise Support" "true"
 test_copyright_validation "Company name only (multi-word)" "Acme Corporation Inc" "true"
-test_copyright_validation "Single word company name" "Acme" "true"
+test_copyright_validation "Two letter company name" "AB" "true"
 
 # Invalid formats that should fail
 test_copyright_validation "Only © and year (missing company)" "© 2025" "false"
 test_copyright_validation "Only year (missing company)" "2025" "false"
 test_copyright_validation "Only © symbol (missing company)" "©" "false"
 test_copyright_validation "Empty string" "" "false"
+test_copyright_validation "Single character (no letter)" "1" "false"
+test_copyright_validation "Single special character" "@" "false"
+test_copyright_validation "Two numbers (no letter)" "12" "false"
+test_copyright_validation "Special characters only" "©©" "false"
 
 # Summary
 echo "=========================================="
@@ -139,3 +100,4 @@ else
     echo -e "${RED}Some tests failed!${NC}"
     exit 1
 fi
+
