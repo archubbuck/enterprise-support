@@ -4,6 +4,7 @@ export interface ThemeOption {
   id: string;
   name: string;
   description: string;
+  enabled?: boolean;
 }
 
 export interface ThemeConfig {
@@ -34,7 +35,8 @@ function isValidThemeConfig(config: any): config is ThemeConfig {
     typeof theme === 'object' &&
     typeof theme.id === 'string' &&
     typeof theme.name === 'string' &&
-    typeof theme.description === 'string'
+    typeof theme.description === 'string' &&
+    (theme.enabled === undefined || typeof theme.enabled === 'boolean')
   );
 }
 
@@ -48,8 +50,8 @@ export function getThemeConfig(): ThemeConfig {
       defaultTheme: 'light',
       enableThemeSwitcher: true,
       themes: [
-        { id: 'light', name: 'Light', description: 'Clean light theme' },
-        { id: 'dark', name: 'Dark', description: 'Dark mode theme' },
+        { id: 'light', name: 'Light', description: 'Clean light theme', enabled: true },
+        { id: 'dark', name: 'Dark', description: 'Dark mode theme', enabled: true },
       ],
     };
   }
@@ -66,5 +68,7 @@ export function isThemeSwitcherEnabled(): boolean {
 }
 
 export function getAvailableThemes(): ThemeOption[] {
-  return getThemeConfig().themes;
+  const config = getThemeConfig();
+  // Filter to only return enabled themes (enabled is true or undefined for backward compatibility)
+  return config.themes.filter(theme => theme.enabled !== false);
 }
