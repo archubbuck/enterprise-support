@@ -1,0 +1,105 @@
+name: Automated Release
+
+# Automatically creates a release when the main branch is updated
+# This ensures every change to main is tagged and released
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    name: Create Automated Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for accurate version numbering
+      
+      - name: Generate version tag
+        id: version
+        run: |
+          # Generate a date-based semantic version (YYYY.MM.DD.BUILD)
+          # This ensures unique, monotonically increasing versions
+          DATE=$(date +'%Y.%m.%d')
+          
+          # Count commits today to handle multiple releases on the same day
+          BUILD_NUMBER=$(git log --since="00:00:00" --oneline | wc -l | tr -d ' ')
+          
+          # Create version tag
+          VERSION="v${DATE}.${BUILD_NUMBER}"
+          
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "📦 Generated version: ${VERSION}"
+      
+      - name: Check if tag exists
+        id: check_tag
+        run: |
+          if git rev-parse "${{ steps.version.outputs.version }}" >/dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "⚠️  Tag ${{ steps.version.outputs.version }} already exists"
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "✅ Tag ${{ steps.version.outputs.version }} is new"
+          fi
+      
+      - name: Create and push tag
+        if: steps.check_tag.outputs.exists == 'false'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "${{ steps.version.outputs.version }}" -m "Automated release ${{ steps.version.outputs.version }}"
+          git push origin "${{ steps.version.outputs.version }}"
+          echo "✅ Created and pushed tag ${{ steps.version.outputs.version }}"
+      
+      - name: Generate release notes
+        id: release_notes
+        if: steps.check_tag.outputs.exists == 'false'
+        run: |
+          # Get commits since last tag, or all commits if no tags exist
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          
+          if [ -z "$LAST_TAG" ]; then
+            echo "📝 Generating release notes from all commits (no previous tags)"
+            COMMITS=$(git log --pretty=format:"- %s (%h)" --no-merges)
+          else
+            echo "📝 Generating release notes since ${LAST_TAG}"
+            COMMITS=$(git log ${LAST_TAG}..HEAD --pretty=format:"- %s (%h)" --no-merges)
+          fi
+          
+          # Create release notes
+          echo "## Changes" > release_notes.md
+          echo "" >> release_notes.md
+          if [ -z "$COMMITS" ]; then
+            echo "- No new commits in this release" >> release_notes.md
+          else
+            echo "$COMMITS" >> release_notes.md
+          fi
+          echo "" >> release_notes.md
+          echo "---" >> release_notes.md
+          echo "_This release was automatically generated from the main branch_" >> release_notes.md
+          
+          cat release_notes.md
+      
+      - name: Create GitHub Release
+        if: steps.check_tag.outputs.exists == 'false'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          name: Release ${{ steps.version.outputs.version }}
+          body_path: release_notes.md
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Release summary
+        if: steps.check_tag.outputs.exists == 'false'
+        run: |
+          echo "🎉 Successfully created release ${{ steps.version.outputs.version }}"
+          echo "📦 View the release at: ${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ steps.version.outputs.version }}"
