@@ -56,10 +56,42 @@ Visit `http://localhost:5173` to see the app running.
 
 ## Configuration
 
-This app is designed to be enterprise-agnostic. To customize it for your organization, edit the `company.config.json` file in the root directory:
+This app is designed to be enterprise-agnostic. To customize it for your organization, edit the `company.config.json` file in the root directory.
+
+### Quick Configuration
+
+Choose a template that matches your organization:
+
+```bash
+# For startups/small businesses
+cp examples/company.config.startup.json company.config.json
+
+# For large enterprises
+cp examples/company.config.enterprise.json company.config.json
+
+# For regional organizations
+cp examples/company.config.regional.json company.config.json
+```
+
+Then edit with your organization's information and validate:
+
+```bash
+npm run validate:company-config
+```
+
+### Configuration Features
+
+- ✅ **JSON Schema Validation** - Automatic validation with detailed error messages
+- ✅ **TypeScript Type Safety** - Compile-time type checking
+- ✅ **IDE Integration** - Autocomplete and inline documentation
+- ✅ **Example Templates** - Pre-configured for different organization sizes
+- ✅ **Comprehensive Documentation** - Detailed guides and best practices
+
+### Example Configuration
 
 ```json
 {
+  "$schema": "./company.config.schema.json",
   "companyName": "Your Company",
   "appName": "Your Company Support",
   "appId": "com.yourcompany.support",
@@ -76,7 +108,10 @@ This app is designed to be enterprise-agnostic. To customize it for your organiz
 }
 ```
 
-📖 **Learn more:** See the [Configuration Guide](./docs/CONFIGURATION.md) for detailed configuration options.
+📖 **Learn more:** 
+- [Configuration Guide](./docs/CONFIGURATION.md) - Detailed configuration options
+- [Company Config Guide](./COMPANY_CONFIG_GUIDE.md) - Comprehensive schema documentation
+- [Examples](./examples/README.md) - Example configurations for different scenarios
 
 ## Features
 
@@ -201,7 +236,8 @@ enterprise-support/
 - `npm run build` - Build for production
 - `npm run lint` - Run ESLint
 - `npm run validate:json` - Validate all JSON files
-- `npm run check` - Run all validation checks (JSON + lint)
+- `npm run validate:company-config` - Validate company configuration
+- `npm run check` - Run all validation checks (JSON + company config + lint)
 - `npm run ios:build` - Build and sync to iOS
 - `npm run ios:open` - Open project in Xcode (Mac only)
 - `npm run ios:run` - Build, sync, and open in Xcode (Mac only)

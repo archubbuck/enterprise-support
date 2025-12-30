@@ -1,4 +1,5 @@
 {
+  "$schema": "./company.config.schema.json",
   "companyName": "Your Company",
   "appName": "Enterprise Support",
   "appId": "com.enterprise.support",
