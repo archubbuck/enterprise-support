@@ -85,6 +85,7 @@ This app is designed to be enterprise-agnostic. To customize it for your organiz
 - 📞 **Contact Directory** - Quick access to IT support contacts
 - 🌐 **Offline Support** - All content available offline
 - 🎨 **Modern UI** - Clean, iOS-native design
+- 🎨 **Theme Customization** - Multiple color themes with user selection
 
 ### Developer Features
 
@@ -93,6 +94,7 @@ This app is designed to be enterprise-agnostic. To customize it for your organiz
 - 📝 **Markdown Content** - Easy document management
 - 🔧 **Configurable** - Enterprise-agnostic configuration system
 - 🧩 **Component Library** - Built with Radix UI primitives
+- 🎨 **Theme System** - Configurable color themes with runtime switching
 
 ## Development
 
@@ -134,6 +136,7 @@ Comprehensive documentation is available to help you get started and work with t
 
 - 📚 [Quick Start Guide](./docs/QUICK_START.md) - Get up and running quickly
 - ⚙️ [Configuration Guide](./docs/CONFIGURATION.md) - Customize for your organization
+- 🎨 [Theme Configuration Guide](./docs/THEME_CONFIGURATION.md) - Configure color themes
 - 📱 [iOS Development Guide](./docs/iOS_DEVELOPMENT.md) - iOS-specific development instructions
 - 📝 [Document Management](./docs/DOCUMENTS.md) - Managing support documents
 - 🚀 [CI/CD Pipeline](./docs/CI_CD.md) - Continuous integration and deployment

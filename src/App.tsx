@@ -8,6 +8,7 @@ import { DocumentTile } from '@/components/DocumentTile';
 import { DocumentViewer } from '@/components/DocumentViewer';
 import { ContactsView } from '@/components/ContactsView';
 import { TagFilter } from '@/components/TagFilter';
+import { ThemeSelector } from '@/components/ThemeSelector';
 import { loadSupportDocuments, SupportDocument } from '@/lib/documents';
 import { useFeaturePreview } from '@/hooks/useFeaturePreview';
 import companyConfig from '../company.config.json';
@@ -83,7 +84,8 @@ function App() {
               <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
-          <h1 className="text-xl font-semibold tracking-tight text-foreground">{companyConfig.appName}</h1>
+          <h1 className="text-xl font-semibold tracking-tight text-foreground flex-1">{companyConfig.appName}</h1>
+          <ThemeSelector />
         </div>
         <p className="text-sm text-muted-foreground ml-11">{companyConfig.appSubtitle}</p>
       </header>

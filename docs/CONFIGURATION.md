@@ -159,9 +159,16 @@ If you need to maintain apps for multiple enterprises:
 
 Alternatively, use environment-specific config files and a build script to select the appropriate configuration at build time.
 
+## Theme Configuration
+
+The application supports multiple color themes that users can select at runtime. Theme settings are configured in `runtime.config.json`.
+
+For detailed information about configuring and customizing themes, see the [Theme Configuration Guide](./THEME_CONFIGURATION.md).
+
 ## Related Documentation
 
 - [Quick Start Guide](./QUICK_START.md) - Getting started with development
+- [Theme Configuration Guide](./THEME_CONFIGURATION.md) - Configuring color themes
 - [iOS Development Guide](./iOS_DEVELOPMENT.md) - iOS-specific instructions
 - [Document Management](./DOCUMENTS.md) - Managing support documents
 - [README](../README.md) - Project overview
