@@ -5,5 +5,36 @@
     "pdfDocuments": true,
     "wordDocuments": true,
     "imageDocuments": true
+  },
+  "themeConfig": {
+    "defaultTheme": "light",
+    "enableThemeSwitcher": true,
+    "themes": [
+      {
+        "id": "light",
+        "name": "Light",
+        "description": "Clean light theme"
+      },
+      {
+        "id": "dark",
+        "name": "Dark",
+        "description": "Dark mode theme"
+      },
+      {
+        "id": "blue",
+        "name": "Ocean Blue",
+        "description": "Professional blue theme"
+      },
+      {
+        "id": "green",
+        "name": "Forest Green",
+        "description": "Natural green theme"
+      },
+      {
+        "id": "purple",
+        "name": "Royal Purple",
+        "description": "Elegant purple theme"
+      }
+    ]
   }
 }
