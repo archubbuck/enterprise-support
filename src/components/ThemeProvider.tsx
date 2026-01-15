@@ -1,14 +1,18 @@
 import { ThemeProvider as NextThemesProvider } from 'next-themes';
 import { ReactNode } from 'react';
-import { getDefaultTheme, getAvailableThemes } from '@/lib/theme-config';
+import { useThemeConfig } from '@/hooks/useCompanyConfig';
+import { getDefaultTheme, getAvailableThemes, DEFAULT_THEME_CONFIG } from '@/lib/theme-config';
 
 interface ThemeProviderProps {
   children: ReactNode;
 }
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
-  const defaultTheme = getDefaultTheme();
-  const availableThemes = getAvailableThemes();
+  const themeConfig = useThemeConfig();
+  
+  // Use config or defaults while loading
+  const defaultTheme = getDefaultTheme(themeConfig);
+  const availableThemes = getAvailableThemes(themeConfig ?? DEFAULT_THEME_CONFIG);
   const themeIds = availableThemes.map(theme => theme.id);
   
   return (

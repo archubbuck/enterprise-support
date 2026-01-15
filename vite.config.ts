@@ -52,12 +52,12 @@ export default defineConfig({
       },
     } as PluginOption,
     {
-      name: 'copy-runtime-config',
+      name: 'copy-company-config',
       closeBundle() {
         try {
-          const srcPath = resolve(projectRoot, 'runtime.config.json');
+          const srcPath = resolve(projectRoot, 'company.config.json');
           const destDir = resolve(projectRoot, 'dist');
-          const destPath = resolve(destDir, 'runtime.config.json');
+          const destPath = resolve(destDir, 'company.config.json');
           if (existsSync(srcPath)) {
             if (!existsSync(destDir)) {
               mkdirSync(destDir, { recursive: true });
@@ -65,7 +65,7 @@ export default defineConfig({
             copyFileSync(srcPath, destPath);
           }
         } catch (error) {
-          console.warn('Warning: Failed to copy runtime.config.json during closeBundle:', error);
+          console.warn('Warning: Failed to copy company.config.json during closeBundle:', error);
         }
       },
     } as PluginOption,

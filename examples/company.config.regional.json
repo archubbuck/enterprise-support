@@ -1,5 +1,6 @@
 {
   "$schema": "../company.config.schema.json",
+  "$version": "1.0",
   "companyName": "Regional Healthcare",
   "appName": "Healthcare IT Support",
   "appId": "com.regionalhealthcare.support",
@@ -21,6 +22,30 @@
         "city": "San Diego, CA",
         "phone": "+1 (619) 555-4000",
         "hours": "7:00 AM - 9:00 PM PST"
+      }
+    ]
+  },
+  "features": {
+    "tagFiltering": true,
+    "pdfDocuments": true,
+    "wordDocuments": true,
+    "imageDocuments": true
+  },
+  "theme": {
+    "defaultTheme": "light",
+    "enableThemeSwitcher": true,
+    "themes": [
+      {
+        "id": "light",
+        "name": "Light",
+        "description": "Clean light theme",
+        "enabled": true
+      },
+      {
+        "id": "dark",
+        "name": "Dark",
+        "description": "Dark mode theme",
+        "enabled": true
       }
     ]
   }

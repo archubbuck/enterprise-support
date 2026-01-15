@@ -6,6 +6,84 @@
  */
 
 /**
+ * Feature flags configuration
+ * Controls which application features are enabled or disabled
+ */
+export interface FeatureConfig {
+  /**
+   * Enable tag-based filtering in document lists
+   */
+  tagFiltering: boolean;
+  
+  /**
+   * Enable PDF document viewing
+   */
+  pdfDocuments: boolean;
+  
+  /**
+   * Enable Word document (.docx) viewing
+   */
+  wordDocuments: boolean;
+  
+  /**
+   * Enable image document viewing
+   */
+  imageDocuments: boolean;
+}
+
+/**
+ * Theme definition for UI customization
+ */
+export interface Theme {
+  /**
+   * Unique theme identifier used in CSS class names and storage
+   * @example "light"
+   * @example "dark"
+   * @example "corporate-blue"
+   */
+  id: string;
+  
+  /**
+   * Human-readable theme name shown in the theme selector
+   * @example "Light"
+   * @example "Dark Mode"
+   */
+  name: string;
+  
+  /**
+   * Optional description of the theme
+   */
+  description?: string;
+  
+  /**
+   * Whether this theme is available for selection
+   */
+  enabled: boolean;
+}
+
+/**
+ * Theme configuration for application appearance
+ */
+export interface ThemeConfig {
+  /**
+   * Default theme ID applied on first load
+   * Must match one of the theme IDs in the themes array
+   */
+  defaultTheme: string;
+  
+  /**
+   * Show theme selector in the UI
+   * Set to false to lock users to the default theme
+   */
+  enableThemeSwitcher: boolean;
+  
+  /**
+   * Available themes for the application
+   */
+  themes: Theme[];
+}
+
+/**
  * Regional office contact information
  */
 export interface RegionalContact {
@@ -132,6 +210,23 @@ export interface CompanyConfig {
    * All email addresses should be monitored mailboxes
    */
   contacts: ContactInfo;
+  
+  /**
+   * Schema version for enterprise stability and migration support
+   * Semantic versioning format (major.minor)
+   * @example "1.0"
+   */
+  $version: string;
+  
+  /**
+   * Feature flags to enable or disable application features
+   */
+  features: FeatureConfig;
+  
+  /**
+   * Theme configuration for application appearance
+   */
+  theme: ThemeConfig;
 }
 
 /**
@@ -147,7 +242,9 @@ export function isCompanyConfig(obj: unknown): obj is CompanyConfig {
   
   const config = obj as Partial<CompanyConfig>;
   
-  return (
+  // Check base required fields
+  const hasBaseFields = (
+    typeof config.$version === 'string' &&
     typeof config.companyName === 'string' &&
     typeof config.appName === 'string' &&
     typeof config.appId === 'string' &&
@@ -156,6 +253,32 @@ export function isCompanyConfig(obj: unknown): obj is CompanyConfig {
     config.contacts !== null &&
     typeof config.contacts.email === 'string'
   );
+  
+  if (!hasBaseFields) return false;
+  
+  // Check features object
+  const hasFeatures = (
+    typeof config.features === 'object' &&
+    config.features !== null &&
+    typeof config.features.tagFiltering === 'boolean' &&
+    typeof config.features.pdfDocuments === 'boolean' &&
+    typeof config.features.wordDocuments === 'boolean' &&
+    typeof config.features.imageDocuments === 'boolean'
+  );
+  
+  if (!hasFeatures) return false;
+  
+  // Check theme object
+  const hasTheme = (
+    typeof config.theme === 'object' &&
+    config.theme !== null &&
+    typeof config.theme.defaultTheme === 'string' &&
+    typeof config.theme.enableThemeSwitcher === 'boolean' &&
+    Array.isArray(config.theme.themes) &&
+    config.theme.themes.length > 0
+  );
+  
+  return hasTheme;
 }
 
 /**
@@ -167,7 +290,15 @@ export function isCompanyConfig(obj: unknown): obj is CompanyConfig {
  */
 export function validateCompanyConfig(config: unknown): asserts config is CompanyConfig {
   if (!isCompanyConfig(config)) {
-    throw new Error('Invalid company configuration: Missing required fields');
+    throw new Error('Invalid company configuration: Missing required fields ($version, companyName, appName, appId, domain, contacts, features, theme)');
+  }
+  
+  // Validate version format
+  const versionPattern = /^[0-9]+\.[0-9]+$/;
+  if (!versionPattern.test(config.$version)) {
+    throw new Error(
+      `Invalid $version format: "${config.$version}". Must be semantic versioning (e.g., 1.0)`
+    );
   }
   
   // Validate appId format (reverse domain notation)
@@ -216,5 +347,35 @@ export function validateCompanyConfig(config: unknown): asserts config is Compan
         );
       }
     });
+  }
+  
+  // Validate theme configuration
+  const themeIdPattern = /^[a-z][a-z0-9-]*$/;
+  config.theme.themes.forEach((theme, index) => {
+    if (!theme.id || !theme.name || typeof theme.enabled !== 'boolean') {
+      throw new Error(
+        `Invalid theme at index ${index}: Missing required fields (id, name, enabled)`
+      );
+    }
+    
+    if (!themeIdPattern.test(theme.id)) {
+      throw new Error(
+        `Invalid theme id at index ${index}: "${theme.id}". Must be lowercase alphanumeric with hyphens`
+      );
+    }
+  });
+  
+  // Validate defaultTheme references a valid theme
+  const validThemeIds = config.theme.themes.map(t => t.id);
+  if (!validThemeIds.includes(config.theme.defaultTheme)) {
+    throw new Error(
+      `Invalid defaultTheme: "${config.theme.defaultTheme}". Must match one of: ${validThemeIds.join(', ')}`
+    );
+  }
+  
+  // Ensure at least one theme is enabled
+  const enabledThemes = config.theme.themes.filter(t => t.enabled);
+  if (enabledThemes.length === 0) {
+    throw new Error('At least one theme must be enabled');
   }
 }

@@ -9,11 +9,12 @@ import { DocumentViewer } from '@/components/DocumentViewer';
 import { ContactsView } from '@/components/ContactsView';
 import { TagFilter } from '@/components/TagFilter';
 import { ThemeSelector } from '@/components/ThemeSelector';
-import { loadSupportDocuments, SupportDocument } from '@/lib/documents';
+import { loadSupportDocuments, SupportDocument, initializeDocuments } from '@/lib/documents';
 import { useFeaturePreview } from '@/hooks/useFeaturePreview';
-import companyConfig from '../company.config.json';
+import { useCompanyConfig } from '@/hooks/useCompanyConfig';
 
 function App() {
+  const { config, loading: configLoading, error: configError } = useCompanyConfig();
   const [activeTab, setActiveTab] = useState<'documents' | 'contacts'>('documents');
   const [selectedDocument, setSelectedDocument] = useState<SupportDocument | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -25,12 +26,18 @@ function App() {
   const isWordEnabled = useFeaturePreview('wordDocuments');
   const isImageEnabled = useFeaturePreview('imageDocuments');
 
+  // Initialize documents module and load documents when config is ready
   useEffect(() => {
+    if (!config) return;
+    
+    // Initialize documents module with config
+    initializeDocuments(config);
+    
     loadSupportDocuments().then(docs => {
       setDocuments(docs);
       setIsLoading(false);
     });
-  }, []);
+  }, [config]);
 
   // Extract all unique tags from documents
   const availableTags = useMemo(() => {
@@ -75,6 +82,35 @@ function App() {
     setSelectedTags([]);
   };
 
+  // Show loading state while config is loading
+  if (configLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center space-y-3">
+          <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mx-auto animate-pulse">
+            <FileText className="w-6 h-6 text-muted-foreground" />
+          </div>
+          <p className="text-sm font-medium text-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state if config failed to load
+  if (configError || !config) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-5">
+        <div className="text-center space-y-3 max-w-md">
+          <div className="w-12 h-12 rounded-full bg-destructive/10 flex items-center justify-center mx-auto">
+            <X className="w-6 h-6 text-destructive" />
+          </div>
+          <p className="text-sm font-medium text-foreground">Failed to load configuration</p>
+          <p className="text-sm text-muted-foreground">{configError?.message || 'Please try refreshing the page.'}</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <header className="px-5 pt-6 pb-4">
@@ -84,10 +120,10 @@ function App() {
               <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
-          <h1 className="text-xl font-semibold tracking-tight text-foreground flex-1">{companyConfig.appName}</h1>
+          <h1 className="text-xl font-semibold tracking-tight text-foreground flex-1">{config.appName}</h1>
           <ThemeSelector />
         </div>
-        <p className="text-sm text-muted-foreground ml-11">{companyConfig.appSubtitle}</p>
+        <p className="text-sm text-muted-foreground ml-11">{config.appSubtitle}</p>
       </header>
 
       <nav className="px-5 mb-4">

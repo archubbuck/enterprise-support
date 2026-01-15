@@ -72,13 +72,23 @@ function validateConfig(config, filePath) {
   const errors = [];
   const warnings = [];
   
-  // Check required fields
-  const requiredFields = ['companyName', 'appName', 'appId', 'domain', 'contacts'];
+  // Check required fields (including new $version, features, theme)
+  const requiredFields = ['$version', 'companyName', 'appName', 'appId', 'domain', 'contacts', 'features', 'theme'];
   requiredFields.forEach(field => {
     if (!config[field]) {
       errors.push(`Missing required field: "${field}"`);
     }
   });
+  
+  // Validate $version
+  if (config.$version) {
+    const versionPattern = /^[0-9]+\.[0-9]+$/;
+    if (typeof config.$version !== 'string') {
+      errors.push('$version must be a string');
+    } else if (!versionPattern.test(config.$version)) {
+      errors.push(`$version "${config.$version}" must be in semantic versioning format (e.g., 1.0)`);
+    }
+  }
   
   // Validate companyName
   if (config.companyName) {
@@ -192,6 +202,88 @@ function validateConfig(config, filePath) {
               );
             }
           });
+        }
+      }
+    }
+  }
+  
+  // Validate features
+  if (config.features) {
+    if (typeof config.features !== 'object') {
+      errors.push('features must be an object');
+    } else {
+      const requiredFeatures = ['tagFiltering', 'pdfDocuments', 'wordDocuments', 'imageDocuments'];
+      requiredFeatures.forEach(feature => {
+        if (typeof config.features[feature] !== 'boolean') {
+          errors.push(`features.${feature} must be a boolean`);
+        }
+      });
+    }
+  }
+  
+  // Validate theme
+  if (config.theme) {
+    if (typeof config.theme !== 'object') {
+      errors.push('theme must be an object');
+    } else {
+      // Validate defaultTheme
+      if (typeof config.theme.defaultTheme !== 'string') {
+        errors.push('theme.defaultTheme must be a string');
+      }
+      
+      // Validate enableThemeSwitcher
+      if (typeof config.theme.enableThemeSwitcher !== 'boolean') {
+        errors.push('theme.enableThemeSwitcher must be a boolean');
+      }
+      
+      // Validate themes array
+      if (!Array.isArray(config.theme.themes)) {
+        errors.push('theme.themes must be an array');
+      } else if (config.theme.themes.length === 0) {
+        errors.push('theme.themes must have at least one theme');
+      } else {
+        const themeIdPattern = /^[a-z][a-z0-9-]*$/;
+        const themeIds = [];
+        let hasEnabledTheme = false;
+        
+        config.theme.themes.forEach((theme, index) => {
+          const themePath = `theme.themes[${index}]`;
+          
+          // Check required theme fields
+          if (!theme.id || typeof theme.id !== 'string') {
+            errors.push(`${themePath}.id is required and must be a string`);
+          } else {
+            if (!themeIdPattern.test(theme.id)) {
+              errors.push(`${themePath}.id "${theme.id}" must be lowercase alphanumeric with hyphens`);
+            }
+            themeIds.push(theme.id);
+          }
+          
+          if (!theme.name || typeof theme.name !== 'string') {
+            errors.push(`${themePath}.name is required and must be a string`);
+          }
+          
+          if (typeof theme.enabled !== 'boolean') {
+            errors.push(`${themePath}.enabled must be a boolean`);
+          } else if (theme.enabled) {
+            hasEnabledTheme = true;
+          }
+        });
+        
+        // Check for duplicate theme IDs
+        const duplicates = themeIds.filter((id, index) => themeIds.indexOf(id) !== index);
+        if (duplicates.length > 0) {
+          errors.push(`Duplicate theme IDs found: ${duplicates.join(', ')}`);
+        }
+        
+        // Check if defaultTheme exists in themes
+        if (config.theme.defaultTheme && !themeIds.includes(config.theme.defaultTheme)) {
+          errors.push(`theme.defaultTheme "${config.theme.defaultTheme}" must match one of the theme IDs: ${themeIds.join(', ')}`);
+        }
+        
+        // Check at least one theme is enabled
+        if (!hasEnabledTheme) {
+          errors.push('At least one theme must be enabled');
         }
       }
     }

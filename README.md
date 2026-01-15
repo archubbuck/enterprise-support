@@ -50,7 +50,7 @@ npm install
 npm run dev
 ```
 
-Visit `http://localhost:5173` to see the app running.
+Visit `http://localhost:5000` to see the app running.
 
 📖 **New to this project?** Check out the [Quick Start Guide](./docs/QUICK_START.md) for detailed setup instructions.
 
@@ -167,7 +167,7 @@ npm run dev
 npm run build
 ```
 
-The development server runs at `http://localhost:5173`
+The development server runs at `http://localhost:5000`
 
 ### iOS Development (Mac Only)
 

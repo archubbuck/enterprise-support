@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { SupportDocument } from '@/lib/documents';
 import { marked } from 'marked';
+import { PdfViewerLazy } from './PdfViewerLazy';
 
 interface DocumentViewerProps {
   document: SupportDocument;
@@ -53,13 +54,7 @@ export function DocumentViewer({ document, onBack }: DocumentViewerProps) {
                 Open PDF
               </Button>
             </div>
-            <iframe
-              src={document.fileUrl}
-              className="w-full border border-border rounded-lg"
-              style={{ height: 'calc(100vh - 200px)', minHeight: '400px' }}
-              title={document.title}
-              sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
-            />
+            <PdfViewerLazy fileUrl={document.fileUrl} title={document.title} />
           </div>
         );
       

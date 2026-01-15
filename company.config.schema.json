@@ -2,10 +2,16 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://github.com/archubbuck/enterprise-support/company.config.schema.json",
   "title": "Company Configuration Schema",
-  "description": "Configuration schema for enterprise-specific settings in the Enterprise Support application. This file controls branding, contact information, and regional office details.",
+  "description": "Configuration schema for enterprise-specific settings in the Enterprise Support application. This file controls branding, contact information, feature flags, theming, and regional office details.",
   "type": "object",
-  "required": ["companyName", "appName", "appId", "domain", "contacts"],
+  "required": ["$version", "companyName", "appName", "appId", "domain", "contacts", "features", "theme"],
   "properties": {
+    "$version": {
+      "type": "string",
+      "description": "Schema version for enterprise stability and migration support. Semantic versioning format (major.minor).",
+      "pattern": "^[0-9]+\\.[0-9]+$",
+      "examples": ["1.0", "1.1", "2.0"]
+    },
     "companyName": {
       "type": "string",
       "description": "Your company's official name. Used throughout the application and in document content. Keep it concise for better readability.",
@@ -102,11 +108,90 @@
         }
       },
       "additionalProperties": false
+    },
+    "features": {
+      "type": "object",
+      "description": "Feature flags to enable or disable application features. All features are disabled by default.",
+      "required": ["tagFiltering", "pdfDocuments", "wordDocuments", "imageDocuments"],
+      "properties": {
+        "tagFiltering": {
+          "type": "boolean",
+          "description": "Enable tag-based filtering in document lists. Allows users to filter documents by category tags.",
+          "default": false
+        },
+        "pdfDocuments": {
+          "type": "boolean",
+          "description": "Enable PDF document viewing with native viewer support.",
+          "default": true
+        },
+        "wordDocuments": {
+          "type": "boolean",
+          "description": "Enable Word document (.docx) viewing and rendering.",
+          "default": true
+        },
+        "imageDocuments": {
+          "type": "boolean",
+          "description": "Enable image document viewing (PNG, JPG, GIF, etc.).",
+          "default": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "theme": {
+      "type": "object",
+      "description": "Theme configuration for application appearance and user customization options.",
+      "required": ["defaultTheme", "enableThemeSwitcher", "themes"],
+      "properties": {
+        "defaultTheme": {
+          "type": "string",
+          "description": "Default theme ID applied on first load. Must match one of the theme IDs in the themes array.",
+          "examples": ["light", "dark", "blue"]
+        },
+        "enableThemeSwitcher": {
+          "type": "boolean",
+          "description": "Show theme selector in the UI. Set to false to lock users to the default theme.",
+          "default": true
+        },
+        "themes": {
+          "type": "array",
+          "description": "Available themes for the application. At least one theme must be enabled.",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["id", "name", "enabled"],
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique theme identifier used in CSS class names and storage.",
+                "pattern": "^[a-z][a-z0-9-]*$",
+                "examples": ["light", "dark", "corporate-blue"]
+              },
+              "name": {
+                "type": "string",
+                "description": "Human-readable theme name shown in the theme selector.",
+                "examples": ["Light", "Dark Mode", "Corporate Blue"]
+              },
+              "description": {
+                "type": "string",
+                "description": "Optional description of the theme shown in tooltips or extended UI."
+              },
+              "enabled": {
+                "type": "boolean",
+                "description": "Whether this theme is available for selection. Disabled themes are hidden from the UI.",
+                "default": true
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": false,
   "examples": [
     {
+      "$version": "1.0",
       "companyName": "Acme Corporation",
       "appName": "Acme Support",
       "appId": "com.acmecorp.support",
@@ -122,6 +207,30 @@
             "city": "New York, NY (HQ)",
             "phone": "+1 (555) 123-4567",
             "hours": "8:00 AM - 6:00 PM EST"
+          }
+        ]
+      },
+      "features": {
+        "tagFiltering": false,
+        "pdfDocuments": true,
+        "wordDocuments": true,
+        "imageDocuments": true
+      },
+      "theme": {
+        "defaultTheme": "light",
+        "enableThemeSwitcher": true,
+        "themes": [
+          {
+            "id": "light",
+            "name": "Light",
+            "description": "Clean light theme",
+            "enabled": true
+          },
+          {
+            "id": "dark",
+            "name": "Dark",
+            "description": "Dark mode theme",
+            "enabled": true
           }
         ]
       }

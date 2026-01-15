@@ -1,4 +1,25 @@
-import companyConfig from '../../company.config.json';
+import type { CompanyConfig } from '../types/company-config';
+
+// Module-level config storage for runtime access
+let _companyConfig: CompanyConfig | null = null;
+
+/**
+ * Initialize the documents module with company configuration
+ * Must be called before using contact info or loading documents
+ */
+export function initializeDocuments(config: CompanyConfig): void {
+  _companyConfig = config;
+}
+
+/**
+ * Get the current company config (for internal use)
+ */
+function getConfig(): CompanyConfig {
+  if (!_companyConfig) {
+    throw new Error('Documents module not initialized. Call initializeDocuments() first.');
+  }
+  return _companyConfig;
+}
 
 export type DocumentType = 'markdown' | 'pdf' | 'image' | 'word';
 
@@ -50,11 +71,12 @@ function detectDocumentType(filename: string): DocumentType {
 
 // Function to replace placeholders in document content
 function replacePlaceholders(content: string): string {
+  const config = getConfig();
   return content
-    .replace(/\{companyName\}/g, companyConfig.companyName)
-    .replace(/\{companyName\.toUpperCase\(\)\}/g, companyConfig.companyName.toUpperCase())
-    .replace(/\{emergencyEmail\}/g, companyConfig.contacts.emergencyEmail)
-    .replace(/\{vpnPortal\}/g, companyConfig.vpnPortal);
+    .replace(/\{companyName\}/g, config.companyName)
+    .replace(/\{companyName\.toUpperCase\(\)\}/g, config.companyName.toUpperCase())
+    .replace(/\{emergencyEmail\}/g, config.contacts.emergencyEmail || '')
+    .replace(/\{vpnPortal\}/g, config.vpnPortal || '');
 }
 
 // Function to load documents from local storage (app bundle assets)
@@ -117,27 +139,29 @@ async function loadDocumentsFromAssets(): Promise<SupportDocument[]> {
 }
 
 // Fallback hardcoded documents for web development
-const fallbackDocuments: SupportDocument[] = [
+// Uses placeholder syntax that gets processed by replacePlaceholders()
+function getFallbackDocuments(): SupportDocument[] {
+  return [
   {
     id: 'wifi-network',
-    title: `${companyConfig.companyName} Wi-Fi Network Connections`,
+    title: '{companyName} Wi-Fi Network Connections',
     category: 'Network',
     icon: 'wifi',
     tags: ['network', 'wifi', 'connection', 'setup'],
     type: 'markdown',
-    content: `# ${companyConfig.companyName} Wi-Fi Network Connections
+    content: `# {companyName} Wi-Fi Network Connections
 
 ## Overview
-This guide explains how to connect to the ${companyConfig.companyName} corporate Wi-Fi network from your devices.
+This guide explains how to connect to the {companyName} corporate Wi-Fi network from your devices.
 
 ## Available Networks
 
-### ${companyConfig.companyName.toUpperCase()}-CORP
-Primary corporate network for ${companyConfig.companyName}-issued devices.
+### {companyName.toUpperCase()}-CORP
+Primary corporate network for {companyName}-issued devices.
 - **Security**: WPA2-Enterprise
-- **Authentication**: Use your ${companyConfig.companyName} credentials
+- **Authentication**: Use your {companyName} credentials
 
-### ${companyConfig.companyName.toUpperCase()}-GUEST
+### {companyName.toUpperCase()}-GUEST
 For visitors and personal devices.
 - **Security**: WPA2-PSK
 - **Password**: Available from reception or IT Help Desk
@@ -146,20 +170,20 @@ For visitors and personal devices.
 
 ### Windows Devices
 1. Click the Wi-Fi icon in the system tray
-2. Select "${companyConfig.companyName.toUpperCase()}-CORP" from the list
-3. Enter your ${companyConfig.companyName} email and password
+2. Select "{companyName.toUpperCase()}-CORP" from the list
+3. Enter your {companyName} email and password
 4. Check "Connect automatically" for convenience
 5. Click Connect
 
 ### macOS Devices
 1. Click the Wi-Fi icon in the menu bar
-2. Select "${companyConfig.companyName.toUpperCase()}-CORP"
-3. Enter your ${companyConfig.companyName} credentials when prompted
+2. Select "{companyName.toUpperCase()}-CORP"
+3. Enter your {companyName} credentials when prompted
 4. Click Join
 
 ### iOS/Android Devices
 1. Go to Settings > Wi-Fi
-2. Tap "${companyConfig.companyName.toUpperCase()}-CORP"
+2. Tap "{companyName.toUpperCase()}-CORP"
 3. Enter your credentials
 4. Accept the security certificate if prompted
 
@@ -188,7 +212,7 @@ For assistance, contact the IT Help Desk.`
     content: `# Tips on Using Microsoft Teams
 
 ## Getting Started
-Microsoft Teams is ${companyConfig.companyName}' primary collaboration platform for chat, meetings, and file sharing.
+Microsoft Teams is {companyName}' primary collaboration platform for chat, meetings, and file sharing.
 
 ## Essential Features
 
@@ -254,7 +278,7 @@ For Teams support, contact the IT Help Desk or visit the Teams Help channel.`
 ### Desktop Setup (Windows/Mac)
 1. Open Microsoft Outlook
 2. Go to File > Add Account
-3. Enter your ${companyConfig.companyName} email address
+3. Enter your {companyName} email address
 4. Follow the autodiscover prompts
 5. Enter your password when prompted
 
@@ -262,13 +286,13 @@ For Teams support, contact the IT Help Desk or visit the Teams Help channel.`
 **iOS Mail App:**
 1. Settings > Mail > Accounts > Add Account
 2. Select Microsoft Exchange
-3. Enter your ${companyConfig.companyName} email
-4. Accept ${companyConfig.companyName} MDM policy
+3. Enter your {companyName} email
+4. Accept {companyName} MDM policy
 
 **Outlook Mobile (Recommended):**
 1. Download Outlook from App Store/Play Store
 2. Tap Add Account
-3. Enter your ${companyConfig.companyName} email
+3. Enter your {companyName} email
 4. Authenticate with your credentials
 
 ## Email Best Practices
@@ -277,7 +301,7 @@ For Teams support, contact the IT Help Desk or visit the Teams Help channel.`
 - **Subject lines**: Be specific and actionable
 - **Recipients**: Use CC sparingly, BCC for large groups
 - **Length**: Keep emails concise; use bullets for clarity
-- **Signature**: Use the standard ${companyConfig.companyName} signature template
+- **Signature**: Use the standard {companyName} signature template
 
 ### Managing Your Inbox
 - **Folders**: Create folders for projects and clients
@@ -287,7 +311,7 @@ For Teams support, contact the IT Help Desk or visit the Teams Help channel.`
 
 ### Security Guidelines
 - Never share passwords via email
-- Report suspicious emails to ${companyConfig.contacts.emergencyEmail}
+- Report suspicious emails to {emergencyEmail}
 - Verify sender addresses on financial requests
 - Don't click links in unexpected emails
 
@@ -368,7 +392,7 @@ Contact IT Help Desk for email issues.`
 ### If You Suspect Phishing
 1. Don't click any links
 2. Don't download attachments
-3. Forward to ${companyConfig.contacts.emergencyEmail}
+3. Forward to {emergencyEmail}
 4. Delete the email
 
 ## Data Protection
@@ -379,7 +403,7 @@ Contact IT Help Desk for email issues.`
 
 ## Incident Reporting
 Report security incidents immediately to:
-- Email: ${companyConfig.contacts.emergencyEmail}
+- Email: {emergencyEmail}
 - Phone: IT Security Hotline (see Contacts)
 
 ## Support
@@ -395,11 +419,11 @@ Contact the Security team for questions.`
     content: `# VPN Connection Guide
 
 ## Overview
-The ${companyConfig.companyName} VPN provides secure access to internal resources when working remotely.
+The {companyName} VPN provides secure access to internal resources when working remotely.
 
 ## Before You Start
 - Ensure you have the GlobalProtect client installed
-- Have your ${companyConfig.companyName} credentials ready
+- Have your {companyName} credentials ready
 - Verify MFA is set up on your account
 
 ## Installation
@@ -420,9 +444,9 @@ The ${companyConfig.companyName} VPN provides secure access to internal resource
 
 ### First Time Setup
 1. Open GlobalProtect
-2. Enter portal address: ${companyConfig.vpnPortal}
+2. Enter portal address: {vpnPortal}
 3. Click Connect
-4. Enter your ${companyConfig.companyName} username and password
+4. Enter your {companyName} username and password
 5. Approve the MFA prompt on your phone
 6. Wait for connection to establish
 
@@ -502,7 +526,7 @@ Documents are held in a secure queue until you release them at any printer.
 
 ### Sending a Secure Print Job
 1. Print your document normally
-2. Select "${companyConfig.companyName} Secure Print" as the printer
+2. Select "{companyName} Secure Print" as the printer
 3. Click Print
 4. Go to any printer to release
 
@@ -557,20 +581,20 @@ For printer issues, contact IT Help Desk.`
     content: `# Softphone & Phone System
 
 ## Overview
-${companyConfig.companyName} uses a unified communications system for voice calls, accessible via desk phones, softphone, and mobile.
+{companyName} uses a unified communications system for voice calls, accessible via desk phones, softphone, and mobile.
 
 ## Softphone Setup
 
 ### Desktop Client
 1. Download the softphone client from IT portal
 2. Install and launch the application
-3. Sign in with your ${companyConfig.companyName} credentials
+3. Sign in with your {companyName} credentials
 4. Allow microphone and speaker permissions
 5. Test audio in Settings
 
 ### Mobile App
 1. Download Webex or Teams (per your region)
-2. Sign in with your ${companyConfig.companyName} account
+2. Sign in with your {companyName} account
 3. Enable notifications
 4. Test incoming and outgoing calls
 
@@ -653,7 +677,7 @@ Contact IT Help Desk for phone system issues.`
 ### Power Management
 - Plug in when at desk to preserve battery health
 - Keep charge between 20-80% when possible
-- Use the provided ${companyConfig.companyName} charger only
+- Use the provided {companyName} charger only
 - Don't leave plugged in at 100% for extended periods
 
 ### Physical Care
@@ -738,12 +762,24 @@ Updates are deployed automatically. When prompted:
 Contact IT Help Desk for hardware issues.`
   }
 ];
+}
+
+/**
+ * Process fallback documents to replace placeholders with config values
+ */
+function processedFallbackDocuments(): SupportDocument[] {
+  return getFallbackDocuments().map(doc => ({
+    ...doc,
+    title: replacePlaceholders(doc.title),
+    content: replacePlaceholders(doc.content)
+  }));
+}
 
 // Main function to load documents - loads from app assets (works on both web and iOS)
 export async function loadSupportDocuments(): Promise<SupportDocument[]> {
   const documents = await loadDocumentsFromAssets();
-  // If loading from assets fails, use fallback
-  return documents.length > 0 ? documents : fallbackDocuments;
+  // If loading from assets fails, use fallback (processed with config values)
+  return documents.length > 0 ? documents : processedFallbackDocuments();
 }
 
 export interface ContactRegion {
@@ -753,8 +789,24 @@ export interface ContactRegion {
   hours: string;
 }
 
+/**
+ * Get contact information from config
+ * Note: This is a getter function to ensure config is initialized
+ */
+export function getContactInfo(): { email: string; emergencyEmail: string; regions: ContactRegion[] } {
+  const config = getConfig();
+  return {
+    email: config.contacts.email,
+    emergencyEmail: config.contacts.emergencyEmail || '',
+    regions: (config.contacts.regions || []) as ContactRegion[]
+  };
+}
+
+/**
+ * @deprecated Use getContactInfo() instead
+ */
 export const contactInfo = {
-  email: companyConfig.contacts.email,
-  emergencyEmail: companyConfig.contacts.emergencyEmail,
-  regions: companyConfig.contacts.regions as ContactRegion[]
+  get email() { return getContactInfo().email; },
+  get emergencyEmail() { return getContactInfo().emergencyEmail; },
+  get regions() { return getContactInfo().regions; }
 };

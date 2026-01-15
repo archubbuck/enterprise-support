@@ -1,47 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useFeatureFlag } from './useCompanyConfig';
+import type { FeatureConfig } from '../types/company-config';
 
-interface RuntimeConfig {
-  app: string;
-  featurePreviews?: {
-    [key: string]: boolean;
-  };
-}
-
-export function useFeaturePreview(featureName: string): boolean {
-  const [isEnabled, setIsEnabled] = useState(false);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const loadConfig = async () => {
-      try {
-        const response = await fetch('/runtime.config.json');
-        if (!response.ok) {
-          if (isMounted) {
-            setIsEnabled(false);
-          }
-          return;
-        }
-
-        const config: RuntimeConfig = await response.json();
-
-        if (isMounted) {
-          setIsEnabled(config.featurePreviews?.[featureName] ?? false);
-        }
-      } catch (error) {
-        console.error('Failed to load runtime config:', error);
-        if (isMounted) {
-          setIsEnabled(false);
-        }
-      }
-    };
-
-    loadConfig();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [featureName]);
-
-  return isEnabled;
+/**
+ * Hook to check if a feature preview is enabled
+ * 
+ * @deprecated Use useFeatureFlag from useCompanyConfig instead
+ * @param featureName - Name of the feature to check
+ * @returns Whether the feature is enabled
+ */
+export function useFeaturePreview(featureName: keyof FeatureConfig): boolean {
+  return useFeatureFlag(featureName);
 }
