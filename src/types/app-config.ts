@@ -84,6 +84,35 @@ export interface ThemeConfig {
 }
 
 /**
+ * Document configuration entry
+ * Specifies a document collection and its location
+ */
+export interface DocumentConfig {
+  /**
+   * Friendly name describing the document collection
+   * @example "IT Support Documents"
+   * @example "Employee Resources"
+   */
+  name: string;
+  
+  /**
+   * Path to the document manifest.json file, relative to the workspace root
+   * @example "public/documents/manifest.json"
+   * @example "docs/support/manifest.json"
+   */
+  path: string;
+  
+  /**
+   * Optional numeric position for ordering documents
+   * Lower numbers appear first. Documents without a position value
+   * are placed after positioned documents in their natural order.
+   * @example 0
+   * @example 10
+   */
+  position?: number;
+}
+
+/**
  * Regional office contact information
  */
 export interface RegionalContact {
@@ -227,6 +256,12 @@ export interface AppConfig {
    * Theme configuration for application appearance
    */
   theme: ThemeConfig;
+  
+  /**
+   * Available documents configuration
+   * Each entry specifies a document collection and its location
+   */
+  documents: DocumentConfig[];
 }
 
 /**
@@ -278,7 +313,15 @@ export function isAppConfig(obj: unknown): obj is AppConfig {
     config.theme.themes.length > 0
   );
   
-  return hasTheme;
+  if (!hasTheme) return false;
+  
+  // Check documents array
+  const hasDocuments = (
+    Array.isArray(config.documents) &&
+    config.documents.length > 0
+  );
+  
+  return hasDocuments;
 }
 
 /**
@@ -290,7 +333,7 @@ export function isAppConfig(obj: unknown): obj is AppConfig {
  */
 export function validateAppConfig(config: unknown): asserts config is AppConfig {
   if (!isAppConfig(config)) {
-    throw new Error('Invalid app configuration: Missing required fields ($version, companyName, appName, appId, domain, contacts, features, theme)');
+    throw new Error('Invalid app configuration: Missing required fields ($version, companyName, appName, appId, domain, contacts, features, theme, documents)');
   }
   
   // Validate version format
@@ -378,4 +421,33 @@ export function validateAppConfig(config: unknown): asserts config is AppConfig 
   if (enabledThemes.length === 0) {
     throw new Error('At least one theme must be enabled');
   }
+  
+  // Validate documents array
+  if (!Array.isArray(config.documents)) {
+    throw new Error('documents must be an array');
+  }
+  
+  if (config.documents.length === 0) {
+    throw new Error('At least one document configuration must be provided');
+  }
+  
+  config.documents.forEach((doc, index) => {
+    if (!doc.name || !doc.path) {
+      throw new Error(
+        `Invalid document at index ${index}: Missing required fields (name, path)`
+      );
+    }
+    
+    if (typeof doc.name !== 'string' || typeof doc.path !== 'string') {
+      throw new Error(
+        `Invalid document at index ${index}: name and path must be strings`
+      );
+    }
+    
+    if (doc.position !== undefined && (typeof doc.position !== 'number' || doc.position < 0)) {
+      throw new Error(
+        `Invalid document at index ${index}: position must be a non-negative number`
+      );
+    }
+  });
 }

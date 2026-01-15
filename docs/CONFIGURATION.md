@@ -38,6 +38,9 @@ All app-specific settings are stored in `app.config.json` at the root of the pro
 - **Domain information** - Email domains and VPN portals
 - **Contact information** - IT helpdesk and emergency contacts
 - **Regional offices** - Multi-location support information
+- **Document configuration** - Available documents and their locations
+- **Feature flags** - Enable or disable application features
+- **Theme settings** - Color themes and customization options
 
 ### File Structure
 
@@ -61,7 +64,31 @@ All app-specific settings are stored in `app.config.json` at the root of the pro
         "hours": "8:00 AM - 6:00 PM EST"
       }
     ]
-  }
+  },
+  "features": {
+    "tagFiltering": false,
+    "pdfDocuments": true,
+    "wordDocuments": true,
+    "imageDocuments": true
+  },
+  "theme": {
+    "defaultTheme": "light",
+    "enableThemeSwitcher": true,
+    "themes": [
+      {
+        "id": "light",
+        "name": "Light",
+        "enabled": true
+      }
+    ]
+  },
+  "documents": [
+    {
+      "name": "IT Support Documents",
+      "path": "public/documents/manifest.json",
+      "position": 0
+    }
+  ]
 }
 ```
 
@@ -166,6 +193,63 @@ Each region in the `contacts.regions` array should have:
 **Field Details:**
 - `region`: Geographic region (e.g., "Americas", "EMEA", "Asia Pacific")
 - `city`: City and state/country. Add "(HQ)" for headquarters
+- `phone`: International format with country code
+- `hours`: Business hours with timezone abbreviation
+
+### Documents Configuration
+
+The `documents` array specifies which document collections are available in the application. Each entry has the following structure:
+
+```json
+{
+  "name": "IT Support Documents",
+  "path": "public/documents/manifest.json",
+  "position": 0
+}
+```
+
+**Field Details:**
+- `name` (required): Friendly name describing the document collection
+- `path` (required): Path to the manifest.json file, relative to workspace root
+- `position` (optional): Numeric ordering value (lower numbers appear first)
+
+**Document Ordering:**
+- Documents with a `position` value are displayed first, sorted by position (ascending)
+- Documents without a `position` value appear after positioned documents
+- This allows you to control which documents appear at the top of the list
+
+**Example with Multiple Document Collections:**
+
+```json
+"documents": [
+  {
+    "name": "Quick Start Guides",
+    "path": "public/documents/quick-start/manifest.json",
+    "position": 0
+  },
+  {
+    "name": "IT Support Documents",
+    "path": "public/documents/support/manifest.json",
+    "position": 1
+  },
+  {
+    "name": "Security Policies",
+    "path": "public/documents/security/manifest.json",
+    "position": 2
+  },
+  {
+    "name": "Additional Resources",
+    "path": "public/documents/misc/manifest.json"
+  }
+]
+```
+
+In this example, Quick Start Guides appear first, followed by IT Support Documents, then Security Policies. Additional Resources (no position) appear last.
+
+**Search Compatibility:**
+The search function works across all configured document collections. When you search for a term, it searches through titles and categories from all documents specified in the configuration.
+
+### Important Field Notes
 - `phone`: International format with country code
 - `hours`: Business hours with timezone abbreviation
 
