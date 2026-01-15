@@ -96,9 +96,14 @@ async function loadDocumentsFromAssets(): Promise<SupportDocument[]> {
     
     for (const docConfig of sortedDocConfigs) {
       try {
+        // Normalize path: ensure it starts with / and has no double slashes
+        let normalizedPath = docConfig.path;
+        if (!normalizedPath.startsWith('/')) {
+          normalizedPath = `/${normalizedPath}`;
+        }
+        
         // Fetch the manifest file from the configured path
-        const manifestPath = docConfig.path.startsWith('/') ? docConfig.path : `/${docConfig.path}`;
-        const manifestResponse = await fetch(manifestPath);
+        const manifestResponse = await fetch(normalizedPath);
         
         if (!manifestResponse.ok) {
           console.warn(`Failed to fetch manifest from ${docConfig.path}`);
@@ -108,13 +113,20 @@ async function loadDocumentsFromAssets(): Promise<SupportDocument[]> {
         const manifestData = await manifestResponse.json() as DocumentManifestItem[];
         
         // Determine the base path for documents (directory containing manifest.json)
-        const basePath = docConfig.path.replace(/\/[^/]+$/, '');
+        // Remove leading slash for base path, then we'll add it back when constructing URLs
+        let basePath = normalizedPath.replace(/^\//, '').replace(/\/[^/]+$/, '');
+        
+        // If basePath ends up being the filename itself (manifest at root), set to empty
+        if (basePath.includes('.json') || basePath.includes('.')) {
+          basePath = '';
+        }
         
         // Load each document file from this manifest
         const documents = await Promise.all(
           manifestData.map(async (item) => {
             try {
               const documentType = item.type || detectDocumentType(item.file);
+              // Construct file URL: always start with /, use basePath if it exists
               const fileUrl = basePath ? `/${basePath}/${item.file}` : `/${item.file}`;
               
               let content = '';
