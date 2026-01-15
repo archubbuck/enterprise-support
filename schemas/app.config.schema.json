@@ -208,7 +208,7 @@
             "examples": ["public/documents/manifest.json", "docs/support/manifest.json"]
           },
           "position": {
-            "type": "number",
+            "type": "integer",
             "description": "Optional numeric position for ordering documents. Lower numbers appear first. Documents without a position value are placed after positioned documents in their natural order.",
             "minimum": 0,
             "examples": [0, 1, 2, 10, 100]

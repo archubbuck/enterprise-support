@@ -444,9 +444,9 @@ export function validateAppConfig(config: unknown): asserts config is AppConfig 
       );
     }
     
-    if (doc.position !== undefined && (typeof doc.position !== 'number' || doc.position < 0)) {
+    if (doc.position !== undefined && (typeof doc.position !== 'number' || !Number.isInteger(doc.position) || doc.position < 0)) {
       throw new Error(
-        `Invalid document at index ${index}: position must be a non-negative number`
+        `Invalid document at index ${index}: position must be a non-negative integer`
       );
     }
   });

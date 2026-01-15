@@ -116,8 +116,9 @@ async function loadDocumentsFromAssets(): Promise<SupportDocument[]> {
         // Remove leading slash for base path, then we'll add it back when constructing URLs
         let basePath = normalizedPath.replace(/^\//, '').replace(/\/[^/]+$/, '');
         
-        // If basePath ends up being the filename itself (manifest at root), set to empty
-        if (basePath.includes('.json') || basePath.includes('.')) {
+        // If the path had no directory (manifest at root), basePath will equal the filename
+        // In this case, set basePath to empty string
+        if (!basePath.includes('/')) {
           basePath = '';
         }
         
