@@ -373,7 +373,7 @@ If you're still experiencing issues:
 1. **Check the documentation:**
    - [Quick Start Guide](./QUICK_START.md)
    - [Configuration Guide](./CONFIGURATION.md)
-   - [Contributing Guide](../CONTRIBUTING.md)
+   - [Contributing Guide](../.github/CONTRIBUTING.md)
 
 2. **Search existing issues:**
    - Check [GitHub Issues](https://github.com/archubbuck/enterprise-support/issues)

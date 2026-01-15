@@ -1,10 +1,10 @@
-# Company Configuration Examples
+# App Configuration Examples
 
-This directory contains example configurations for different types of organizations. Use these as templates when setting up your own `company.config.json`.
+This directory contains example configurations for different types of organizations. Use these as templates when setting up your own `app.config.json`.
 
 ## Available Examples
 
-### 1. Startup Configuration (`company.config.startup.json`)
+### 1. Startup Configuration (`app.config.startup.json`)
 
 **Best for:** Small companies, startups, single-location businesses
 
@@ -19,7 +19,7 @@ This directory contains example configurations for different types of organizati
 - Need a quick, simple setup
 - Don't need regional office contacts
 
-### 2. Enterprise Configuration (`company.config.enterprise.json`)
+### 2. Enterprise Configuration (`app.config.enterprise.json`)
 
 **Best for:** Large multinational corporations, global enterprises
 
@@ -35,7 +35,7 @@ This directory contains example configurations for different types of organizati
 - Have dedicated IT teams in different locations
 - Support a large, distributed workforce
 
-### 3. Regional Configuration (`company.config.regional.json`)
+### 3. Regional Configuration (`app.config.regional.json`)
 
 **Best for:** Medium-sized businesses with multiple domestic locations
 
@@ -53,9 +53,9 @@ This directory contains example configurations for different types of organizati
 ## How to Use These Examples
 
 1. **Choose the template** that best matches your organization's size and structure
-2. **Copy the example** to the root directory as `company.config.json`:
+2. **Copy the example** to the root directory as `app.config.json`:
    ```bash
-   cp examples/company.config.startup.json company.config.json
+   cp examples/app.config.startup.json app.config.json
    ```
 3. **Edit the values** to match your organization's information
 4. **Validate your configuration**:
@@ -110,7 +110,7 @@ This directory contains example configurations for different types of organizati
 
 ## Validation
 
-All example configurations are validated against the JSON schema at `../company.config.schema.json`. This ensures:
+All example configurations are validated against the JSON schema at `../schemas/app.config.schema.json`. This ensures:
 - All required fields are present
 - Field formats are correct (emails, phone numbers, app IDs)
 - No typos or structural errors
@@ -119,7 +119,7 @@ All example configurations are validated against the JSON schema at `../company.
 
 - See the [Configuration Guide](../docs/CONFIGURATION.md) for detailed documentation
 - Check the [Quick Start Guide](../docs/QUICK_START.md) for setup instructions
-- Review the [JSON Schema](../company.config.schema.json) for all available options
+- Review the [JSON Schema](../schemas/app.config.schema.json) for all available options
 
 ## Contributing
 

@@ -50,7 +50,7 @@ Welcome to the Enterprise Support App documentation! This directory contains com
 
 1. Start with the [Quick Start Guide](./QUICK_START.md)
 2. Review the [Configuration Guide](./CONFIGURATION.md) to customize the app
-3. Read the [Contributing Guide](../CONTRIBUTING.md) if you plan to contribute
+3. Read the [Contributing Guide](../.github/CONTRIBUTING.md) if you plan to contribute
 
 ### For iOS Developers
 
@@ -69,11 +69,11 @@ Welcome to the Enterprise Support App documentation! This directory contains com
 ### Project Files
 
 - [README](../README.md) - Project overview and features
-- [CONTRIBUTING](../CONTRIBUTING.md) - How to contribute
-- [CODE_OF_CONDUCT](../CODE_OF_CONDUCT.md) - Community guidelines
+- [CONTRIBUTING](../.github/CONTRIBUTING.md) - How to contribute
+- [CODE_OF_CONDUCT](../.github/CODE_OF_CONDUCT.md) - Community guidelines
 - [CHANGELOG](../CHANGELOG.md) - Project version history
 - [LICENSE](../LICENSE) - License information
-- [SECURITY](../SECURITY.md) - Security policy
+- [SECURITY](../.github/SECURITY.md) - Security policy
 
 ### External Resources
 
@@ -88,7 +88,7 @@ Welcome to the Enterprise Support App documentation! This directory contains com
 - Check the relevant documentation above
 - Search existing [GitHub Issues](https://github.com/archubbuck/enterprise-support/issues)
 - [Open a new issue](https://github.com/archubbuck/enterprise-support/issues/new/choose) if you can't find an answer
-- Review the [Contributing Guide](../CONTRIBUTING.md) for development questions
+- Review the [Contributing Guide](../.github/CONTRIBUTING.md) for development questions
 
 ## 📝 Documentation Improvements
 
@@ -96,7 +96,7 @@ Found a problem with the documentation? We welcome improvements!
 
 - [Report documentation issues](https://github.com/archubbuck/enterprise-support/issues/new?template=documentation.md)
 - Submit a pull request with fixes or improvements
-- See the [Contributing Guide](../CONTRIBUTING.md) for details
+- See the [Contributing Guide](../.github/CONTRIBUTING.md) for details
 
 ## 🗂️ Documentation Structure
 

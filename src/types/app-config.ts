@@ -1,7 +1,7 @@
 /**
- * Type definitions for company configuration
+ * Type definitions for app configuration
  * 
- * These types provide compile-time type safety when working with the company.config.json file.
+ * These types provide compile-time type safety when working with the app.config.json file.
  * They ensure that all required fields are present and properly typed.
  */
 
@@ -143,12 +143,12 @@ export interface ContactInfo {
 }
 
 /**
- * Company configuration for the Enterprise Support application
+ * App configuration for the Enterprise Support application
  * 
- * This configuration controls all company-specific settings including
+ * This configuration controls all app-specific settings including
  * branding, contact information, and regional office details.
  */
-export interface CompanyConfig {
+export interface AppConfig {
   /**
    * Your company's official name
    * Used throughout the application and in document content
@@ -230,17 +230,17 @@ export interface CompanyConfig {
 }
 
 /**
- * Type guard to check if an object is a valid CompanyConfig
+ * Type guard to check if an object is a valid AppConfig
  * 
  * @param obj - Object to check
- * @returns true if the object is a valid CompanyConfig
+ * @returns true if the object is a valid AppConfig
  */
-export function isCompanyConfig(obj: unknown): obj is CompanyConfig {
+export function isAppConfig(obj: unknown): obj is AppConfig {
   if (typeof obj !== 'object' || obj === null) {
     return false;
   }
   
-  const config = obj as Partial<CompanyConfig>;
+  const config = obj as Partial<AppConfig>;
   
   // Check base required fields
   const hasBaseFields = (
@@ -282,15 +282,15 @@ export function isCompanyConfig(obj: unknown): obj is CompanyConfig {
 }
 
 /**
- * Validates the company configuration structure
+ * Validates the app configuration structure
  * Throws detailed error if validation fails
  * 
  * @param config - Configuration to validate
  * @throws Error if configuration is invalid
  */
-export function validateCompanyConfig(config: unknown): asserts config is CompanyConfig {
-  if (!isCompanyConfig(config)) {
-    throw new Error('Invalid company configuration: Missing required fields ($version, companyName, appName, appId, domain, contacts, features, theme)');
+export function validateAppConfig(config: unknown): asserts config is AppConfig {
+  if (!isAppConfig(config)) {
+    throw new Error('Invalid app configuration: Missing required fields ($version, companyName, appName, appId, domain, contacts, features, theme)');
   }
   
   // Validate version format

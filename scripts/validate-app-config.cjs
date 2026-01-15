@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 
 /**
- * Company Configuration Validation Script
+ * App Configuration Validation Script
  * 
- * This script validates company.config.json against the JSON schema to ensure
+ * This script validates app.config.json against the JSON schema to ensure
  * all required fields are present and properly formatted.
  * 
  * Usage:
- *   npm run validate:company-config
- *   node scripts/validate-company-config.cjs
+ *   npm run validate:app-config
+ *   node scripts/validate-app-config.cjs
  */
 
 const fs = require('fs');
@@ -297,22 +297,22 @@ function validateConfig(config, filePath) {
  */
 function main() {
   console.log(`${colors.cyan}╔═══════════════════════════════════════════╗${colors.reset}`);
-  console.log(`${colors.cyan}║   Company Config Validation Report       ║${colors.reset}`);
+  console.log(`${colors.cyan}║     App Config Validation Report         ║${colors.reset}`);
   console.log(`${colors.cyan}╚═══════════════════════════════════════════╝${colors.reset}\n`);
   
-  const configPath = path.join(process.cwd(), 'company.config.json');
-  const schemaPath = path.join(process.cwd(), 'company.config.schema.json');
+  const configPath = path.join(process.cwd(), 'app.config.json');
+  const schemaPath = path.join(process.cwd(), 'schemas', 'app.config.schema.json');
   
   // Check if config file exists
   if (!fs.existsSync(configPath)) {
-    console.log(`${colors.red}✗ Error: company.config.json not found${colors.reset}`);
+    console.log(`${colors.red}✗ Error: app.config.json not found${colors.reset}`);
     console.log(`  Expected at: ${configPath}\n`);
     process.exit(1);
   }
   
   // Check if schema file exists
   if (!fs.existsSync(schemaPath)) {
-    console.log(`${colors.yellow}⚠ Warning: company.config.schema.json not found${colors.reset}`);
+    console.log(`${colors.yellow}⚠ Warning: schemas/app.config.schema.json not found${colors.reset}`);
     console.log(`  Expected at: ${schemaPath}`);
     console.log(`  Validation will be limited to basic checks.\n`);
   }
@@ -323,7 +323,7 @@ function main() {
     const configContent = fs.readFileSync(configPath, 'utf8');
     config = JSON.parse(configContent);
   } catch (error) {
-    console.log(`${colors.red}✗ Error parsing company.config.json:${colors.reset}`);
+    console.log(`${colors.red}✗ Error parsing app.config.json:${colors.reset}`);
     console.log(`  ${error.message}\n`);
     process.exit(1);
   }
@@ -374,9 +374,9 @@ function main() {
     // Help section
     if (errors.length > 0) {
       console.log(`${colors.cyan}How to fix:${colors.reset}`);
-      console.log(`  1. Open company.config.json in your editor`);
+      console.log(`  1. Open app.config.json in your editor`);
       console.log(`  2. Fix the errors listed above`);
-      console.log(`  3. Run this validation again: npm run validate:company-config`);
+      console.log(`  3. Run this validation again: npm run validate:app-config`);
       console.log(`  4. See docs/CONFIGURATION.md for detailed guidance`);
       console.log(`  5. Check examples/ directory for sample configurations\n`);
       

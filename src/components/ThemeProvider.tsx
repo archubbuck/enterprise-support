@@ -1,6 +1,6 @@
 import { ThemeProvider as NextThemesProvider } from 'next-themes';
 import { ReactNode } from 'react';
-import { useThemeConfig } from '@/hooks/useCompanyConfig';
+import { useThemeConfig } from '@/hooks/useAppConfig';
 import { getDefaultTheme, getAvailableThemes, DEFAULT_THEME_CONFIG } from '@/lib/theme-config';
 
 interface ThemeProviderProps {

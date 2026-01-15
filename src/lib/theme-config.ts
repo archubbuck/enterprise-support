@@ -1,4 +1,4 @@
-import { ThemeConfig, Theme } from '../types/company-config';
+import { ThemeConfig, Theme } from '../types/app-config';
 
 /**
  * Re-export types for convenience

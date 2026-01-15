@@ -457,7 +457,7 @@ To add copyright for additional languages:
 Potential improvements to consider:
 
 1. **Multi-locale support**: Automatically update copyright for all locales
-2. **Company config integration**: Read company name from `company.config.json`
+2. **App config integration**: Read company name from `app.config.json`
 3. **Version-specific copyright**: Include version number in copyright text
 4. **Validation warnings**: Alert if company name looks incorrect
 5. **Copyright range**: Support year ranges (e.g., "2020-2025 Company")

@@ -18,20 +18,20 @@ For the fastest setup, use one of our pre-configured examples:
 
 ```bash
 # For startups/small businesses
-cp examples/company.config.startup.json company.config.json
+cp examples/app.config.startup.json app.config.json
 
 # For large enterprises
-cp examples/company.config.enterprise.json company.config.json
+cp examples/app.config.enterprise.json app.config.json
 
 # For regional organizations
-cp examples/company.config.regional.json company.config.json
+cp examples/app.config.regional.json app.config.json
 ```
 
 Then edit the copied file with your organization's information.
 
 ## Configuration File
 
-All company-specific settings are stored in `company.config.json` at the root of the project. This file controls:
+All app-specific settings are stored in `app.config.json` at the root of the project. This file controls:
 
 - **Company branding** - Name, app name, and subtitle
 - **App identifiers** - Bundle ID for iOS App Store
@@ -43,7 +43,7 @@ All company-specific settings are stored in `company.config.json` at the root of
 
 ```json
 {
-  "$schema": "./company.config.schema.json",
+  "$schema": "./schemas/app.config.schema.json",
   "companyName": "YourCompany",
   "appName": "YourCompany Support",
   "appId": "com.yourcompany.support",
@@ -71,25 +71,25 @@ All company-specific settings are stored in `company.config.json` at the root of
 
 ### JSON Schema
 
-The configuration is validated against a JSON Schema (`company.config.schema.json`) that ensures:
+The configuration is validated against a JSON Schema (`app.config.schema.json`) that ensures:
 - All required fields are present
 - Field formats are correct (emails, domains, app IDs)
 - No typos or structural errors
 
 ### TypeScript Types
 
-TypeScript type definitions are available at `src/types/company-config.ts` for compile-time type safety.
+TypeScript type definitions are available at `src/types/app-config.ts` for compile-time type safety.
 
 ### Validation Commands
 
 ```bash
-# Validate company configuration
-npm run validate:company-config
+# Validate app configuration
+npm run validate:app-config
 
 # Validate all JSON files
 npm run validate:json
 
-# Run all checks (JSON, company config, and linting)
+# Run all checks (JSON, app config, and linting)
 npm run check
 ```
 
@@ -98,7 +98,7 @@ npm run check
 We provide three complete examples for different organization types:
 
 ### 1. Startup Configuration
-**File:** `examples/company.config.startup.json`
+**File:** `examples/app.config.startup.json`
 
 **Best for:** Small companies, startups, single-location businesses (< 50 employees)
 
@@ -108,7 +108,7 @@ We provide three complete examples for different organization types:
 - Quick setup
 
 ### 2. Enterprise Configuration
-**File:** `examples/company.config.enterprise.json`
+**File:** `examples/app.config.enterprise.json`
 
 **Best for:** Large multinational corporations (500+ employees)
 
@@ -118,7 +118,7 @@ We provide three complete examples for different organization types:
 - Comprehensive contact information
 
 ### 3. Regional Configuration
-**File:** `examples/company.config.regional.json`
+**File:** `examples/app.config.regional.json`
 
 **Best for:** Medium-sized businesses with multiple domestic locations (50-500 employees)
 
@@ -207,8 +207,8 @@ After making changes, follow these steps:
 ### 1. Validate Configuration
 
 ```bash
-# Validate company config
-npm run validate:company-config
+# Validate app config
+npm run validate:app-config
 
 # Run all validations
 npm run check
@@ -276,7 +276,7 @@ npm run ios:open
 
 ## Customizing Document Content
 
-The support documents are in `src/lib/documents.ts`. They automatically use values from `company.config.json`, but you can also:
+The support documents are in `src/lib/documents.ts`. They automatically use values from `app.config.json`, but you can also:
 
 1. Add new documents
 2. Modify existing document content
@@ -286,7 +286,7 @@ The support documents are in `src/lib/documents.ts`. They automatically use valu
 All company-specific references use template literals that pull from the configuration:
 
 ```typescript
-`Connect to ${companyConfig.companyName} VPN`
+`Connect to ${appConfig.companyName} VPN`
 ```
 
 This ensures consistency across all documents when you change the company name.
@@ -299,25 +299,25 @@ If you need to maintain apps for multiple enterprises:
 
 **Option 1: Git Branches**
 1. Create separate Git branches for each company
-2. Maintain different `company.config.json` in each branch
+2. Maintain different `app.config.json` in each branch
 3. Use different `appId` values for each deployment
 4. Build and deploy separately for each organization
 
 **Option 2: Environment-Based Configuration**
 1. Create environment-specific config files:
-   - `company.config.dev.json`
-   - `company.config.staging.json`
-   - `company.config.prod.json`
-2. Use a build script to copy the appropriate file to `company.config.json`
+   - `app.config.dev.json`
+   - `app.config.staging.json`
+   - `app.config.prod.json`
+2. Use a build script to copy the appropriate file to `app.config.json`
 3. Set up CI/CD to select the right config per environment
 
 ### IDE Integration
 
-For better editing experience, add the `$schema` field to your `company.config.json`:
+For better editing experience, add the `$schema` field to your `app.config.json`:
 
 ```json
 {
-  "$schema": "./company.config.schema.json",
+  "$schema": "./schemas/app.config.schema.json",
   "companyName": "Your Company",
   ...
 }
@@ -334,11 +334,11 @@ This enables:
 You can validate configurations programmatically in your code:
 
 ```typescript
-import { validateCompanyConfig } from '@/types/company-config';
-import companyConfig from '../company.config.json';
+import { validateAppConfig } from '@/types/app-config';
+import appConfig from '../app.config.json';
 
 try {
-  validateCompanyConfig(companyConfig);
+  validateAppConfig(appConfig);
   console.log('Configuration is valid!');
 } catch (error) {
   console.error('Configuration error:', error.message);
@@ -348,7 +348,7 @@ try {
 ### Configuration Best Practices
 
 1. **Keep It Simple**: Start with minimal configuration and add complexity as needed
-2. **Validate Often**: Run `npm run validate:company-config` before every commit
+2. **Validate Often**: Run `npm run validate:app-config` before every commit
 3. **Document Changes**: Keep notes on why you chose specific values
 4. **Use Examples**: Reference the examples directory when unsure
 5. **Test Thoroughly**: Always test in development before deploying
@@ -385,7 +385,7 @@ For organizations with specific compliance requirements:
 
 ### Validation Fails
 
-**Symptom**: `npm run validate:company-config` reports errors
+**Symptom**: `npm run validate:app-config` reports errors
 
 **Solutions**:
 1. Read the error messages carefully

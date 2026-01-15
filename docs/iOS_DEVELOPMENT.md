@@ -8,7 +8,7 @@ This app is built using **Capacitor**, which wraps the React web application int
 
 ## Configuration
 
-Before building the iOS app, configure it for your enterprise by editing `company.config.json`:
+Before building the iOS app, configure it for your enterprise by editing `app.config.json`:
 
 ```json
 {
@@ -353,7 +353,7 @@ enterprise-support/
 │       ├── App/           # iOS app code and resources
 │       ├── Pods/          # CocoaPods dependencies
 │       └── App.xcodeproj  # Xcode project file
-├── company.config.json    # Company-specific configuration
+├── app.config.json        # App-specific configuration
 ├── capacitor.config.ts    # Capacitor configuration
 └── package.json           # Node.js dependencies and scripts
 ```
@@ -651,7 +651,7 @@ If builds are still slow:
 - [Configuration Guide](./CONFIGURATION.md) - Customizing the app
 - [Document Management](./DOCUMENTS.md) - Managing support documents
 - [Apple Connect Copyright Automation](./APPLE_CONNECT_COPYRIGHT_AUTOMATION.md) - Automated copyright field management
-- [Contributing Guide](../CONTRIBUTING.md) - How to contribute
+- [Contributing Guide](../.github/CONTRIBUTING.md) - How to contribute
 
 ## Support
 

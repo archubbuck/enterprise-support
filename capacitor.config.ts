@@ -1,11 +1,11 @@
 import type { CapacitorConfig } from '@capacitor/cli';
-import companyConfig from './company.config.json';
+import appConfig from './app.config.json';
 
 const isDev = process.env.NODE_ENV === 'development' || false;
 
 const config: CapacitorConfig = {
-  appId: companyConfig.appId,
-  appName: companyConfig.appName,
+  appId: appConfig.appId,
+  appName: appConfig.appName,
   webDir: 'dist',
   server: {
     // Allow clear text traffic for local development only

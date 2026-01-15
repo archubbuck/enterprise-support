@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://github.com/archubbuck/enterprise-support/company.config.schema.json",
-  "title": "Company Configuration Schema",
+  "$id": "https://github.com/archubbuck/enterprise-support/app.config.schema.json",
+  "title": "App Configuration Schema",
   "description": "Configuration schema for enterprise-specific settings in the Enterprise Support application. This file controls branding, contact information, feature flags, theming, and regional office details.",
   "type": "object",
   "required": ["$version", "companyName", "appName", "appId", "domain", "contacts", "features", "theme"],

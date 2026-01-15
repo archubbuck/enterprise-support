@@ -1,56 +1,56 @@
 {
-  "$schema": "../company.config.schema.json",
+  "$schema": "./schemas/app.config.schema.json",
   "$version": "1.0",
-  "companyName": "Global Finance Corp",
-  "appName": "Global Finance IT Support",
-  "appId": "com.globalfinance.itsupport",
-  "appSubtitle": "Enterprise IT Services",
-  "domain": "globalfinance.com",
-  "vpnPortal": "https://vpn.globalfinance.com",
+  "companyName": "Your Company",
+  "appName": "Enterprise Support",
+  "appId": "com.enterprise.support",
+  "appSubtitle": "IT Help & Documentation",
+  "domain": "example.com",
+  "vpnPortal": "vpn.example.com",
   "contacts": {
-    "email": "ithelpdesk@globalfinance.com",
-    "emergencyEmail": "security@globalfinance.com",
+    "email": "ithelpdesk@example.com",
+    "emergencyEmail": "security@example.com",
     "regions": [
       {
         "region": "Americas",
-        "city": "New York, NY (HQ)",
-        "phone": "+1 (212) 555-1000",
-        "hours": "24/7"
+        "city": "Charlotte, NC (HQ)",
+        "phone": "+1 (704) 805-7200",
+        "hours": "7:00 AM - 7:00 PM EST"
       },
       {
         "region": "Americas",
-        "city": "Toronto, Canada",
-        "phone": "+1 (416) 555-2000",
-        "hours": "8:00 AM - 8:00 PM EST"
+        "city": "New York, NY",
+        "phone": "+1 (212) 878-3600",
+        "hours": "8:00 AM - 6:00 PM EST"
       },
       {
         "region": "EMEA",
         "city": "London, UK",
-        "phone": "+44 20 7946 0958",
+        "phone": "+44 20 7514 1000",
         "hours": "8:00 AM - 6:00 PM GMT"
       },
       {
         "region": "EMEA",
         "city": "Frankfurt, Germany",
-        "phone": "+49 69 7169 0",
+        "phone": "+49 69 71690000",
         "hours": "8:00 AM - 6:00 PM CET"
+      },
+      {
+        "region": "Asia Pacific",
+        "city": "Hong Kong",
+        "phone": "+852 2841 1000",
+        "hours": "9:00 AM - 6:00 PM HKT"
       },
       {
         "region": "Asia Pacific",
         "city": "Tokyo, Japan",
         "phone": "+81 3 4578 7400",
         "hours": "9:00 AM - 6:00 PM JST"
-      },
-      {
-        "region": "Asia Pacific",
-        "city": "Singapore",
-        "phone": "+65 6622 2000",
-        "hours": "9:00 AM - 6:00 PM SGT"
       }
     ]
   },
   "features": {
-    "tagFiltering": true,
+    "tagFiltering": false,
     "pdfDocuments": true,
     "wordDocuments": true,
     "imageDocuments": true

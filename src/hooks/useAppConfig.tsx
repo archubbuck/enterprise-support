@@ -1,40 +1,41 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { CompanyConfig, validateCompanyConfig } from '../types/company-config';
+import { AppConfig, validateAppConfig } from '../types/app-config';
 
 /**
  * Cache configuration constants
  */
-const CONFIG_CACHE_KEY = 'enterprise-support-config-cache';
+const CONFIG_CACHE_KEY = 'enterprise-support-app-config-cache';
 const CONFIG_CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 
 /**
  * Cached configuration structure stored in localStorage
  */
 interface CachedConfig {
-  data: CompanyConfig;
+  data: AppConfig;
   timestamp: number;
   version: string;
 }
 
 /**
- * Company config context state
+ * App config context state
  */
-interface CompanyConfigState {
-  config: CompanyConfig | null;
+interface AppConfigState {
+  config: AppConfig | null;
   loading: boolean;
   error: Error | null;
 }
 
 /**
- * React context for company configuration
+ * React context for app configuration
  */
-const CompanyConfigContext = createContext<CompanyConfigState | null>(null);
+const AppConfigContext = createContext<AppConfigState | null>(null);
 
 /**
  * Reads cached configuration from localStorage
  * Returns null if cache is missing, expired, or invalid
  */
-function getCachedConfig(): CompanyConfig | null {
+function getCachedConfig(): AppConfig | null {
   try {
     const cached = localStorage.getItem(CONFIG_CACHE_KEY);
     if (!cached) return null;
@@ -48,7 +49,7 @@ function getCachedConfig(): CompanyConfig | null {
     }
     
     // Validate cached config still matches current schema
-    validateCompanyConfig(parsed.data);
+    validateAppConfig(parsed.data);
     return parsed.data;
   } catch {
     // Invalid cache, remove it
@@ -60,7 +61,7 @@ function getCachedConfig(): CompanyConfig | null {
 /**
  * Saves configuration to localStorage cache
  */
-function setCachedConfig(config: CompanyConfig): void {
+function setCachedConfig(config: AppConfig): void {
   try {
     const cached: CachedConfig = {
       data: config,
@@ -70,7 +71,7 @@ function setCachedConfig(config: CompanyConfig): void {
     localStorage.setItem(CONFIG_CACHE_KEY, JSON.stringify(cached));
   } catch {
     // localStorage may be full or disabled, fail silently
-    console.warn('Failed to cache company configuration');
+    console.warn('Failed to cache app configuration');
   }
 }
 
@@ -78,35 +79,35 @@ function setCachedConfig(config: CompanyConfig): void {
  * Fetches configuration from the server
  * Uses stale-while-revalidate pattern for offline resilience
  */
-async function fetchConfig(): Promise<CompanyConfig> {
-  const response = await fetch('/company.config.json');
+async function fetchConfig(): Promise<AppConfig> {
+  const response = await fetch('/app.config.json');
   
   if (!response.ok) {
     throw new Error(`Failed to load configuration: ${response.status} ${response.statusText}`);
   }
   
   const data = await response.json();
-  validateCompanyConfig(data);
+  validateAppConfig(data);
   return data;
 }
 
 /**
- * Props for CompanyConfigProvider component
+ * Props for AppConfigProvider component
  */
-interface CompanyConfigProviderProps {
+interface AppConfigProviderProps {
   children: ReactNode;
 }
 
 /**
- * Provider component that fetches and caches company configuration
+ * Provider component that fetches and caches app configuration
  * Uses stale-while-revalidate pattern for offline resilience:
  * 1. Immediately returns cached config if available (stale)
  * 2. Fetches fresh config in background
  * 3. Updates cache and state when fresh config arrives
  * 4. Falls back to cache if network fails
  */
-export function CompanyConfigProvider({ children }: CompanyConfigProviderProps) {
-  const [state, setState] = useState<CompanyConfigState>(() => {
+export function AppConfigProvider({ children }: AppConfigProviderProps) {
+  const [state, setState] = useState<AppConfigState>(() => {
     // Try to get cached config immediately for faster initial render
     const cached = getCachedConfig();
     return {
@@ -164,23 +165,23 @@ export function CompanyConfigProvider({ children }: CompanyConfigProviderProps) 
   }, []);
 
   return (
-    <CompanyConfigContext.Provider value={state}>
+    <AppConfigContext.Provider value={state}>
       {children}
-    </CompanyConfigContext.Provider>
+    </AppConfigContext.Provider>
   );
 }
 
 /**
- * Hook to access company configuration from context
- * Must be used within a CompanyConfigProvider
+ * Hook to access app configuration from context
+ * Must be used within a AppConfigProvider
  * 
- * @returns Company config state with config, loading, and error
- * @throws Error if used outside of CompanyConfigProvider
+ * @returns App config state with config, loading, and error
+ * @throws Error if used outside of AppConfigProvider
  * 
  * @example
  * ```tsx
  * function MyComponent() {
- *   const { config, loading, error } = useCompanyConfig();
+ *   const { config, loading, error } = useAppConfig();
  *   
  *   if (loading) return <Spinner />;
  *   if (error) return <ErrorMessage error={error} />;
@@ -190,11 +191,11 @@ export function CompanyConfigProvider({ children }: CompanyConfigProviderProps) 
  * }
  * ```
  */
-export function useCompanyConfig(): CompanyConfigState {
-  const context = useContext(CompanyConfigContext);
+export function useAppConfig(): AppConfigState {
+  const context = useContext(AppConfigContext);
   
   if (context === null) {
-    throw new Error('useCompanyConfig must be used within a CompanyConfigProvider');
+    throw new Error('useAppConfig must be used within a AppConfigProvider');
   }
   
   return context;
@@ -220,8 +221,8 @@ export function useCompanyConfig(): CompanyConfigState {
  * }
  * ```
  */
-export function useFeatureFlag(feature: keyof CompanyConfig['features']): boolean {
-  const { config } = useCompanyConfig();
+export function useFeatureFlag(feature: keyof AppConfig['features']): boolean {
+  const { config } = useAppConfig();
   return config?.features[feature] ?? false;
 }
 
@@ -231,7 +232,7 @@ export function useFeatureFlag(feature: keyof CompanyConfig['features']): boolea
  * 
  * @returns Theme configuration or null if loading
  */
-export function useThemeConfig(): CompanyConfig['theme'] | null {
-  const { config } = useCompanyConfig();
+export function useThemeConfig(): AppConfig['theme'] | null {
+  const { config } = useAppConfig();
   return config?.theme ?? null;
 }

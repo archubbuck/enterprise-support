@@ -1,5 +1,5 @@
 {
-  "$schema": "../company.config.schema.json",
+  "$schema": "../schemas/app.config.schema.json",
   "$version": "1.0",
   "companyName": "Regional Healthcare",
   "appName": "Healthcare IT Support",

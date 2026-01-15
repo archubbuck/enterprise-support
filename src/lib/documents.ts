@@ -1,24 +1,24 @@
-import type { CompanyConfig } from '../types/company-config';
+import type { AppConfig } from '../types/app-config';
 
 // Module-level config storage for runtime access
-let _companyConfig: CompanyConfig | null = null;
+let _appConfig: AppConfig | null = null;
 
 /**
- * Initialize the documents module with company configuration
+ * Initialize the documents module with app configuration
  * Must be called before using contact info or loading documents
  */
-export function initializeDocuments(config: CompanyConfig): void {
-  _companyConfig = config;
+export function initializeDocuments(config: AppConfig): void {
+  _appConfig = config;
 }
 
 /**
- * Get the current company config (for internal use)
+ * Get the current app config (for internal use)
  */
-function getConfig(): CompanyConfig {
-  if (!_companyConfig) {
+function getConfig(): AppConfig {
+  if (!_appConfig) {
     throw new Error('Documents module not initialized. Call initializeDocuments() first.');
   }
-  return _companyConfig;
+  return _appConfig;
 }
 
 export type DocumentType = 'markdown' | 'pdf' | 'image' | 'word';

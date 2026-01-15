@@ -260,17 +260,17 @@ App Store Connect supports preview videos to showcase your app.
 - `ios/App/fastlane/metadata/en-US/marketing_url.txt` - Marketing website URL
 
 **Current Values:**
-- Support URL: `https://github.com/archubbuck/enterprise-support/blob/main/SUPPORT.md` - Links to the support documentation
-- Privacy URL: `https://github.com/archubbuck/enterprise-support/blob/main/PRIVACY.md` - Links to the privacy policy
+- Support URL: `https://github.com/archubbuck/enterprise-support/blob/main/.github/SUPPORT.md` - Links to the support documentation
+- Privacy URL: `https://github.com/archubbuck/enterprise-support/blob/main/docs/PRIVACY.md` - Links to the privacy policy
 - Marketing URL: `https://github.com/archubbuck/enterprise-support/blob/main/README.md` - Links to the project README
 
 **Documentation Files:**
-- **PRIVACY.md** - Comprehensive privacy policy explaining:
+- **docs/PRIVACY.md** - Comprehensive privacy policy explaining:
   - No personal data collection
   - Local-only data storage
   - No third-party tracking
   - Compliance with GDPR and CCPA
-- **SUPPORT.md** - Support resources including:
+- **.github/SUPPORT.md** - Support resources including:
   - Links to documentation
   - How to report issues
   - Contact information

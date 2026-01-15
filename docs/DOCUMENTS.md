@@ -40,7 +40,7 @@ The `public/documents/manifest.json` file describes all available documents:
 
 ## Placeholders
 
-Documents support dynamic placeholders that are replaced at runtime with values from `company.config.json`:
+Documents support dynamic placeholders that are replaced at runtime with values from `app.config.json`:
 
 - `{companyName}` - Replaced with the company name
 - `{companyName.toUpperCase()}` - Replaced with uppercase company name
@@ -64,7 +64,7 @@ For emergencies, contact {emergencyEmail}.
 1. App loads and calls `loadSupportDocuments()`
 2. Function fetches `manifest.json` from `/documents/manifest.json`
 3. For each document in the manifest, fetches the corresponding `.md` file
-4. Replaces all placeholders with values from `company.config.json`
+4. Replaces all placeholders with values from `app.config.json`
 5. Returns array of document objects with parsed content
 
 ### iOS Environment
@@ -181,4 +181,4 @@ After making changes to documents:
 - [Configuration Guide](./CONFIGURATION.md) - App configuration options
 - [Quick Start Guide](./QUICK_START.md) - Getting started
 - [iOS Development Guide](./iOS_DEVELOPMENT.md) - Building for iOS
-- [Contributing Guide](../CONTRIBUTING.md) - How to contribute
+- [Contributing Guide](../.github/CONTRIBUTING.md) - How to contribute

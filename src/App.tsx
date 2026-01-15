@@ -11,10 +11,10 @@ import { TagFilter } from '@/components/TagFilter';
 import { ThemeSelector } from '@/components/ThemeSelector';
 import { loadSupportDocuments, SupportDocument, initializeDocuments } from '@/lib/documents';
 import { useFeaturePreview } from '@/hooks/useFeaturePreview';
-import { useCompanyConfig } from '@/hooks/useCompanyConfig';
+import { useAppConfig } from '@/hooks/useAppConfig';
 
 function App() {
-  const { config, loading: configLoading, error: configError } = useCompanyConfig();
+  const { config, loading: configLoading, error: configError } = useAppConfig();
   const [activeTab, setActiveTab] = useState<'documents' | 'contacts'>('documents');
   const [selectedDocument, setSelectedDocument] = useState<SupportDocument | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
