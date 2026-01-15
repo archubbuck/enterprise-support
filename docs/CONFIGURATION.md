@@ -250,10 +250,6 @@ In this example, Quick Start Guides appear first, followed by IT Support Documen
 The search function works across all configured document collections. When you search for a term, it searches through titles and categories from all documents specified in the configuration.
 
 ### Important Field Notes
-- `phone`: International format with country code
-- `hours`: Business hours with timezone abbreviation
-
-### Important Field Notes
 
 #### App Bundle ID (`appId`)
 - **CRITICAL**: Must be unique in the App Store
