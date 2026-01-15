@@ -4,7 +4,7 @@
   "title": "App Configuration Schema",
   "description": "Configuration schema for enterprise-specific settings in the Enterprise Support application. This file controls branding, contact information, feature flags, theming, and regional office details.",
   "type": "object",
-  "required": ["$version", "companyName", "appName", "appId", "domain", "contacts", "features", "theme"],
+  "required": ["$version", "companyName", "appName", "appId", "domain", "contacts", "features", "theme", "documents"],
   "properties": {
     "$version": {
       "type": "string",
@@ -186,6 +186,42 @@
         }
       },
       "additionalProperties": false
+    },
+    "documents": {
+      "type": "array",
+      "description": "Available documents configuration. Each document specifies a friendly name and the path to the document file relative to the workspace root. The manifest.json file at the specified path will be loaded to retrieve document metadata.",
+      "items": {
+        "type": "object",
+        "required": ["name", "path"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Friendly name describing the document collection (e.g., 'IT Support Documents', 'Employee Handbook').",
+            "minLength": 1,
+            "maxLength": 100,
+            "examples": ["IT Support Documents", "Employee Resources", "Security Policies"]
+          },
+          "path": {
+            "type": "string",
+            "description": "Path to the document manifest.json file, relative to the workspace root (e.g., 'public/documents/manifest.json').",
+            "minLength": 1,
+            "examples": ["public/documents/manifest.json", "docs/support/manifest.json"]
+          },
+          "position": {
+            "type": "number",
+            "description": "Optional numeric position for ordering documents. Lower numbers appear first. Documents without a position value are placed after positioned documents in their natural order.",
+            "minimum": 0,
+            "examples": [0, 1, 2, 10, 100]
+          }
+        },
+        "additionalProperties": false
+      },
+      "default": [
+        {
+          "name": "IT Support Documents",
+          "path": "public/documents/manifest.json"
+        }
+      ]
     }
   },
   "additionalProperties": false,
@@ -233,7 +269,13 @@
             "enabled": true
           }
         ]
-      }
+      },
+      "documents": [
+        {
+          "name": "IT Support Documents",
+          "path": "public/documents/manifest.json"
+        }
+      ]
     }
   ]
 }

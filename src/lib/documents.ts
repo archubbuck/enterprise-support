@@ -82,56 +82,82 @@ function replacePlaceholders(content: string): string {
 // Function to load documents from local storage (app bundle assets)
 async function loadDocumentsFromAssets(): Promise<SupportDocument[]> {
   try {
-    // Read the manifest file from assets
-    const manifestResponse = await fetch('/documents/manifest.json');
-    if (!manifestResponse.ok) {
-      throw new Error('Failed to fetch manifest');
+    const config = getConfig();
+    
+    // Sort document configs by position (documents with position come first)
+    const sortedDocConfigs = [...config.documents].sort((a, b) => {
+      const posA = a.position ?? Number.MAX_SAFE_INTEGER;
+      const posB = b.position ?? Number.MAX_SAFE_INTEGER;
+      return posA - posB;
+    });
+    
+    // Load documents from each configured path
+    const allDocuments: SupportDocument[] = [];
+    
+    for (const docConfig of sortedDocConfigs) {
+      try {
+        // Fetch the manifest file from the configured path
+        const manifestPath = docConfig.path.startsWith('/') ? docConfig.path : `/${docConfig.path}`;
+        const manifestResponse = await fetch(manifestPath);
+        
+        if (!manifestResponse.ok) {
+          console.warn(`Failed to fetch manifest from ${docConfig.path}`);
+          continue;
+        }
+        
+        const manifestData = await manifestResponse.json() as DocumentManifestItem[];
+        
+        // Determine the base path for documents (directory containing manifest.json)
+        const basePath = docConfig.path.replace(/\/[^/]+$/, '');
+        
+        // Load each document file from this manifest
+        const documents = await Promise.all(
+          manifestData.map(async (item) => {
+            try {
+              const documentType = item.type || detectDocumentType(item.file);
+              const fileUrl = basePath ? `/${basePath}/${item.file}` : `/${item.file}`;
+              
+              let content = '';
+              
+              // For markdown, load and process the content
+              if (documentType === 'markdown') {
+                const fileResponse = await fetch(fileUrl);
+                if (!fileResponse.ok) {
+                  throw new Error(`Failed to fetch ${item.file}`);
+                }
+                content = replacePlaceholders(await fileResponse.text());
+              } else {
+                // For other file types (PDF, Word, images), we'll just store the URL
+                // Content can be a simple message or empty
+                content = `This is a ${documentType} file. View below.`;
+              }
+              
+              const title = replacePlaceholders(item.title);
+              
+              return {
+                id: item.id,
+                title,
+                category: item.category,
+                icon: item.icon as SupportDocument['icon'],
+                content,
+                tags: item.tags,
+                type: documentType,
+                fileUrl,
+              };
+            } catch (error) {
+              console.error(`Failed to load document ${item.file}:`, error);
+              return null;
+            }
+          })
+        );
+        
+        allDocuments.push(...documents.filter((doc): doc is SupportDocument => doc !== null));
+      } catch (error) {
+        console.error(`Failed to load documents from ${docConfig.path}:`, error);
+      }
     }
     
-    const manifestData = await manifestResponse.json() as DocumentManifestItem[];
-    
-    // Load each document file
-    const documents = await Promise.all(
-      manifestData.map(async (item) => {
-        try {
-          const documentType = item.type || detectDocumentType(item.file);
-          const fileUrl = `/documents/${item.file}`;
-          
-          let content = '';
-          
-          // For markdown, load and process the content
-          if (documentType === 'markdown') {
-            const fileResponse = await fetch(fileUrl);
-            if (!fileResponse.ok) {
-              throw new Error(`Failed to fetch ${item.file}`);
-            }
-            content = replacePlaceholders(await fileResponse.text());
-          } else {
-            // For other file types (PDF, Word, images), we'll just store the URL
-            // Content can be a simple message or empty
-            content = `This is a ${documentType} file. View below.`;
-          }
-          
-          const title = replacePlaceholders(item.title);
-          
-          return {
-            id: item.id,
-            title,
-            category: item.category,
-            icon: item.icon as SupportDocument['icon'],
-            content,
-            tags: item.tags,
-            type: documentType,
-            fileUrl,
-          };
-        } catch (error) {
-          console.error(`Failed to load document ${item.file}:`, error);
-          return null;
-        }
-      })
-    );
-    
-    return documents.filter((doc): doc is SupportDocument => doc !== null);
+    return allDocuments;
   } catch (error) {
     console.error('Failed to load documents from assets:', error);
     return [];

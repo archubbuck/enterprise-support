@@ -6,6 +6,56 @@ This document explains how support documents are managed in the Enterprise Suppo
 
 Support documents are stored as individual Markdown files in the `public/documents/` directory. This allows for easier editing and maintenance compared to hardcoding documents in TypeScript files.
 
+The application loads documents based on the configuration specified in `app.config.json`. This makes document locations transparent and configurable.
+
+## Document Configuration
+
+### App Config Setup
+
+Documents are configured in the `app.config.json` file using the `documents` array. Each entry specifies a document collection:
+
+```json
+{
+  "documents": [
+    {
+      "name": "IT Support Documents",
+      "path": "public/documents/manifest.json",
+      "position": 0
+    }
+  ]
+}
+```
+
+**Configuration Fields:**
+- `name`: Friendly name for the document collection (e.g., "IT Support Documents")
+- `path`: Path to the manifest.json file, relative to the workspace root
+- `position`: (Optional) Numeric value for ordering. Lower numbers appear first. Documents without a position are placed after positioned documents.
+
+**Multiple Document Collections:**
+
+You can configure multiple document collections from different locations:
+
+```json
+{
+  "documents": [
+    {
+      "name": "Quick Start Guides",
+      "path": "public/documents/quickstart/manifest.json",
+      "position": 0
+    },
+    {
+      "name": "IT Support Documents",
+      "path": "public/documents/support/manifest.json",
+      "position": 1
+    },
+    {
+      "name": "Security Policies",
+      "path": "public/documents/security/manifest.json"
+    }
+  ]
+}
+```
+
 ## Document Structure
 
 ### Document Files
@@ -61,11 +111,12 @@ For emergencies, contact {emergencyEmail}.
 
 ### Web Environment
 
-1. App loads and calls `loadSupportDocuments()`
-2. Function fetches `manifest.json` from `/documents/manifest.json`
-3. For each document in the manifest, fetches the corresponding `.md` file
-4. Replaces all placeholders with values from `app.config.json`
-5. Returns array of document objects with parsed content
+1. App loads and reads `app.config.json` to get document configurations
+2. For each document configuration, the app fetches the manifest.json from the specified path
+3. Documents are loaded in order based on the `position` field (if specified)
+4. For each document in the manifest, the app fetches the corresponding `.md` file
+5. All placeholders are replaced with values from `app.config.json`
+6. Returns array of document objects with parsed content
 
 ### iOS Environment
 
@@ -73,6 +124,14 @@ For emergencies, contact {emergencyEmail}.
 2. Documents become part of the iOS app bundle
 3. At runtime, the same fetch-based loading works because Capacitor serves bundle assets via HTTP
 4. Placeholders are replaced just like in web environment
+
+### Search Compatibility
+
+The search function works seamlessly with the document configuration:
+- Searches across all documents from all configured collections
+- Matches against document titles and categories
+- Results are displayed in the order specified by the `position` field
+- Feature flags still apply (PDF, Word, Image document filtering)
 
 ## Adding New Documents
 
