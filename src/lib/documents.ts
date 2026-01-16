@@ -114,13 +114,9 @@ async function loadDocumentsFromAssets(): Promise<SupportDocument[]> {
         
         // Determine the base path for documents (directory containing manifest.json)
         // Remove leading slash for base path, then we'll add it back when constructing URLs
-        let basePath = normalizedPath.replace(/^\//, '').replace(/\/[^/]+$/, '');
-        
-        // If the path had no directory (manifest at root), basePath will equal the filename
-        // In this case, set basePath to empty string
-        if (!basePath.includes('/')) {
-          basePath = '';
-        }
+        const pathWithoutLeadingSlash = normalizedPath.startsWith('/') ? normalizedPath.substring(1) : normalizedPath;
+        const lastSlashIndex = pathWithoutLeadingSlash.lastIndexOf('/');
+        const basePath = lastSlashIndex !== -1 ? pathWithoutLeadingSlash.substring(0, lastSlashIndex) : '';
         
         // Load each document file from this manifest
         const documents = await Promise.all(

@@ -444,10 +444,17 @@ export function validateAppConfig(config: unknown): asserts config is AppConfig 
       );
     }
     
-    if (doc.position !== undefined && (typeof doc.position !== 'number' || !Number.isInteger(doc.position) || doc.position < 0)) {
-      throw new Error(
-        `Invalid document at index ${index}: position must be a non-negative integer`
-      );
+    const hasPosition = doc.position !== undefined;
+    if (hasPosition) {
+      const isNotNumber = typeof doc.position !== 'number';
+      const isNotInteger = !Number.isInteger(doc.position);
+      const isNegative = doc.position < 0;
+      
+      if (isNotNumber || isNotInteger || isNegative) {
+        throw new Error(
+          `Invalid document at index ${index}: position must be a non-negative integer`
+        );
+      }
     }
   });
 }
