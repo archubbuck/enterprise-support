@@ -15,59 +15,107 @@ export function ContactsView() {
   const groupedContacts = groupByRegion(contactInfo.regions);
 
   return (
-    <div className="px-5 pb-6 space-y-6">
-      <div>
-        <h2 className="text-lg font-semibold text-foreground mb-1">IT Help Desk</h2>
-        <p className="text-sm text-muted-foreground">
-          Contact your regional support team
+    <div className="px-5 py-6 space-y-6">
+      {/* Header with brutalist styling */}
+      <div className="border-4 border-black p-4 bg-white" style={{ boxShadow: '6px 6px 0 #000' }}>
+        <h2 
+          className="text-lg font-black text-black uppercase tracking-tighter mb-2"
+          style={{ fontFamily: "'JetBrains Mono', monospace" }}
+        >
+          IT HELP DESK
+        </h2>
+        <p 
+          className="text-xs text-gray-600 uppercase tracking-wide"
+          style={{ fontFamily: "'JetBrains Mono', monospace" }}
+        >
+          CONTACT YOUR REGIONAL SUPPORT TEAM
         </p>
       </div>
 
+      {/* Global email with lime accent */}
       <button
         onClick={() => window.location.href = `mailto:${contactInfo.email}`}
-        className="w-full flex items-center gap-4 p-4 bg-accent/10 rounded-xl hover:bg-accent/15 transition-colors text-left group"
+        className="w-full flex items-center gap-4 p-5 bg-[#CCFF00] border-3 border-black text-left group hover:translate-x-[-3px] hover:translate-y-[-3px] transition-transform relative"
+        style={{ boxShadow: '5px 5px 0 #000' }}
       >
-        <div className="w-11 h-11 rounded-xl bg-accent/20 flex items-center justify-center shrink-0">
-          <EnvelopeSimple className="w-5 h-5 text-accent" weight="duotone" />
+        <div className="relative shrink-0">
+          <div className="absolute inset-0 translate-x-1 translate-y-1 bg-black" style={{ width: '52px', height: '52px' }} />
+          <div className="relative w-13 h-13 bg-black border-2 border-black flex items-center justify-center z-10">
+            <EnvelopeSimple className="w-7 h-7 text-[#CCFF00]" weight="bold" />
+          </div>
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-xs text-muted-foreground mb-0.5">Global Email Support</p>
-          <p className="text-sm font-medium text-foreground">{contactInfo.email}</p>
+          <p 
+            className="text-[9px] text-black mb-1 font-black uppercase tracking-widest"
+            style={{ fontFamily: "'JetBrains Mono', monospace" }}
+          >
+            GLOBAL EMAIL SUPPORT
+          </p>
+          <p 
+            className="text-sm font-black text-black"
+            style={{ fontFamily: "'JetBrains Mono', monospace" }}
+          >
+            {contactInfo.email}
+          </p>
         </div>
-        <CaretRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors shrink-0" />
+        <div className="shrink-0 w-10 h-10 bg-black border-2 border-black flex items-center justify-center">
+          <CaretRight className="w-6 h-6 text-[#CCFF00]" weight="bold" />
+        </div>
       </button>
 
-      <div className="space-y-5">
+      {/* Regional contacts */}
+      <div className="space-y-6">
         {Object.entries(groupedContacts).map(([region, contacts]) => (
           <div key={region}>
-            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 px-1">
-              {region}
-            </h3>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="h-1 flex-1 bg-black"></div>
+              <h3 
+                className="text-[10px] font-black text-black uppercase tracking-widest px-2 bg-white"
+                style={{ fontFamily: "'JetBrains Mono', monospace" }}
+              >
+                {region}
+              </h3>
+              <div className="h-1 flex-1 bg-black"></div>
+            </div>
             
-            <div className="space-y-2">
+            <div className="space-y-3">
               {contacts.map((contact, index) => (
                 <button
                   key={index}
                   onClick={() => window.location.href = `tel:${contact.phone.replace(/\s/g, '')}`}
-                  className="w-full flex items-center gap-4 p-4 bg-card rounded-xl hover:bg-muted/50 transition-colors text-left group"
+                  className="w-full flex items-center gap-4 p-4 bg-white border-3 border-black text-left group hover:translate-x-[-2px] hover:translate-y-[-2px] transition-transform"
+                  style={{ boxShadow: '4px 4px 0 #000' }}
                 >
-                  <div className="w-11 h-11 rounded-xl bg-muted flex items-center justify-center shrink-0">
-                    <MapPin className="w-5 h-5 text-foreground/70" weight="duotone" />
+                  <div className="w-12 h-12 bg-black border-2 border-black flex items-center justify-center shrink-0">
+                    <MapPin className="w-6 h-6 text-[#00FFFF]" weight="bold" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-foreground">{contact.city}</p>
-                    <div className="flex items-center gap-3 mt-1">
-                      <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                        <Phone className="w-3 h-3" />
+                    <p 
+                      className="text-sm font-black text-black uppercase"
+                      style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                    >
+                      {contact.city}
+                    </p>
+                    <div className="flex items-center gap-3 mt-1 flex-wrap">
+                      <span 
+                        className="flex items-center gap-1 text-[10px] text-gray-600 font-bold uppercase"
+                        style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                      >
+                        <Phone className="w-3 h-3" weight="bold" />
                         {contact.phone}
                       </span>
-                      <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                        <Clock className="w-3 h-3" />
+                      <span 
+                        className="flex items-center gap-1 text-[10px] text-gray-600 font-bold uppercase"
+                        style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                      >
+                        <Clock className="w-3 h-3" weight="bold" />
                         {contact.hours}
                       </span>
                     </div>
                   </div>
-                  <CaretRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors shrink-0" />
+                  <div className="shrink-0 w-8 h-8 bg-black border-2 border-black flex items-center justify-center">
+                    <CaretRight className="w-5 h-5 text-[#CCFF00]" weight="bold" />
+                  </div>
                 </button>
               ))}
             </div>
@@ -75,23 +123,48 @@ export function ContactsView() {
         ))}
       </div>
 
+      {/* Emergency contact with red accent */}
       <div className="pt-2">
         <button
           onClick={() => window.location.href = `mailto:${contactInfo.emergencyEmail}`}
-          className="w-full flex items-center gap-4 p-4 bg-destructive/10 rounded-xl hover:bg-destructive/15 transition-colors text-left group"
+          className="w-full flex items-center gap-4 p-5 bg-[#FF3300] border-3 border-black text-left group hover:translate-x-[-3px] hover:translate-y-[-3px] transition-transform relative"
+          style={{ boxShadow: '5px 5px 0 #000' }}
         >
-          <div className="w-11 h-11 rounded-xl bg-destructive/20 flex items-center justify-center shrink-0">
-            <EnvelopeSimple className="w-5 h-5 text-destructive" weight="duotone" />
+          <div className="relative shrink-0">
+            <div className="absolute inset-0 translate-x-1 translate-y-1 bg-black" style={{ width: '52px', height: '52px' }} />
+            <div className="relative w-13 h-13 bg-black border-2 border-black flex items-center justify-center z-10 animate-pulse">
+              <EnvelopeSimple className="w-7 h-7 text-[#FF3300]" weight="bold" />
+            </div>
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-xs text-muted-foreground mb-0.5">Security Incidents</p>
-            <p className="text-sm font-medium text-foreground">{contactInfo.emergencyEmail}</p>
+            <p 
+              className="text-[9px] text-white mb-1 font-black uppercase tracking-widest"
+              style={{ fontFamily: "'JetBrains Mono', monospace" }}
+            >
+              ⚠ SECURITY INCIDENTS
+            </p>
+            <p 
+              className="text-sm font-black text-white"
+              style={{ fontFamily: "'JetBrains Mono', monospace" }}
+            >
+              {contactInfo.emergencyEmail}
+            </p>
           </div>
-          <CaretRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors shrink-0" />
+          <div className="shrink-0 w-10 h-10 bg-black border-2 border-black flex items-center justify-center">
+            <CaretRight className="w-6 h-6 text-white" weight="bold" />
+          </div>
         </button>
-        <p className="text-xs text-muted-foreground mt-2 px-1">
-          Report security issues, suspicious emails, or lost devices
-        </p>
+        <div 
+          className="mt-3 px-4 py-2 bg-white border-2 border-black"
+          style={{ boxShadow: '3px 3px 0 #000' }}
+        >
+          <p 
+            className="text-[10px] text-gray-600 font-bold uppercase tracking-wide"
+            style={{ fontFamily: "'JetBrains Mono', monospace" }}
+          >
+            REPORT: SECURITY ISSUES / SUSPICIOUS EMAILS / LOST DEVICES
+          </p>
+        </div>
       </div>
     </div>
   );

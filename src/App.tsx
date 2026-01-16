@@ -112,71 +112,117 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <header className="px-5 pt-6 pb-4">
-        <div className="flex items-center gap-3 mb-1">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-            <svg viewBox="0 0 24 24" className="w-4 h-4 text-primary-foreground">
-              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+    <div className="min-h-screen bg-white flex flex-col neo-brutalist brutalist-grain">
+      {/* Neo-Brutalist Header with Asymmetric Layout */}
+      <header className="px-5 pt-8 pb-6 border-b-4 border-black relative">
+        <div className="flex items-start gap-4 mb-3">
+          {/* Bold geometric logo */}
+          <div className="relative">
+            <div className="w-14 h-14 bg-[#CCFF00] border-3 border-black flex items-center justify-center relative"
+                 style={{ boxShadow: '4px 4px 0 #000' }}>
+              <svg viewBox="0 0 24 24" className="w-6 h-6 text-black">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="square" strokeLinejoin="miter"/>
+              </svg>
+            </div>
+            {/* Offline status indicator */}
+            <div className="absolute -top-1 -right-1 w-4 h-4 bg-[#CCFF00] border-2 border-black"></div>
           </div>
-          <h1 className="text-xl font-semibold tracking-tight text-foreground flex-1">{config.appName}</h1>
+          
+          <div className="flex-1">
+            <h1 className="text-2xl font-black tracking-tighter text-black uppercase" 
+                style={{ fontFamily: "'JetBrains Mono', monospace", letterSpacing: '-0.05em' }}>
+              {config.appName}
+            </h1>
+            <div className="flex items-center gap-2 mt-1">
+              <span className="text-xs font-bold uppercase tracking-wider text-gray-600"
+                    style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                {config.appSubtitle}
+              </span>
+              <span className="px-2 py-0.5 bg-black text-[#CCFF00] text-[9px] font-black uppercase tracking-widest"
+                    style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                OFFLINE
+              </span>
+            </div>
+          </div>
+          
           <ThemeSelector />
         </div>
-        <p className="text-sm text-muted-foreground ml-11">{config.appSubtitle}</p>
+        
+        {/* Technical grid pattern */}
+        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-black via-[#CCFF00] to-black opacity-50"></div>
       </header>
 
-      <nav className="px-5 mb-4">
-        <div className="flex gap-1 p-1 bg-muted rounded-lg">
+      {/* Brutalist Tab Navigation */}
+      <nav className="px-5 py-4 bg-gray-100">
+        <div className="flex gap-3">
           <button
             onClick={() => setActiveTab('documents')}
-            className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-md text-sm font-medium transition-all ${
+            className={`flex-1 flex items-center justify-center gap-2 py-4 px-4 font-bold text-xs uppercase tracking-wider transition-all border-3 border-black ${
               activeTab === 'documents'
-                ? 'bg-card text-foreground shadow-sm'
-                : 'text-muted-foreground hover:text-foreground'
+                ? 'bg-[#CCFF00] text-black'
+                : 'bg-white text-black hover:bg-gray-200'
             }`}
+            style={{ 
+              fontFamily: "'JetBrains Mono', monospace",
+              boxShadow: activeTab === 'documents' ? '4px 4px 0 #000' : '2px 2px 0 #000',
+              transform: activeTab === 'documents' ? 'translate(-2px, -2px)' : 'none'
+            }}
           >
-            <FileText className="w-4 h-4" weight={activeTab === 'documents' ? 'fill' : 'regular'} />
-            Documents
+            <FileText className="w-5 h-5" weight="bold" />
+            <span>DOCS</span>
           </button>
           <button
             onClick={() => setActiveTab('contacts')}
-            className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-md text-sm font-medium transition-all ${
+            className={`flex-1 flex items-center justify-center gap-2 py-4 px-4 font-bold text-xs uppercase tracking-wider transition-all border-3 border-black ${
               activeTab === 'contacts'
-                ? 'bg-card text-foreground shadow-sm'
-                : 'text-muted-foreground hover:text-foreground'
+                ? 'bg-[#CCFF00] text-black'
+                : 'bg-white text-black hover:bg-gray-200'
             }`}
+            style={{ 
+              fontFamily: "'JetBrains Mono', monospace",
+              boxShadow: activeTab === 'contacts' ? '4px 4px 0 #000' : '2px 2px 0 #000',
+              transform: activeTab === 'contacts' ? 'translate(-2px, -2px)' : 'none'
+            }}
           >
-            <Phone className="w-4 h-4" weight={activeTab === 'contacts' ? 'fill' : 'regular'} />
-            Contacts
+            <Phone className="w-5 h-5" weight="bold" />
+            <span>CONTACT</span>
           </button>
         </div>
       </nav>
 
-      <ScrollArea className="flex-1">
+      <ScrollArea className="flex-1 bg-white">
         {activeTab === 'documents' && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="px-5 pb-6 space-y-4"
+            className="px-5 py-6 space-y-6"
           >
+            {/* Brutalist Search Bar */}
             <div className="relative">
-              <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 z-10">
+                <MagnifyingGlass className="w-5 h-5 text-black" weight="bold" />
+              </div>
               <Input
                 id="search-documents"
-                placeholder="Search documents..."
+                placeholder="SEARCH ARCHIVES..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 pr-9 h-10 bg-muted border-0 focus-visible:ring-1 focus-visible:ring-accent"
+                className="pl-12 pr-12 h-14 bg-white border-3 border-black text-black font-bold uppercase tracking-wide placeholder:text-gray-400 focus-visible:ring-0 focus-visible:border-black"
+                style={{ 
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: '12px',
+                  boxShadow: 'inset 3px 3px 0 rgba(0,0,0,0.1)'
+                }}
               />
               {searchQuery && (
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 hover:bg-transparent"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 h-10 w-10 bg-black hover:bg-gray-800 border-2 border-black"
                   onClick={() => setSearchQuery('')}
+                  style={{ boxShadow: '2px 2px 0 #000' }}
                 >
-                  <X className="w-3.5 h-3.5" />
+                  <X className="w-4 h-4 text-[#CCFF00]" weight="bold" />
                 </Button>
               )}
             </div>
@@ -191,35 +237,74 @@ function App() {
             )}
 
             {isLoading ? (
-              <div className="text-center py-16 space-y-3">
-                <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mx-auto animate-pulse">
-                  <FileText className="w-6 h-6 text-muted-foreground" />
+              <div className="text-center py-20 space-y-4">
+                <div className="w-20 h-20 bg-white border-4 border-black flex items-center justify-center mx-auto"
+                     style={{ boxShadow: '6px 6px 0 #000' }}>
+                  <FileText className="w-10 h-10 text-black animate-pulse" weight="bold" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-foreground">Loading documents...</p>
+                  <p className="text-sm font-black text-black uppercase tracking-widest"
+                     style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                    LOADING ARCHIVES...
+                  </p>
+                  <div className="mt-3 h-1 w-32 mx-auto bg-gray-200 overflow-hidden">
+                    <div className="h-full w-1/3 bg-[#CCFF00] animate-pulse"></div>
+                  </div>
                 </div>
               </div>
             ) : filteredDocuments.length === 0 ? (
-              <div className="text-center py-16 space-y-3">
-                <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mx-auto">
-                  <FileText className="w-6 h-6 text-muted-foreground" />
+              <div className="text-center py-20 space-y-4">
+                <div className="w-20 h-20 bg-white border-4 border-black flex items-center justify-center mx-auto"
+                     style={{ boxShadow: '6px 6px 0 #000' }}>
+                  <FileText className="w-10 h-10 text-gray-400" weight="bold" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-foreground">No documents found</p>
-                  <p className="text-sm text-muted-foreground mt-1">Try a different search term</p>
+                  <p className="text-sm font-black text-black uppercase tracking-widest"
+                     style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                    NO RESULTS FOUND
+                  </p>
+                  <p className="text-xs text-gray-600 mt-2 uppercase tracking-wide"
+                     style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                    TRY DIFFERENT SEARCH TERMS
+                  </p>
                 </div>
-                <Button variant="ghost" size="sm" onClick={() => setSearchQuery('')} className="text-accent">
-                  Clear search
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => setSearchQuery('')} 
+                  className="bg-[#CCFF00] text-black border-3 border-black font-black uppercase tracking-wider hover:bg-[#A3CC00]"
+                  style={{ 
+                    fontFamily: "'JetBrains Mono', monospace",
+                    boxShadow: '3px 3px 0 #000'
+                  }}
+                >
+                  CLEAR SEARCH
                 </Button>
               </div>
             ) : (
-              <div className="space-y-2">
-                {filteredDocuments.map((doc) => (
-                  <DocumentTile
-                    key={doc.id}
-                    document={doc}
-                    onSelect={setSelectedDocument}
-                  />
+              <div className="space-y-3">
+                {/* Document count indicator */}
+                <div className="flex items-center justify-between px-1">
+                  <span className="text-xs font-black uppercase tracking-widest text-gray-600"
+                        style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                    {filteredDocuments.length} DOCUMENT{filteredDocuments.length !== 1 ? 'S' : ''} AVAILABLE
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-[#CCFF00] border border-black"></div>
+                    <span className="text-[9px] font-black uppercase tracking-widest text-gray-600"
+                          style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                      OFFLINE MODE
+                    </span>
+                  </div>
+                </div>
+                
+                {filteredDocuments.map((doc, index) => (
+                  <div key={doc.id} className="brutalist-stagger-item" style={{ animationDelay: `${index * 0.05}s` }}>
+                    <DocumentTile
+                      document={doc}
+                      onSelect={setSelectedDocument}
+                    />
+                  </div>
                 ))}
               </div>
             )}
