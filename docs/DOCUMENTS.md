@@ -130,7 +130,7 @@ For emergencies, contact {emergencyEmail}.
 The search function works seamlessly with the document configuration:
 - Searches across all documents from all configured collections
 - Matches against document titles and categories
-- Results are displayed in the order specified by the `position` field
+- Results maintain the document order based on the `position` field
 - Feature flags still apply (PDF, Word, Image document filtering)
 
 ## Adding New Documents
