@@ -40,7 +40,7 @@ export function ContactsView() {
       >
         <div className="relative shrink-0">
           <div className="absolute inset-0 translate-x-1 translate-y-1 bg-black" style={{ width: '52px', height: '52px' }} />
-          <div className="relative w-13 h-13 bg-black border-2 border-black flex items-center justify-center z-10">
+          <div className="relative w-12 h-12 bg-black border-2 border-black flex items-center justify-center z-10">
             <EnvelopeSimple className="w-7 h-7 text-[#CCFF00]" weight="bold" />
           </div>
         </div>
@@ -132,7 +132,7 @@ export function ContactsView() {
         >
           <div className="relative shrink-0">
             <div className="absolute inset-0 translate-x-1 translate-y-1 bg-black" style={{ width: '52px', height: '52px' }} />
-            <div className="relative w-13 h-13 bg-black border-2 border-black flex items-center justify-center z-10 animate-pulse">
+            <div className="relative w-12 h-12 bg-black border-2 border-black flex items-center justify-center z-10 animate-pulse">
               <EnvelopeSimple className="w-7 h-7 text-[#FF3300]" weight="bold" />
             </div>
           </div>
