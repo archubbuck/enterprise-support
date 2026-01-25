@@ -276,7 +276,22 @@ App Store Connect supports preview videos to showcase your app.
   - Contact information
   - FAQs
 
-Update these files to change the URLs. Ensure any URLs point to valid, accessible pages that return HTTP 200.
+**Important:** Ensure any URLs point to valid, accessible pages that return HTTP 200. Apple's precheck validation will verify URL accessibility during app submission. If URLs are temporarily unavailable during validation, you may see precheck warnings even though deployment succeeds.
+
+**Best Practices:**
+- Use stable URLs that won't change (e.g., GitHub repository URLs on the main branch)
+- Ensure the files exist on the main branch before deployment
+- Test URLs manually before submitting to App Store
+- Avoid using branch-specific URLs that may be deleted
+- Consider using GitHub Pages or a dedicated website for critical URLs
+
+**Troubleshooting URL 404 Errors:**
+If you see "HTTP 404" errors during precheck:
+1. Verify the files exist on the main branch: `git show main:docs/PRIVACY.md`
+2. Test the URL manually: `curl -I https://github.com/...`
+3. Check if the repository is public (private repos may cause issues)
+4. Wait a few minutes and retry - GitHub may have temporary delays
+5. Consider using raw GitHub URLs: `https://raw.githubusercontent.com/...`
 
 ### 10. Description & Keywords ✅
 
