@@ -21,7 +21,7 @@ During a successful App Store deployment, Fastlane's precheck validation identif
 **Cause:** The copyright file (`ios/App/fastlane/metadata/en-US/copyright.txt`) contained "© 2025 Enterprise Support" while the current year was 2026.
 
 **Why it occurred:**
-- While Fastlane automatically updates the copyright year during deployment (lines 246-293 in Fastfile)
+- While Fastlane automatically updates the copyright year during deployment (see "Update copyright with current year" section in Fastfile)
 - The base file in the repository was not updated for the new year
 - Apple's precheck validation flagged the outdated year in the source file
 
@@ -156,7 +156,7 @@ Fastlane's precheck validation runs automatically before app submission and chec
 
 **Configuration:**
 ```ruby
-# ios/App/fastlane/Fastfile (line 331)
+# ios/App/fastlane/Fastfile - upload_to_app_store configuration
 upload_to_app_store(
   api_key: api_key,
   run_precheck_before_submit: true,
