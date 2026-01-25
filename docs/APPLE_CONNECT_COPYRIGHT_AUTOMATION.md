@@ -492,7 +492,7 @@ jobs:
           CURRENT_YEAR="${{ steps.set_year.outputs.year }}"
           sed -i "s/© [0-9]\{4\}/© ${CURRENT_YEAR}/" ios/App/fastlane/metadata/en-US/copyright.txt
       - name: Create pull request
-        uses: peter-evans/create-pull-request@v7.0.5  # Pin to SHA: 5b4a9f6a9e2af4d592c1f0f0f6f6f6f6f6f6f6f6
+        uses: peter-evans/create-pull-request@5e914681df9dc83aa4e4905692ca88beb2f9e91f  # v7.0.5
         with:
           commit-message: "chore: update copyright year to ${{ steps.set_year.outputs.year }}"
           title: "Update copyright year to ${{ steps.set_year.outputs.year }}"
@@ -500,7 +500,7 @@ jobs:
           branch: "chore/copyright-${{ steps.set_year.outputs.year }}"
 ```
 
-**Security Note:** This example uses a version tag for simplicity. For production use, consider pinning to an immutable commit SHA instead of a mutable version tag to reduce supply-chain risks. For example: `uses: peter-evans/create-pull-request@c5a7806660adbe173f04e3e038b0ccdcd758773d  # v7.0.5`
+**Security Note:** This example uses an immutable commit SHA (`5e914681df9dc83aa4e4905692ca88beb2f9e91f`) for v7.0.5 to reduce supply-chain risks from mutable version tags.
 
 ## Multiple Locales
 

@@ -29,10 +29,19 @@ runs:
           exit 1
         fi
         
-        # Source shared validation logic
-        source "$GITHUB_WORKSPACE/scripts/lib/validate-copyright.sh"
+        # Source shared validation logic from repository root
+        # Note: GITHUB_WORKSPACE is set by GitHub Actions and points to the repository root
+        VALIDATION_SCRIPT="$GITHUB_WORKSPACE/scripts/lib/validate-copyright.sh"
         
-        # Validate copyright format
+        if [ ! -f "$VALIDATION_SCRIPT" ]; then
+          echo "❌ Validation script not found at: $VALIDATION_SCRIPT"
+          echo "   Expected location: scripts/lib/validate-copyright.sh in repository root"
+          exit 1
+        fi
+        
+        source "$VALIDATION_SCRIPT"
+        
+        # Validate copyright format using shared validation function
         validate_copyright_content "$COPYRIGHT_CONTENT"
         
         if [ "$VALIDATION_PASSED" = "false" ]; then
@@ -47,7 +56,7 @@ runs:
           exit 1
         fi
         
-        # Parse copyright to validate format
+        # Parse copyright to display detected format
         # The Fastlane script expects formats like:
         # - "© YYYY Company Name" (recommended)
         # - "YYYY Company Name" (legacy)
@@ -61,7 +70,7 @@ runs:
         # Extract the first word to check for copyright symbol
         FIRST_WORD="${WORDS[0]}"
         
-        # Check if it starts with copyright symbol or is parseable
+        # Display the detected format
         if [[ "$FIRST_WORD" == "©" ]]; then
           SECOND_WORD="${WORDS[1]}"
           
@@ -69,20 +78,20 @@ runs:
           if [[ "$SECOND_WORD" =~ ^[0-9]{4}$ ]]; then
             # Format: "© YYYY Company Name"
             COMPANY_NAME="${WORDS[@]:2}"
-            echo "✅ Copyright format valid: © $SECOND_WORD $COMPANY_NAME"
+            echo "✅ Copyright format detected: © $SECOND_WORD $COMPANY_NAME"
           else
             # Format: "© Company Name" (no year)
             COMPANY_NAME="${WORDS[@]:1}"
-            echo "✅ Copyright format valid: © $COMPANY_NAME (year will be added automatically)"
+            echo "✅ Copyright format detected: © $COMPANY_NAME (year will be added automatically)"
           fi
         elif [[ "$FIRST_WORD" =~ ^[0-9]{4}$ ]]; then
           # Format: "YYYY Company Name" (legacy, no © symbol)
           COMPANY_NAME="${WORDS[@]:1}"
-          echo "✅ Copyright format valid: $FIRST_WORD $COMPANY_NAME (© symbol will be added automatically)"
+          echo "✅ Copyright format detected: $FIRST_WORD $COMPANY_NAME (© symbol will be added automatically)"
         else
           # Format: "Company Name" (no © symbol, no year)
           COMPANY_NAME="$COPYRIGHT_CONTENT"
-          echo "✅ Copyright format valid: $COMPANY_NAME (© symbol and year will be added automatically)"
+          echo "✅ Copyright format detected: $COMPANY_NAME (© symbol and year will be added automatically)"
         fi
         
         echo "✅ Copyright metadata validation passed"
