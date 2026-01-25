@@ -9,7 +9,30 @@ The app icon is a crucial part of your iOS application's identity. This document
 - Required icon specifications
 - How to verify the icon in Xcode
 - How the icon is automatically uploaded to the App Store
+- Automated verification tools
 - Troubleshooting common icon issues
+
+## Quick Verification
+
+Before diving into the detailed setup, you can verify your icon configuration at any time using the automated verification tool:
+
+```bash
+npm run validate:app-icon
+```
+
+This script checks:
+- ✓ Icon file exists and is in the correct format
+- ✓ Contents.json is properly configured
+- ✓ app.config.json has required fields
+- ✓ Fastlane is configured to upload metadata
+
+The verification is also included in the standard checks:
+
+```bash
+npm run check
+```
+
+For detailed setup and troubleshooting, continue reading below.
 
 ## Icon Requirements
 

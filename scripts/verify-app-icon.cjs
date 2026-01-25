@@ -63,30 +63,53 @@ function info(message) {
   console.log(`${colors.cyan}ℹ${colors.reset} ${message}`);
 }
 
-function checkFileExists(filePath, description) {
+function checkFileExists(filePath, description, expectedType = null) {
   if (!fs.existsSync(filePath)) {
     error(`${description} not found at: ${filePath}`);
     return false;
   }
+  
+  // Check type if specified
+  if (expectedType) {
+    const stats = fs.statSync(filePath);
+    if (expectedType === 'file' && !stats.isFile()) {
+      error(`${description} exists but is not a file: ${filePath}`);
+      return false;
+    }
+    if (expectedType === 'directory' && !stats.isDirectory()) {
+      error(`${description} exists but is not a directory: ${filePath}`);
+      return false;
+    }
+  }
+  
   success(`${description} exists`);
   return true;
 }
 
-function checkIconFile() {
+function parseContentsJson() {
+  if (!checkFileExists(contentsJsonPath, 'Contents.json', 'file')) {
+    return null;
+  }
+  
+  try {
+    const contentsData = fs.readFileSync(contentsJsonPath, 'utf8');
+    return JSON.parse(contentsData);
+  } catch (err) {
+    error(`Failed to read or parse Contents.json: ${err.message}`);
+    return null;
+  }
+}
+
+function checkIconFile(contentsJson) {
   console.log(`\n${colors.blue}=== Checking App Icon File ===${colors.reset}`);
   
   // Check if icon directory exists
-  if (!checkFileExists(iconDir, 'App icon directory')) {
+  if (!checkFileExists(iconDir, 'App icon directory', 'directory')) {
     return;
   }
   
-  // Read Contents.json to get icon filename
-  let contentsJson;
-  try {
-    const contentsData = fs.readFileSync(contentsJsonPath, 'utf8');
-    contentsJson = JSON.parse(contentsData);
-  } catch (err) {
-    error(`Failed to read or parse Contents.json: ${err.message}`);
+  if (!contentsJson) {
+    error('Contents.json must be valid to check icon file');
     return;
   }
   
@@ -109,7 +132,7 @@ function checkIconFile() {
   
   // Check if icon file exists
   const iconPath = path.join(iconDir, universalIcon.filename);
-  if (!checkFileExists(iconPath, 'App icon file')) {
+  if (!checkFileExists(iconPath, 'App icon file', 'file')) {
     return;
   }
   
@@ -159,19 +182,11 @@ function checkIconFile() {
   info(`      You can verify with: file ${iconPath}`);
 }
 
-function checkContentsJson() {
+function checkContentsJson(contentsJson) {
   console.log(`\n${colors.blue}=== Checking Contents.json ===${colors.reset}`);
   
-  if (!checkFileExists(contentsJsonPath, 'Contents.json')) {
-    return;
-  }
-  
-  let contentsJson;
-  try {
-    const contentsData = fs.readFileSync(contentsJsonPath, 'utf8');
-    contentsJson = JSON.parse(contentsData);
-  } catch (err) {
-    error(`Failed to read or parse Contents.json: ${err.message}`);
+  if (!contentsJson) {
+    // Error already reported by parseContentsJson
     return;
   }
   
@@ -346,8 +361,11 @@ function printSummary() {
 console.log(`${colors.cyan}App Icon Configuration Verification${colors.reset}`);
 console.log('====================================\n');
 
-checkIconFile();
-checkContentsJson();
+// Parse Contents.json once and reuse it across checks
+const contentsJson = parseContentsJson();
+
+checkIconFile(contentsJson);
+checkContentsJson(contentsJson);
 checkAppConfig();
 checkFastfile();
 printSummary();
