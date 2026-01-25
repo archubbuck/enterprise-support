@@ -89,8 +89,7 @@ Edit `app.config.json` in the project root to configure your app's identity:
 {
   "companyName": "Your Company",
   "appName": "Your Company Support",
-  "appId": "com.yourcompany.support",
-  // ... other configuration
+  "appId": "com.yourcompany.support"
 }
 ```
 

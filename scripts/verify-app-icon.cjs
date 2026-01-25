@@ -6,11 +6,13 @@
  * This script verifies that the app icon is properly configured for iOS App Store upload.
  * It checks:
  * - Icon file exists and is accessible
- * - Icon is PNG format
- * - Icon dimensions are correct (1024x1024)
+ * - Icon is PNG format (by file extension and configuration)
  * - Contents.json is properly formatted
  * - app.config.json has required fields
  * - Fastfile includes icon upload configuration
+ * 
+ * Note: This script does not verify the actual pixel dimensions of the icon image
+ * (e.g., 1024x1024). Ensure the source icon meets Apple's size requirements.
  */
 
 // Import required modules with error handling
@@ -123,12 +125,26 @@ function checkIconFile() {
   
   // Check if it's a PNG file by reading the magic bytes
   const buffer = Buffer.alloc(8);
-  const fd = fs.openSync(iconPath, 'r');
-  fs.readSync(fd, buffer, 0, 8, 0);
-  fs.closeSync(fd);
+  let fd;
+  try {
+    fd = fs.openSync(iconPath, 'r');
+    fs.readSync(fd, buffer, 0, 8, 0);
+  } finally {
+    if (fd !== undefined) {
+      fs.closeSync(fd);
+    }
+  }
   
   // PNG magic bytes: 137 80 78 71 13 10 26 10
-  const isPNG = buffer[0] === 137 && buffer[1] === 80 && buffer[2] === 78 && buffer[3] === 71;
+  const isPNG =
+    buffer[0] === 137 &&
+    buffer[1] === 80 &&
+    buffer[2] === 78 &&
+    buffer[3] === 71 &&
+    buffer[4] === 13 &&
+    buffer[5] === 10 &&
+    buffer[6] === 26 &&
+    buffer[7] === 10;
   
   if (!isPNG) {
     error('App icon is not a valid PNG file');
@@ -140,7 +156,7 @@ function checkIconFile() {
   // Note: We can't easily check dimensions without external tools like ImageMagick
   // But we can provide a warning
   info('Note: This script cannot verify icon dimensions. Ensure it is 1024x1024 pixels.');
-  info('      You can verify with: file ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png');
+  info(`      You can verify with: file ${iconPath}`);
 }
 
 function checkContentsJson() {
@@ -217,16 +233,16 @@ function checkAppConfig() {
     return;
   }
   
-  // Check required fields
+  // Check fields required by this script (not the full app.config.json schema)
   const requiredFields = ['companyName', 'appName', 'appId'];
   const missingFields = requiredFields.filter(field => !appConfig[field]);
   
   if (missingFields.length > 0) {
-    error(`app.config.json is missing required fields: ${missingFields.join(', ')}`);
+    error(`app.config.json is missing fields required for this script: ${missingFields.join(', ')}`);
     return;
   }
   
-  success('app.config.json has all required fields');
+  success('app.config.json includes required fields for this script (companyName, appName, appId)');
   
   // Display values
   info(`Company Name: ${appConfig.companyName}`);
@@ -280,10 +296,10 @@ function checkFastfile() {
   if (skipMetadataMatch) {
     const skipMetadata = skipMetadataMatch[1] === 'true';
     if (skipMetadata) {
-      warning('skip_metadata is set to true. Metadata (including app icon) will not be uploaded.');
-      info('       Set skip_metadata: false in Fastfile to upload metadata.');
+      warning('skip_metadata is set to true. App Store Connect metadata (description, keywords, etc.) will not be uploaded by Fastlane.');
+      info('       Note: This does not affect the App Store icon, which is taken from the built IPA, not Fastlane metadata.');
     } else {
-      success('skip_metadata is set to false (metadata will be uploaded)');
+      success('skip_metadata is set to false (App Store Connect metadata will be uploaded by Fastlane)');
     }
   } else {
     info('skip_metadata setting not found (defaults to false, which is correct)');
