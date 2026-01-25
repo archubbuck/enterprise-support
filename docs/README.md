@@ -29,6 +29,29 @@ Welcome to the Enterprise Support App documentation! This directory contains com
   - App Store submission
   - Troubleshooting
 
+### App Store & Deployment
+
+- **[Apple Connect Metadata](./APPLE_CONNECT_METADATA.md)** - App Store metadata automation
+  - Automated metadata uploads
+  - Screenshots and app previews
+  - Categories and descriptions
+  - URL configuration
+
+- **[Apple Connect Copyright Automation](./APPLE_CONNECT_COPYRIGHT_AUTOMATION.md)** - Copyright field automation
+  - Automatic year updates
+  - Configuration and customization
+  - Validation and testing
+
+- **[CI/CD Pipeline](./CI_CD.md)** - Continuous integration and deployment
+  - GitHub Actions workflows
+  - Automated releases
+  - Deployment process
+
+- **[Fastlane Precheck Warnings](./FASTLANE_PRECHECK_WARNINGS.md)** - Resolving deployment warnings
+  - Copyright date issues
+  - URL validation errors
+  - Best practices for metadata maintenance
+
 ### Content Management
 
 - **[Document Management](./DOCUMENTS.md)** - Managing support documents
@@ -102,10 +125,19 @@ Found a problem with the documentation? We welcome improvements!
 
 ```
 docs/
-├── README.md                # This file - documentation index
-├── QUICK_START.md          # Getting started guide
-├── CONFIGURATION.md        # Configuration options
-├── iOS_DEVELOPMENT.md      # iOS development guide
-├── DOCUMENTS.md            # Document management guide
-└── PRD.md                  # Product requirements document
+├── README.md                           # This file - documentation index
+├── QUICK_START.md                      # Getting started guide
+├── CONFIGURATION.md                    # Configuration options
+├── THEME_CONFIGURATION.md              # Theme and styling configuration
+├── iOS_DEVELOPMENT.md                  # iOS development guide
+├── APPLE_CONNECT_METADATA.md           # App Store metadata automation
+├── APPLE_CONNECT_COPYRIGHT_AUTOMATION.md # Copyright automation
+├── CI_CD.md                            # CI/CD pipeline documentation
+├── FASTLANE_PRECHECK_WARNINGS.md       # Deployment warnings troubleshooting
+├── DEPLOYMENT_SIMPLIFICATION.md        # Deployment process overview
+├── DOCUMENTS.md                        # Document management guide
+├── APP_ICON_SETUP.md                   # App icon configuration
+├── PRIVACY.md                          # Privacy policy
+├── TROUBLESHOOTING.md                  # General troubleshooting
+└── PRD.md                              # Product requirements document
 ```
