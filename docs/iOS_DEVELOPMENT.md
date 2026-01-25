@@ -649,6 +649,7 @@ If builds are still slow:
 
 - [Quick Start Guide](./QUICK_START.md) - Getting started with development
 - [Configuration Guide](./CONFIGURATION.md) - Customizing the app
+- [App Icon Setup Guide](./APP_ICON_SETUP.md) - Configure and verify app icon for App Store
 - [Document Management](./DOCUMENTS.md) - Managing support documents
 - [Apple Connect Copyright Automation](./APPLE_CONNECT_COPYRIGHT_AUTOMATION.md) - Automated copyright field management
 - [Contributing Guide](../.github/CONTRIBUTING.md) - How to contribute

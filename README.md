@@ -193,6 +193,7 @@ Comprehensive documentation is available to help you get started and work with t
 - ⚙️ [Configuration Guide](./docs/CONFIGURATION.md) - Customize for your organization
 - 🎨 [Theme Configuration Guide](./docs/THEME_CONFIGURATION.md) - Configure color themes
 - 📱 [iOS Development Guide](./docs/iOS_DEVELOPMENT.md) - iOS-specific development instructions
+- 🖼️ [App Icon Setup Guide](./docs/APP_ICON_SETUP.md) - Configure and verify app icon for App Store
 - 📝 [Document Management](./docs/DOCUMENTS.md) - Managing support documents
 - 🚀 [CI/CD Pipeline](./docs/CI_CD.md) - Continuous integration and deployment
 - 📲 [Apple Connect Metadata Automation](./docs/APPLE_CONNECT_METADATA.md) - Automated metadata uploads
