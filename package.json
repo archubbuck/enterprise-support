@@ -13,7 +13,7 @@
         "validate:json": "node scripts/validate-json.cjs",
         "validate:app-config": "node scripts/validate-app-config.cjs",
         "validate:app-icon": "node scripts/verify-app-icon.cjs",
-        "check": "npm run validate:json && npm run validate:app-config && npm run lint",
+        "check": "npm run validate:json && npm run validate:app-config && npm run validate:app-icon && npm run lint",
         "ios:build": "npm run build && npx cap sync ios",
         "ios:open": "npx cap open ios",
         "ios:run": "npm run ios:build && npm run ios:open",

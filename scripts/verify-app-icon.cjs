@@ -13,8 +13,15 @@
  * - Fastfile includes icon upload configuration
  */
 
-const fs = require('fs');
-const path = require('path');
+// Import required modules with error handling
+let fs, path;
+try {
+  fs = require('fs');
+  path = require('path');
+} catch (error) {
+  console.error('ERROR: Failed to load required Node.js modules. Ensure you are running this with Node.js.');
+  process.exit(1);
+}
 
 // ANSI color codes for terminal output
 const colors = {
