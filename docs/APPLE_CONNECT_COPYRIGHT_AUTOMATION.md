@@ -434,6 +434,69 @@ The API key must have the following permissions:
 2. Ensure system clock is correct in CI environment
 3. Check GitHub Actions runner time zone settings
 
+## Best Practices
+
+### Keeping Copyright Current
+
+While the Fastlane automation automatically updates the copyright year during deployment, it's recommended to keep the base copyright file in the repository current to avoid Apple App Store precheck warnings.
+
+**Why keep it current?**
+- Apple's precheck validation may flag outdated copyright years as warnings
+- Reduces confusion during code reviews
+- Provides accurate reference when viewing the repository
+- Ensures consistency across manual and automated updates
+
+**When to update:**
+- **At the start of each year**: Update the copyright year in the repository
+- **Before major releases**: Verify the copyright is current
+- **After company name changes**: Update immediately
+
+**How to update:**
+```bash
+# Update to current year
+echo "© $(date +%Y) Enterprise Support" > ios/App/fastlane/metadata/en-US/copyright.txt
+
+# Verify the update
+cat ios/App/fastlane/metadata/en-US/copyright.txt
+
+# Commit the change
+git add ios/App/fastlane/metadata/en-US/copyright.txt
+git commit -m "chore: update copyright year to $(date +%Y)"
+```
+
+**Automated reminders:**
+Consider setting up a calendar reminder or GitHub workflow to:
+1. Check copyright file on January 1st each year
+2. Create a pull request to update the year
+3. Notify team members to review
+
+**Example GitHub Action (optional):**
+```yaml
+# .github/workflows/annual-copyright-update.yml
+name: Annual Copyright Update
+on:
+  schedule:
+    - cron: '0 0 1 1 *'  # January 1st at midnight UTC
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  update-copyright:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update copyright year
+        run: |
+          CURRENT_YEAR=$(date +%Y)
+          sed -i "s/© [0-9]\{4\}/© $CURRENT_YEAR/" ios/App/fastlane/metadata/en-US/copyright.txt
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          commit-message: "chore: update copyright year to $CURRENT_YEAR"
+          title: "Update copyright year to $CURRENT_YEAR"
+          body: "Automated update of copyright year for the new year."
+          branch: "chore/copyright-$CURRENT_YEAR"
+```
+
 ## Multiple Locales
 
 To add copyright for additional languages:
