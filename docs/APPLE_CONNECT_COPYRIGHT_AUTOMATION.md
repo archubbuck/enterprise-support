@@ -500,7 +500,7 @@ jobs:
           branch: "chore/copyright-${{ steps.set_year.outputs.year }}"
 ```
 
-**Security Note:** This example uses an immutable commit SHA (`5e914681df9dc83aa4e4905692ca88beb2f9e91f`) for v7.0.5 to reduce supply-chain risks from mutable version tags.
+**Security Note:** This example uses an immutable commit SHA for v7.0.5 to reduce supply-chain risks from mutable version tags.
 
 ## Multiple Locales
 

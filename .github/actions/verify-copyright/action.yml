@@ -35,7 +35,7 @@ runs:
         
         if [ ! -f "$VALIDATION_SCRIPT" ]; then
           echo "❌ Validation script not found at: $VALIDATION_SCRIPT"
-          echo "   Expected location: scripts/lib/validate-copyright.sh in repository root"
+          echo "   Expected location: ${VALIDATION_SCRIPT#$GITHUB_WORKSPACE/} in repository root"
           exit 1
         fi
         
