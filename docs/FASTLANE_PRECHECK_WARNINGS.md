@@ -159,11 +159,18 @@ Fastlane's precheck validation runs automatically before app submission and chec
 # ios/App/fastlane/Fastfile - upload_to_app_store configuration
 upload_to_app_store(
   api_key: api_key,
-  run_precheck_before_submit: true,
-  precheck_default_rule_level: warn,
-  # ...
+  app_identifier: APP_IDENTIFIER,
+  skip_metadata: false,
+  skip_screenshots: false,
+  metadata_path: "./metadata",
+  submit_for_review: false,
+  precheck_include_in_app_purchases: false,
+  force: true,
+  automatic_release: true
 )
 ```
+
+**Note:** Precheck runs automatically before submission. The `precheck_include_in_app_purchases` option is set to `false` to skip in-app purchase validation.
 
 ### Copyright Automation
 

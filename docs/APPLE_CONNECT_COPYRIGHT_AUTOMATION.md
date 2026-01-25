@@ -484,18 +484,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Determine current year
+        id: set_year
+        run: echo "year=$(date +'%Y')" >> "$GITHUB_OUTPUT"
       - name: Update copyright year
         run: |
-          CURRENT_YEAR=$(date +%Y)
-          sed -i "s/© [0-9]\{4\}/© $CURRENT_YEAR/" ios/App/fastlane/metadata/en-US/copyright.txt
+          CURRENT_YEAR="${{ steps.set_year.outputs.year }}"
+          sed -i "s/© [0-9]\{4\}/© ${CURRENT_YEAR}/" ios/App/fastlane/metadata/en-US/copyright.txt
       - name: Create pull request
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@v7.0.5  # Pin to SHA: 5b4a9f6a9e2af4d592c1f0f0f6f6f6f6f6f6f6f6
         with:
-          commit-message: "chore: update copyright year to $CURRENT_YEAR"
-          title: "Update copyright year to $CURRENT_YEAR"
+          commit-message: "chore: update copyright year to ${{ steps.set_year.outputs.year }}"
+          title: "Update copyright year to ${{ steps.set_year.outputs.year }}"
           body: "Automated update of copyright year for the new year."
-          branch: "chore/copyright-$CURRENT_YEAR"
+          branch: "chore/copyright-${{ steps.set_year.outputs.year }}"
 ```
+
+**Security Note:** This example uses a version tag for simplicity. For production use, consider pinning to an immutable commit SHA instead of a mutable version tag to reduce supply-chain risks. For example: `uses: peter-evans/create-pull-request@c5a7806660adbe173f04e3e038b0ccdcd758773d  # v7.0.5`
 
 ## Multiple Locales
 
