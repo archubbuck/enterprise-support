@@ -71,13 +71,18 @@ function checkFileExists(filePath, description, expectedType = null) {
   
   // Check type if specified
   if (expectedType) {
-    const stats = fs.statSync(filePath);
-    if (expectedType === 'file' && !stats.isFile()) {
-      error(`${description} exists but is not a file: ${filePath}`);
-      return false;
-    }
-    if (expectedType === 'directory' && !stats.isDirectory()) {
-      error(`${description} exists but is not a directory: ${filePath}`);
+    try {
+      const stats = fs.statSync(filePath);
+      if (expectedType === 'file' && !stats.isFile()) {
+        error(`${description} exists but is not a file: ${filePath}`);
+        return false;
+      }
+      if (expectedType === 'directory' && !stats.isDirectory()) {
+        error(`${description} exists but is not a directory: ${filePath}`);
+        return false;
+      }
+    } catch (err) {
+      error(`Failed to access ${description} at: ${filePath} (${err.message})`);
       return false;
     }
   }
@@ -109,7 +114,8 @@ function checkIconFile(contentsJson) {
   }
   
   if (!contentsJson) {
-    error('Contents.json must be valid to check icon file');
+    // Error already reported by parseContentsJson
+    // Skip icon file check to avoid double-counting errors
     return;
   }
   
@@ -152,6 +158,9 @@ function checkIconFile(contentsJson) {
   try {
     fd = fs.openSync(iconPath, 'r');
     fs.readSync(fd, buffer, 0, 8, 0);
+  } catch (err) {
+    error(`Failed to read icon file for validation: ${err.message}`);
+    return;
   } finally {
     if (fd !== undefined) {
       fs.closeSync(fd);
@@ -235,7 +244,7 @@ function checkContentsJson(contentsJson) {
 function checkAppConfig() {
   console.log(`\n${colors.blue}=== Checking app.config.json ===${colors.reset}`);
   
-  if (!checkFileExists(appConfigPath, 'app.config.json')) {
+  if (!checkFileExists(appConfigPath, 'app.config.json', 'file')) {
     return;
   }
   
@@ -286,7 +295,7 @@ function checkAppConfig() {
 function checkFastfile() {
   console.log(`\n${colors.blue}=== Checking Fastfile Configuration ===${colors.reset}`);
   
-  if (!checkFileExists(fastfilePath, 'Fastfile')) {
+  if (!checkFileExists(fastfilePath, 'Fastfile', 'file')) {
     return;
   }
   
