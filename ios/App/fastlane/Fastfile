@@ -186,7 +186,7 @@ platform :ios do
     begin
       # Get the current git tag using Fastlane's built-in action
       # This is more reliable than shell commands and has better error handling
-      git_tag = last_git_tag rescue ""
+      git_tag = last_git_tag
       
       if git_tag.empty?
         UI.important("⚠️  No git tag found, using default version from Xcode project")
@@ -194,11 +194,12 @@ platform :ios do
         # Extract version number from tag (e.g., v1.2.3 -> 1.2.3)
         version_number = git_tag.sub(/^v/, '')
         
-        # Validate version format: should contain at least one dot (e.g., 1.0, 1.2.3)
-        # Allows semantic versioning with pre-release/build metadata (e.g., 1.2.3-beta, 1.2.3+build.1)
-        # Regex accepts X.Y, X.Y.Z, X.Y.Z.W, etc. with optional pre-release and build metadata
-        unless version_number.match?(/^\d+(\.\d+)+(-[a-zA-Z0-9.-]+)?(\+[a-zA-Z0-9.-]+)?$/)
-          UI.user_error!("Invalid version format: #{version_number}. Expected format: X.Y or X.Y.Z (e.g., 1.0, 1.0.0, 2.3.4, 1.0.0-beta)")
+        # Validate version format for CFBundleShortVersionString (MARKETING_VERSION):
+        # must be a period-separated list of integers (e.g., 1.0, 1.2.3)
+        # Regex accepts X.Y, X.Y.Z, X.Y.Z.W, etc. with numeric components only
+        # Pre-release or build metadata (e.g., -beta, +build.1) is not supported by Apple
+        unless version_number.match?(/^\d+(\.\d+)+$/)
+          UI.user_error!("Invalid version format: #{version_number}. Expected numeric dot-separated format like 1.0, 1.2.3, or 2.3.4.5")
         end
         
         UI.important("📌 Extracted version #{version_number} from tag #{git_tag}")
@@ -209,13 +210,19 @@ platform :ios do
           xcodeproj: "App.xcodeproj"
         )
         
-        # Generate build number from git commits count for uniqueness using Fastlane's built-in action
+        # Generate build number from git commit count for uniqueness
         # This ensures each build has a unique, monotonically increasing build number
         commit_count = number_of_commits.to_s
         
-        # Validate commit count is a positive integer
-        unless commit_count.match?(/^\d+$/) && commit_count.to_i >= 1
+        # Validate commit count is a non-negative integer
+        unless commit_count.match?(/^\d+$/)
           UI.user_error!("Invalid commit count: #{commit_count}")
+        end
+        
+        # Handle edge case where commit count is 0 (e.g., new repo or shallow clone)
+        if commit_count.to_i < 1
+          UI.important("Git commit count was #{commit_count.inspect}, using default build number 1")
+          commit_count = "1"
         end
         
         UI.important("🔢 Setting build number to #{commit_count} (based on git commit count)")
