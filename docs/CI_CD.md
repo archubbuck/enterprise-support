@@ -214,6 +214,60 @@ This separation ensures that:
 - Only explicitly tagged versions are deployed to the App Store
 - You have full control over which versions go to production
 
+#### Version and Build Number Management
+
+**How versioning works for App Store deployment:**
+
+When you push a version tag (e.g., `v1.2.3`), the deployment workflow automatically:
+
+1. **Extracts the version** from the git tag:
+   - Tag `v1.2.3` → Version `1.2.3`
+   - The `v` prefix is required and automatically removed
+
+2. **Sets the Marketing Version** (CFBundleShortVersionString):
+   - This is the user-facing version shown in the App Store
+   - Set directly from the git tag (e.g., `1.2.3`)
+
+3. **Sets the Build Number** (CFBundleVersion):
+   - Format: `{version}.{commit_count}` (e.g., `1.2.3.42`)
+   - Combines the version with the git commit count for uniqueness
+   - Ensures each build is unique and monotonically increasing
+
+**Version Format Requirements:**
+
+Your git tags must follow these rules:
+- ✅ **Valid formats**: `v1.0.0`, `v1.2.3`, `v2.0.0.1`
+- ✅ Must start with `v` followed by numeric version
+- ✅ Must use period-separated integers only
+- ❌ **Invalid formats**: `v1.0-beta`, `v1.0.0-rc1`, `1.0.0` (missing `v`)
+
+**Example:**
+
+```bash
+# Create and push a version tag
+git tag v1.2.3
+git push origin v1.2.3
+
+# Result in App Store Connect:
+# - Marketing Version: 1.2.3
+# - Build Number: 1.2.3.42 (where 42 is the git commit count)
+```
+
+**Why this approach?**
+
+- **Consistency**: Version and build always reflect the git tag
+- **Traceability**: You can trace any App Store build back to its git tag
+- **Uniqueness**: Each build has a unique build number (version + commit count)
+- **No manual updates**: No need to manually update version in Xcode
+- **No mismatches**: Impossible to deploy with version different from git tag
+
+**Important Notes:**
+
+- The deployment workflow **requires** a valid `v*` tag to run
+- If the tag format is invalid, deployment will fail with a clear error message
+- The commit count ensures each build is unique, even for the same version
+- You cannot deploy without a properly formatted version tag
+
 ### Emergency Fixes
 
 If the main branch is broken:

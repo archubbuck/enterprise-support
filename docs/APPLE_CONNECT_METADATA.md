@@ -54,24 +54,64 @@ This URL points to the project's README which serves as the primary marketing an
 
 **To Update:** Edit the file and commit your changes. Ensure the URL points to a valid, accessible page.
 
-### 3. Version ✅
+### 3. Version and Build Number ✅
 
-**Status:** Fully Automated
+**Status:** Fully Automated from Git Tag
 
-The app version is managed through Xcode's build system.
-
-**Location:** `ios/App/App.xcodeproj/project.pbxproj`
-- `MARKETING_VERSION`: User-facing version (e.g., "1.0")
-- `CURRENT_PROJECT_VERSION`: Build number (e.g., "1")
+The app version and build number are automatically set from the git tag during deployment, ensuring they always match.
 
 **How It Works:**
-- Version is read from the Xcode project during build
-- Automatically included in the IPA metadata
-- Synced to App Store Connect during upload
 
-**To Update:** 
-1. Edit the Xcode project file or use Xcode to update the version
-2. Commit and push a new version tag (e.g., `v1.1.0`)
+When you push a version tag (e.g., `v1.2.3`):
+
+1. **Marketing Version (CFBundleShortVersionString)** is set from the tag:
+   - Tag `v1.2.3` → Version `1.2.3`
+   - This is the user-facing version shown in the App Store
+
+2. **Build Number (CFBundleVersion)** is set as version + commit count:
+   - Format: `{version}.{commit_count}` (e.g., `1.2.3.42`)
+   - Ensures each build is unique and monotonically increasing
+
+**Xcode Project Location:** `ios/App/App.xcodeproj/project.pbxproj`
+- `MARKETING_VERSION`: Set automatically from git tag during deployment
+- `CURRENT_PROJECT_VERSION`: Set automatically to version + commit count
+
+**Version Format Requirements:**
+
+- ✅ Valid: `v1.0.0`, `v1.2.3`, `v2.0.0.1`
+- ✅ Must start with `v` and use period-separated integers
+- ❌ Invalid: `v1.0-beta`, `v1.0.0-rc1`, `1.0.0` (missing `v`)
+
+**Example Deployment:**
+
+```bash
+# Tag and deploy
+git tag v1.2.3
+git push origin v1.2.3
+
+# Result in App Store Connect:
+# Marketing Version: 1.2.3
+# Build Number: 1.2.3.42 (where 42 = git commit count)
+```
+
+**Benefits:**
+
+- **No manual updates needed**: Version is always extracted from git tag
+- **Guaranteed consistency**: Version and build always match the git tag
+- **Full traceability**: Any App Store build can be traced to its git tag
+- **Prevents mismatches**: Deployment fails if tag format is invalid
+- **Unique builds**: Commit count ensures each build is unique
+
+**Important Notes:**
+
+- The deployment workflow **requires** a valid `v*` tag (e.g., `v1.2.3`)
+- You cannot manually set version in Xcode for App Store deployment—it's always overridden by the git tag
+- Invalid tag formats will cause deployment to fail with a clear error message
+- The version in Xcode project file is a fallback default and not used for tagged deployments
+
+**See Also:**
+- [CI/CD Pipeline - App Store Deployment](./CI_CD.md#app-store-deployment) for detailed versioning workflow
+- `ios/App/fastlane/Fastfile` (lines 181-260) for version extraction implementation
 
 ### 4. Copyright ✅
 
