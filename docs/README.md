@@ -31,6 +31,12 @@ Welcome to the Enterprise Support App documentation! This directory contains com
 
 ### App Store & Deployment
 
+- **[iOS Deployment Setup](./DEPLOY_SETUP.md)** - Complete deployment setup guide
+  - Required GitHub secrets configuration
+  - Certificate setup walkthrough
+  - Validation components
+  - Troubleshooting deployment issues
+
 - **[Apple Connect Metadata](./APPLE_CONNECT_METADATA.md)** - App Store metadata automation
   - Automated metadata uploads
   - Screenshots and app previews
@@ -78,8 +84,9 @@ Welcome to the Enterprise Support App documentation! This directory contains com
 ### For iOS Developers
 
 1. Check the [iOS Development Guide](./iOS_DEVELOPMENT.md) for platform-specific setup
-2. Review iOS-specific commands and workflows
-3. Understand the build and deployment process
+2. Review the [iOS Deployment Setup Guide](./DEPLOY_SETUP.md) for App Store deployment configuration
+3. Review iOS-specific commands and workflows
+4. Understand the build and deployment process
 
 ### For Content Creators
 
@@ -130,6 +137,7 @@ docs/
 ├── CONFIGURATION.md                    # Configuration options
 ├── THEME_CONFIGURATION.md              # Theme and styling configuration
 ├── iOS_DEVELOPMENT.md                  # iOS development guide
+├── DEPLOY_SETUP.md                     # iOS deployment setup guide
 ├── APPLE_CONNECT_METADATA.md           # App Store metadata automation
 ├── APPLE_CONNECT_COPYRIGHT_AUTOMATION.md # Copyright automation
 ├── CI_CD.md                            # CI/CD pipeline documentation
