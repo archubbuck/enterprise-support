@@ -24,13 +24,13 @@ test_secret_validation() {
     local test_name="$1"
     shift
     local secrets=("$@")
-    
+
     echo "----------------------------------------"
     echo "Test: $test_name"
-    
+
     # Array to track missing secrets
-    missing_secrets=()
-    secret_names=("MATCH_PASSWORD" "MATCH_GIT_URL" "GIT_AUTHORIZATION" "APPSTORE_ISSUER_ID" "APPSTORE_KEY_ID" "APPSTORE_P8" "APPLE_TEAM_ID")
+    local missing_secrets=()
+    local secret_names=("MATCH_PASSWORD" "MATCH_GIT_URL" "GIT_AUTHORIZATION" "APPSTORE_ISSUER_ID" "APPSTORE_KEY_ID" "APPSTORE_P8" "APPLE_TEAM_ID")
     
     # Check each secret
     for i in "${!secrets[@]}"; do

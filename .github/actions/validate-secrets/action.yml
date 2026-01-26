@@ -79,7 +79,7 @@ runs:
           echo "📝 How to fix:"
           echo ""
           echo "  1. Go to your repository settings:"
-          echo "     https://github.com/${{ github.repository }}/settings/secrets/actions"
+          echo "     ${{ github.server_url }}/${{ github.repository }}/settings/secrets/actions"
           echo ""
           echo "  2. Click 'New repository secret' for each missing secret"
           echo ""
