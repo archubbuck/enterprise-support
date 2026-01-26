@@ -186,10 +186,12 @@ platform :ios do
     UI.important("🕐 Setting app version and build number from git tag...")
     
     begin
-      # Get the current git tag using Fastlane's built-in action
-      # This is more reliable than shell commands and has better error handling
-      # Note: If multiple tags exist at HEAD, last_git_tag returns one based on creation date/alphabetical order
-      git_tag = last_git_tag
+      # Get the current git tag
+      # Prefer GIT_TAG_NAME from environment (set by GitHub Actions) to ensure
+      # we use the exact tag that triggered the workflow. This prevents issues
+      # when multiple tags point to the same commit.
+      # Fallback to last_git_tag for local/manual runs.
+      git_tag = ENV["GIT_TAG_NAME"] || last_git_tag
       
       if git_tag.nil? || git_tag.empty?
         UI.user_error!("No git tag found. For App Store deployment, a version tag (e.g., v1.2.3) is required.")

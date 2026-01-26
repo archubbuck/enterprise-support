@@ -74,10 +74,16 @@ This repository uses GitHub Actions for continuous integration and deployment. T
 **Duration:** ~30-45 minutes
 
 **Tag Format Requirements:**
-- ✅ Valid: `v1.0.0`, `v1.2.3`, `v2.0.0.1`
-- ❌ Invalid: `release/2026.01.26.23`, `1.0.0`, `v1.0-beta`, `v1`
 
-If you push an invalid tag, the workflow fails immediately with a clear error message, saving CI time by not running the full build.
+**Tags that trigger this workflow (`v*` pattern):**
+- ✅ Valid: `v1.0.0`, `v1.2.3`, `v2.0.0.1` - will proceed with deployment
+- ❌ Invalid: `v1.0-beta`, `v1` - will trigger the workflow but fail fast during validation
+
+**Tags that do NOT trigger this workflow:**
+- `release/2026.01.26.23` - reserved for automated GitHub releases (no workflow run)
+- `1.0.0` - missing 'v' prefix (no workflow run)
+
+If you push an invalid `v*` tag (e.g., `v1` or `v1.0-beta`), the workflow starts and fails immediately during validation with a clear error message, saving CI time by not running the full build. If you push a tag that doesn't match `v*` (e.g., `release/*` or `1.0.0`), the deployment workflow won't run at all.
 
 **Requirements:**
 - Repository secrets must be configured (see iOS deployment docs)

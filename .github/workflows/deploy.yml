@@ -9,7 +9,7 @@ name: Deploy to App Store
 #   ✅ Valid:   v1.0.0, v1.2.3, v2.0.0.1
 #   ❌ Invalid: release/2026.01.26.23, 1.0.0, v1.0-beta, v1
 #
-# The 'release/*' tag pattern is reserved for automated GitHub releases 
+# The 'release/*' tag pattern is reserved for automated GitHub releases
 # and does NOT trigger App Store deployment.
 #
 # Prerequisites:
@@ -157,6 +157,9 @@ jobs:
           GIT_AUTHORIZATION: ${{ secrets.GIT_AUTHORIZATION }}
           MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          # Pass the triggering tag to Fastlane to ensure consistency with validation
+          # This prevents issues when multiple tags point to the same commit
+          GIT_TAG_NAME: ${{ github.ref_name }}
           # Increase timeout and retries for xcodebuild -showBuildSettings
           # to prevent hanging on slow CI environments (default: 3 seconds, 4 retries)
           FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 300
