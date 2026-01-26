@@ -85,6 +85,18 @@ The changes ensure:
 - ✅ Documentation provides clear guidance for future maintenance
 - ✅ Best practices are documented to prevent similar issues
 
+### Update (January 26, 2026) - Copyright File Location Fix
+
+**Additional Issue Found:** The copyright file was incorrectly placed in `ios/App/fastlane/metadata/en-US/copyright.txt` (a localized directory), when according to [Fastlane documentation](https://docs.fastlane.tools/actions/upload_to_app_store/#non-localized-metadata), copyright is a **non-localized metadata field** that must be in the root metadata directory.
+
+**Fix Applied:**
+- Moved `copyright.txt` from `metadata/en-US/` to `metadata/` (correct location)
+- Updated Fastfile to reference `metadata/copyright.txt`
+- Updated pre-deployment validation to check the correct location
+- Updated all documentation to reflect the correct path
+
+This fix ensures that Apple's precheck can properly locate and validate the copyright field, eliminating the "missing text" warning that was appearing despite the file existing in the wrong location.
+
 ## Lessons Learned
 
 ### For Future Deployments
