@@ -250,13 +250,14 @@ git push origin v1.2.3
 
 # Result in App Store Connect:
 # - Marketing Version: 1.2.3
-# - Build Number: 42 (git commit count)
+# - Build Number: 42 (git commit count, example value)
+#   (actual value will be the total git commit count in your repo when the tag is created)
 ```
 
 **Why this approach?**
 
 - **Consistency**: Version always reflects the git tag exactly
-- **Traceability**: Build number (commit count) traces back to exact git commit
+- **Traceability**: Build number (commit count) provides a unique, monotonically increasing identifier that can be correlated with the repository history or associated commit SHA
 - **Uniqueness**: Each build has a unique, monotonically increasing build number
 - **No manual updates**: No need to manually update version in Xcode
 - **No mismatches**: Impossible to deploy with version different from git tag
@@ -268,6 +269,7 @@ git push origin v1.2.3
 - If the tag format is invalid, deployment will fail with a clear error message
 - The commit count ensures each build is unique, even for the same version
 - You cannot deploy without a properly formatted version tag
+- **Avoid rewriting git history** (rebase, squash, filter-branch) after deployment, as this could result in a lower commit count and cause App Store Connect upload failures
 
 ### Emergency Fixes
 
