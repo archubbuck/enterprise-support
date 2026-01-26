@@ -60,20 +60,30 @@ This repository uses GitHub Actions for continuous integration and deployment. T
 
 **Triggers:**
 - When a version tag is pushed (e.g., `v1.0.0`)
+- **IMPORTANT:** Only tags matching the pattern `v*` trigger this workflow
+- Tags with `release/*` prefix do NOT trigger App Store deployment
 
 **What it does:**
-1. Builds the web application
-2. Syncs with Capacitor
-3. Builds the iOS app
-4. Uploads to App Store Connect
+1. **Validates tag format** (fails fast if invalid)
+2. Validates required secrets
+3. Builds the web application
+4. Syncs with Capacitor
+5. Builds the iOS app
+6. Uploads to App Store Connect
 
 **Duration:** ~30-45 minutes
+
+**Tag Format Requirements:**
+- ✅ Valid: `v1.0.0`, `v1.2.3`, `v2.0.0.1`
+- ❌ Invalid: `release/2026.01.26.23`, `1.0.0`, `v1.0-beta`, `v1`
+
+If you push an invalid tag, the workflow fails immediately with a clear error message, saving CI time by not running the full build.
 
 **Requirements:**
 - Repository secrets must be configured (see iOS deployment docs)
 - Certificate setup must be completed first
 
-**Note:** This workflow has been optimized by removing redundant verification steps that added unnecessary time to the deployment process.
+**Note:** This workflow has been optimized with early validation to catch configuration issues before expensive build operations.
 
 ### 4. iOS One-Time Match Setup
 

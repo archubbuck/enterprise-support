@@ -3,6 +3,15 @@ name: Deploy to App Store
 # This workflow builds and deploys the iOS app to the App Store.
 # It is automatically triggered when a tag starting with 'v' is pushed (e.g., v1.0.0).
 #
+# IMPORTANT: Tag Format Requirements
+# ==================================
+# Tags MUST follow this format: v<version>
+#   ✅ Valid:   v1.0.0, v1.2.3, v2.0.0.1
+#   ❌ Invalid: release/2026.01.26.23, 1.0.0, v1.0-beta, v1
+#
+# The 'release/*' tag pattern is reserved for automated GitHub releases 
+# and does NOT trigger App Store deployment.
+#
 # Prerequisites:
 # Before using this workflow, ensure you have configured the following repository secrets:
 #   - MATCH_PASSWORD: Password for encrypting the certificates repository

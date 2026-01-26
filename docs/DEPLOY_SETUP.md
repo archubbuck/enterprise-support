@@ -182,9 +182,30 @@ The deployment workflow will automatically:
 
 ## Validation Components
 
-The deployment workflow includes automatic validation steps:
+The deployment workflow includes automatic validation steps that run early to catch configuration issues before starting expensive build operations:
 
-### 1. Secret Validation
+### 1. Tag Format Validation
+
+**File:** `.github/actions/validate-tag-format/action.yml`
+
+**What it does:**
+- Validates that the git tag starts with 'v' (e.g., v1.0.0)
+- Ensures version has at least two numeric components (e.g., 1.0, 1.2.3)
+- Rejects pre-release suffixes (e.g., -beta, -rc1)
+- Runs immediately after checkout, before any build steps
+
+**Valid tag formats:**
+- ✅ `v1.0.0`, `v1.2.3`, `v2.0.0.1`
+
+**Invalid tag formats:**
+- ❌ `release/2026.01.26.23` (reserved for automated GitHub releases)
+- ❌ `1.0.0` (missing 'v' prefix)
+- ❌ `v1.0-beta` (suffixes not allowed)
+- ❌ `v1` (needs at least two components, e.g., v1.0)
+
+If validation fails, the workflow stops immediately with a clear error message explaining the issue and how to fix it. This saves CI minutes by not running expensive build operations with invalid tags.
+
+### 2. Secret Validation
 
 **File:** `.github/actions/validate-secrets/action.yml`
 
@@ -197,7 +218,7 @@ The deployment workflow includes automatic validation steps:
 
 If validation fails, you'll see detailed instructions in the workflow logs explaining which secrets are missing and how to configure them.
 
-### 2. Copyright Validation
+### 3. Copyright Validation
 
 **File:** `.github/actions/verify-copyright/action.yml`
 
@@ -260,7 +281,14 @@ git push
 
 #### "Git tag doesn't match expected format"
 
-**Cause:** You pushed a tag that doesn't start with `v` or used an invalid format.
+**Cause:** You pushed a tag that doesn't start with `v` or used an invalid version format.
+
+**What happens:** The deployment workflow includes early validation that checks the tag format immediately after checkout. If the tag is invalid, the workflow fails fast with a detailed error message explaining:
+- What's wrong with the tag
+- Examples of valid and invalid formats
+- Step-by-step instructions to fix the issue
+
+This early validation saves CI minutes by stopping before expensive build operations.
 
 **Solution:**
 
