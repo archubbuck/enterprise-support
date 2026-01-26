@@ -105,9 +105,9 @@ The deployment workflow validates that your copyright file exists and is properl
 **File location:** `ios/App/fastlane/metadata/copyright.txt`
 
 **Valid formats:**
-- `© 2026 Enterprise Support` (recommended)
+- `© 2025 Enterprise Support` (recommended)
 - `© Enterprise Support` (year added automatically)
-- `2026 Enterprise Support` (© added automatically)
+- `2025 Enterprise Support` (© added automatically)
 - `Enterprise Support` (both © and year added automatically)
 
 **Requirements:**
@@ -119,7 +119,7 @@ The deployment workflow validates that your copyright file exists and is properl
 
 ```bash
 # Edit the copyright file
-echo "© 2026 Your Company Name" > ios/App/fastlane/metadata/copyright.txt
+echo "© 2025 Your Company Name" > ios/App/fastlane/metadata/copyright.txt
 
 # Commit the change
 git add ios/App/fastlane/metadata/copyright.txt
@@ -241,7 +241,7 @@ These files are version-controlled and should exist in the repository. If missin
 
 ```bash
 # Create the file
-echo "© 2026 Your Company Name" > ios/App/fastlane/metadata/copyright.txt
+echo "© 2025 Your Company Name" > ios/App/fastlane/metadata/copyright.txt
 
 # Commit and push
 git add ios/App/fastlane/metadata/copyright.txt
@@ -265,8 +265,8 @@ git push
 
 ```bash
 # Delete the invalid tag locally and remotely
-git tag -d release/2026.01.26.1
-git push origin :refs/tags/release/2026.01.26.1
+git tag -d release/2025.01.26.1
+git push origin :refs/tags/release/2025.01.26.1
 
 # Create a proper version tag
 git tag v1.0.0
