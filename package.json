@@ -77,7 +77,7 @@
         "react-dom": "^19.2.3",
         "react-error-boundary": "^6.1.0",
         "react-hook-form": "^7.71.1",
-        "react-is": "^19.0.0",
+        "react-is": "^19.2.4",
         "react-pdf": "^10.3.0",
         "react-resizable-panels": "^4.4.1",
         "recharts": "^3.6.0",
