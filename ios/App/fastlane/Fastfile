@@ -178,6 +178,42 @@ platform :ios do
     configure_code_signing(APP_IDENTIFIER)
     UI.success("✅ Code signing configured in #{(Time.now - signing_start).round(1)}s")
 
+    # Update version number from git tag
+    # This ensures the app version matches the release tag (e.g., v1.2.3 -> 1.2.3)
+    version_start = Time.now
+    UI.important("🕐 Setting app version from git tag...")
+    
+    # Get the current git tag
+    git_tag = sh("git describe --tags --exact-match 2>/dev/null || echo ''").strip
+    
+    if git_tag.empty?
+      UI.important("⚠️  No git tag found, using default version from Xcode project")
+    elsif git_tag.start_with?('v')
+      # Extract version number from tag (e.g., v1.2.3 -> 1.2.3)
+      version_number = git_tag.sub(/^v/, '')
+      UI.important("📌 Extracted version #{version_number} from tag #{git_tag}")
+      
+      # Update the marketing version (CFBundleShortVersionString)
+      increment_version_number(
+        version_number: version_number,
+        xcodeproj: "App.xcodeproj"
+      )
+      
+      # Generate build number from git commits count for uniqueness
+      # This ensures each build has a unique, monotonically increasing build number
+      commit_count = sh("git rev-list --count HEAD").strip
+      UI.important("🔢 Setting build number to #{commit_count} (based on git commit count)")
+      
+      increment_build_number(
+        build_number: commit_count,
+        xcodeproj: "App.xcodeproj"
+      )
+      
+      UI.success("✅ Version set to #{version_number} (#{commit_count}) in #{(Time.now - version_start).round(1)}s")
+    else
+      UI.important("⚠️  Tag #{git_tag} doesn't match expected format (v*), using default version from Xcode project")
+    end
+
     # Build the app with optimizations for faster CI/release builds
     # xcargs optimizations:
     # - COMPILER_INDEX_STORE_ENABLE=NO: Disables Xcode index store (not needed for CI/release builds)
