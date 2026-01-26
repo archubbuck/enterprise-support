@@ -1,273 +1,115 @@
-# Routing App Coverage File
+# App Store Metadata Management
 
-This GeoJSON file defines the geographic coverage area for routing functionality in your app.
+This directory contains all metadata for the App Store Connect listing, managed according to [Fastlane conventions](https://docs.fastlane.tools/actions/upload_to_app_store/#non-localized-metadata).
 
-## Overview
+⚠️ **IMPORTANT:** This folder is the **canonical source** for all App Store metadata. All metadata must be managed here. Do not edit metadata directly in App Store Connect, as changes will be overwritten on the next deployment.
 
-Apple requires apps that provide routing or mapping services to specify which geographic regions they support. This is done through a GeoJSON file containing MultiPolygon shapes that outline the coverage areas.
+## Quick Start
 
-## File Format
+### Before Making Changes
 
-The file must be valid GeoJSON with the following requirements:
-
-- **Type**: Must be `MultiPolygon` (not `Polygon`, `LineString`, etc.)
-- **Coordinates**: `[longitude, latitude]` format (note: longitude comes first!)
-- **Simplicity**: Avoid complex polygons; Apple recommends < 20 points per polygon
-- **No Holes**: MultiPolygons should not contain holes
-- **No Extra Properties**: Keep the structure minimal
-
-## Current Configuration
-
-The current file defines a small rectangular area in San Francisco as a placeholder:
-
-```json
-{
-  "type": "MultiPolygon",
-  "coordinates": [
-    [
-      [
-        [-122.4194, 37.7749],  // West, South (longitude, latitude)
-        [-122.4083, 37.7749],  // East, South
-        [-122.4083, 37.7849],  // East, North
-        [-122.4194, 37.7849],  // West, North
-        [-122.4194, 37.7749]   // Close the polygon
-      ]
-    ]
-  ]
-}
-```
-
-**⚠️ This is a placeholder. Update it to reflect your actual coverage area before submitting to App Store.**
-
-## How to Update
-
-### Method 1: Using geojson.io (Recommended)
-
-1. Visit [geojson.io](https://geojson.io)
-2. Draw your coverage area on the map
-3. Click on the polygon you created
-4. In the JSON panel on the right, ensure it's a `MultiPolygon`
-5. Copy the GeoJSON
-6. Replace the contents of this file
-7. Simplify if needed (reduce points)
-
-### Method 2: Manual Editing
-
-You can manually edit this file to define your coverage area:
-
-```json
-{
-  "type": "MultiPolygon",
-  "coordinates": [
-    [
-      [
-        [lon1, lat1],
-        [lon2, lat2],
-        [lon3, lat3],
-        [lon4, lat4],
-        [lon1, lat1]  // Must close the polygon
-      ]
-    ]
-  ]
-}
-```
-
-**Important Notes:**
-- Coordinates are `[longitude, latitude]` (not lat/lon!)
-- First and last coordinate must be identical (close the polygon)
-- For multiple regions, add more polygon arrays
-
-### Method 3: Multiple Coverage Areas
-
-If your app covers multiple non-contiguous regions:
-
-```json
-{
-  "type": "MultiPolygon",
-  "coordinates": [
-    [
-      [
-        [lon1, lat1],
-        [lon2, lat2],
-        [lon3, lat3],
-        [lon1, lat1]
-      ]
-    ],
-    [
-      [
-        [lon4, lat4],
-        [lon5, lat5],
-        [lon6, lat6],
-        [lon4, lat4]
-      ]
-    ]
-  ]
-}
-```
-
-## Validation
-
-Before deploying, validate your GeoJSON:
-
-1. **Online Validator**: [geojsonlint.com](https://geojsonlint.com)
-2. **Command Line**: `cat routing_app_coverage.geojson | jq .`
-
-Common validation errors:
-- ❌ Using `Polygon` instead of `MultiPolygon`
-- ❌ Wrong coordinate order (latitude, longitude instead of longitude, latitude)
-- ❌ Not closing polygons (first and last point must match)
-- ❌ Too many points (simplify to < 20 per polygon)
-
-## Upload to App Store Connect
-
-**Note:** As of current Fastlane versions, routing coverage files are not automatically uploaded by the `upload_to_app_store` action. Check [Fastlane deliver documentation](https://docs.fastlane.tools/actions/deliver/) for updates.
-
-You have two options:
-
-### Option 1: Manual Upload (Recommended)
-
-1. Log in to [App Store Connect](https://appstoreconnect.apple.com)
-2. Navigate to your app
-3. Go to the "App Information" section
-4. Find "Routing App Coverage File"
-5. Click "Choose File" and upload `routing_app_coverage.geojson`
-6. Save changes
-
-### Option 2: App Store Connect API
-
-Use the App Store Connect API to upload programmatically:
+Always validate your metadata before committing:
 
 ```bash
-# This requires additional setup with API credentials
-curl -X POST "https://api.appstoreconnect.apple.com/v1/routingAppCoverages" \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d @routing_app_coverage.geojson
+# Validate metadata structure and content
+npm run validate:metadata
+
+# Run all checks (recommended)
+npm run check
 ```
 
-See [Apple's Routing App Coverage API Documentation](https://developer.apple.com/documentation/appstoreconnectapi/routing-app-coverages) for details.
+### Common Tasks
 
-## Geographic Coverage Examples
-
-### US State (California)
-
-```json
-{
-  "type": "MultiPolygon",
-  "coordinates": [
-    [
-      [
-        [-124.4, 42.0],
-        [-120.0, 42.0],
-        [-114.1, 32.5],
-        [-117.1, 32.5],
-        [-124.4, 42.0]
-      ]
-    ]
-  ]
-}
+**Update App Description:**
+```bash
+nano ios/App/fastlane/metadata/en-US/description.txt
+npm run validate:metadata
+git add . && git commit -m "Update app description"
 ```
 
-### City (New York)
-
-```json
-{
-  "type": "MultiPolygon",
-  "coordinates": [
-    [
-      [
-        [-74.0, 40.7],
-        [-73.9, 40.7],
-        [-73.9, 40.8],
-        [-74.0, 40.8],
-        [-74.0, 40.7]
-      ]
-    ]
-  ]
-}
+**Add Screenshots:**
+```bash
+# Place screenshots in screenshots directory with proper naming
+cp my-screenshot.png ios/App/fastlane/metadata/en-US/screenshots/1_4.png
+npm run validate:metadata
 ```
 
-### Multiple Cities
+**Change App Category:**
+```bash
+# Edit primary_category.txt with a valid category
+echo "PRODUCTIVITY" > ios/App/fastlane/metadata/primary_category.txt
+npm run validate:metadata
+```
 
-```json
-{
-  "type": "MultiPolygon",
-  "coordinates": [
-    [
-      [
-        [-122.5, 37.7],
-        [-122.3, 37.7],
-        [-122.3, 37.8],
-        [-122.5, 37.8],
-        [-122.5, 37.7]
-      ]
-    ],
-    [
-      [
-        [-118.3, 34.0],
-        [-118.1, 34.0],
-        [-118.1, 34.1],
-        [-118.3, 34.1],
-        [-118.3, 34.0]
-      ]
-    ]
-  ]
-}
+## Directory Structure
+
+```
+metadata/
+├── copyright.txt                    # Non-localized copyright (auto-updated)
+├── primary_category.txt             # Required: Primary App Store category
+├── secondary_category.txt           # Optional: Secondary category
+├── routing_app_coverage.geojson     # Optional: Geographic routing coverage
+└── en-US/                           # Locale-specific metadata (required)
+    ├── name.txt                     # App display name (30 char limit)
+    ├── subtitle.txt                 # App subtitle (30 char limit)
+    ├── description.txt              # Full description (4000 char limit)
+    ├── keywords.txt                 # Search keywords (100 char limit)
+    ├── promotional_text.txt         # Promotional banner (170 char limit)
+    ├── release_notes.txt            # What's new (4000 char limit)
+    ├── support_url.txt              # Support website URL (required)
+    ├── privacy_url.txt              # Privacy policy URL (required)
+    ├── marketing_url.txt            # Marketing website URL
+    └── screenshots/                 # Screenshots & preview videos
+        ├── 1_1.png                  # iPhone 6.7" - screenshot 1
+        ├── 1_2.png                  # iPhone 6.7" - screenshot 2
+        ├── 2_1.png                  # iPhone 6.5" - screenshot 1
+        └── ...
 ```
 
 ## Best Practices
 
-1. **Be Accurate**: Only include regions where your routing actually works
-2. **Keep It Simple**: Use simplified polygons with minimal points
-3. **Test Thoroughly**: Ensure your routing works in all covered areas
-4. **Update Regularly**: Update coverage as you expand to new regions
-5. **Version Control**: Keep this file in Git to track coverage changes
+1. **Always validate before committing:** Run `npm run validate:metadata`
+2. **Version control everything:** All changes should go through Git
+3. **Review in PRs:** Have team members review metadata changes
+4. **Test URLs:** Ensure all URLs are accessible before deployment
+5. **Update regularly:** Keep screenshots current when UI changes
+6. **Optimize keywords:** Review and update based on App Store analytics
+7. **Follow character limits:** Stay well under limits for better display
+8. **Use the metadata folder exclusively:** Do not edit metadata directly in App Store Connect
 
-## When to Update
+## Validation
 
-Update this file when:
-- Adding support for new geographic regions
-- Improving accuracy of existing coverage areas
-- Removing support for regions
+### Local Validation
 
-After updating, you'll need to:
-1. Commit the changes to Git
-2. Upload manually to App Store Connect (or via API)
-3. Submit app update if required
+Before committing changes, always validate:
 
-## Troubleshooting
+```bash
+npm run validate:metadata
+```
 
-### GeoJSON Not Accepted
+This checks:
+- ✅ Required files exist
+- ✅ Character limits are respected
+- ✅ URLs are valid
+- ✅ Categories are correct
+- ✅ Screenshots follow naming conventions
+- ✅ Fastfile configuration is proper
 
-**Problem:** Apple rejects your GeoJSON file.
+### CI/CD Validation
 
-**Solutions:**
-- Ensure type is `MultiPolygon` (not `Polygon`)
-- Check coordinate order: `[longitude, latitude]`
-- Remove any extra properties
-- Simplify polygons (< 20 points)
-- Validate at [geojsonlint.com](https://geojsonlint.com)
+Validation runs automatically:
+- **CI workflow:** On every pull request and push to main
+- **Deploy workflow:** Before uploading to App Store Connect
 
-### Coverage Area Not Showing
-
-**Problem:** Coverage area doesn't appear in App Store Connect.
-
-**Solutions:**
-- File must be uploaded manually or via API
-- Check file name is correct
-- Verify JSON is valid
-- Ensure you saved changes in App Store Connect
+This ensures metadata is always valid before deployment.
 
 ## Additional Resources
 
-- [Apple Routing App Coverage Guide](https://developer.apple.com/documentation/appstoreconnectapi/routing-app-coverages)
-- [GeoJSON Specification](https://geojson.org/)
-- [geojson.io - Interactive Editor](https://geojson.io)
-- [geojsonlint.com - Validator](https://geojsonlint.com)
+- [Fastlane deliver Documentation](https://docs.fastlane.tools/actions/deliver/)
+- [Apple App Store Screenshot Specifications](https://developer.apple.com/help/app-store-connect/reference/screenshot-specifications)
+- [App Store Product Page](https://developer.apple.com/app-store/product-page/)
 - [Apple Connect Metadata Documentation](../../../../../docs/APPLE_CONNECT_METADATA.md)
-
-## Related Files
-
-- [Metadata Documentation](../../../../../docs/APPLE_CONNECT_METADATA.md)
-- [Fastfile](../Fastfile)
+- [iOS Development Guide](../../../../../docs/iOS_DEVELOPMENT.md)
 - [Screenshots README](en-US/screenshots/README.md)
+
+For detailed information about each metadata file, see [Apple Connect Metadata Documentation](../../../../../docs/APPLE_CONNECT_METADATA.md).
