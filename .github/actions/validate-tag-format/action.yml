@@ -42,7 +42,7 @@ runs:
           echo "      • v2.0.0.1"
           echo ""
           echo "   ❌ Invalid formats:"
-          echo "      • release/2026.01.26.23  (use 'release/*' tags for GitHub releases only)"
+          echo "      • release/YYYY.MM.DD.HH  (use 'release/*' tags for GitHub releases only)"
           echo "      • 1.0.0                  (missing 'v' prefix)"
           echo "      • v1.0-beta              (suffixes not allowed)"
           echo "      • v1                     (needs at least two numeric components, e.g., v1.0)"
@@ -104,8 +104,6 @@ runs:
         # Explanation: Matches one or more digits, followed by one or more groups of
         #              (dot + one or more digits), ensuring at least two numeric components
         # Examples: 1.0, 1.2.3, 2.3.4.5 are valid; 1, 1.0-beta, a.b.c are invalid
-        # - Must have at least two numeric components (e.g., 1.0, 1.2.3, 2.3.4.5)
-        # - No pre-release suffixes allowed (no -beta, -rc1, etc.)
         if [[ ! "$VERSION_NUMBER" =~ ^[0-9]+(\.[0-9]+)+$ ]]; then
           echo "::endgroup::"
           echo "::error title=Invalid Version Format::Version '$VERSION_NUMBER' doesn't match expected format"
