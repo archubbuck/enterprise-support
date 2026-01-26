@@ -10,6 +10,15 @@ runs:
         
         # Get the tag name from the git ref
         # GITHUB_REF format: refs/tags/v1.0.0
+        
+        # Validate GITHUB_REF is set and has the expected format
+        if [[ -z "$GITHUB_REF" || ! "$GITHUB_REF" =~ ^refs/tags/ ]]; then
+          echo "::endgroup::"
+          echo "::error::Invalid GITHUB_REF format: $GITHUB_REF"
+          echo "Expected format: refs/tags/<tag-name>"
+          exit 1
+        fi
+        
         TAG_NAME="${GITHUB_REF#refs/tags/}"
         
         echo "📋 Checking tag format for App Store deployment..."
@@ -74,7 +83,27 @@ runs:
         # Extract version number from tag (e.g., v1.2.3 -> 1.2.3)
         VERSION_NUMBER="${TAG_NAME#v}"
         
+        # Validate that version is not empty (handles edge case of tag being just 'v')
+        if [[ -z "$VERSION_NUMBER" ]]; then
+          echo "::endgroup::"
+          echo "::error title=Empty Version::Tag '$TAG_NAME' has no version after 'v' prefix"
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "❌ Error: Tag '$TAG_NAME' has no version after 'v' prefix"
+          echo ""
+          echo "   Tag must include a version number after 'v' (e.g., v1.0.0)"
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          exit 1
+        fi
+        
         # Validate version format:
+        # Regex: ^[0-9]+(\.[0-9]+)+$
+        # Explanation: Matches one or more digits, followed by one or more groups of
+        #              (dot + one or more digits), ensuring at least two numeric components
+        # Examples: 1.0, 1.2.3, 2.3.4.5 are valid; 1, 1.0-beta, a.b.c are invalid
         # - Must have at least two numeric components (e.g., 1.0, 1.2.3, 2.3.4.5)
         # - No pre-release suffixes allowed (no -beta, -rc1, etc.)
         if [[ ! "$VERSION_NUMBER" =~ ^[0-9]+(\.[0-9]+)+$ ]]; then
