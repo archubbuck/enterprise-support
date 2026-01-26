@@ -38,6 +38,9 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Validate git tag format
+        uses: ./.github/actions/validate-tag-format
+
       - name: Validate required secrets
         uses: ./.github/actions/validate-secrets
         with:
