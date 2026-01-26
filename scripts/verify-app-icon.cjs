@@ -320,35 +320,35 @@ function checkFastfile() {
   if (metadataPathMatch) {
     const metadataPath = metadataPathMatch[1];
     success(`metadata_path is set to: "${metadataPath}"`);
-    info('       All App Store metadata should be managed in the metadata folder');
+    info('All App Store metadata should be managed in the metadata folder');
   } else {
     info('metadata_path not explicitly set (uses default metadata folder)');
   }
   
   // Check for skip_metadata setting
-  const skipMetadataMatch = fastfileContent.match(/skip_metadata:\s*(true|false)/);
+  const skipMetadataMatch = fastfileContent.match(/skip_metadata:\s*(?:true|false)/);
   if (skipMetadataMatch) {
-    const skipMetadata = skipMetadataMatch[1] === 'true';
+    const skipMetadata = skipMetadataMatch[0].includes('true');
     if (skipMetadata) {
       warning('skip_metadata is set to true. App Store Connect metadata (description, keywords, etc.) will not be uploaded by Fastlane.');
-      info('       Note: This does not affect the App Store icon, which is taken from the built IPA, not Fastlane metadata.');
+      info('Note: This does not affect the App Store icon, which is taken from the built IPA, not Fastlane metadata.');
     } else {
       success('skip_metadata is set to false (App Store Connect metadata will be uploaded by Fastlane)');
-      info('       Metadata is managed in ios/App/fastlane/metadata/ folder');
+      info('Metadata is managed in ios/App/fastlane/metadata/ folder');
     }
   } else {
     info('skip_metadata setting not found (defaults to false, which is correct)');
   }
   
   // Check for skip_screenshots setting
-  const skipScreenshotsMatch = fastfileContent.match(/skip_screenshots:\s*(true|false)/);
+  const skipScreenshotsMatch = fastfileContent.match(/skip_screenshots:\s*(?:true|false)/);
   if (skipScreenshotsMatch) {
-    const skipScreenshots = skipScreenshotsMatch[1] === 'true';
+    const skipScreenshots = skipScreenshotsMatch[0].includes('true');
     if (skipScreenshots) {
       info('skip_screenshots is set to true (screenshots will not be uploaded)');
     } else {
       info('skip_screenshots is set to false (screenshots will be uploaded)');
-      info('       Screenshots should be placed in ios/App/fastlane/metadata/en-US/screenshots/');
+      info('Screenshots should be placed in ios/App/fastlane/metadata/en-US/screenshots/');
     }
   }
 }
