@@ -188,6 +188,7 @@ platform :ios do
     begin
       # Get the current git tag using Fastlane's built-in action
       # This is more reliable than shell commands and has better error handling
+      # Note: If multiple tags exist at HEAD, last_git_tag returns one based on creation date/alphabetical order
       git_tag = last_git_tag
       
       if git_tag.nil? || git_tag.empty?
@@ -200,11 +201,11 @@ platform :ios do
       version_number = git_tag.sub(/^v/, '')
       
       # Validate version format for CFBundleShortVersionString (MARKETING_VERSION):
-      # must be a period-separated list of integers (e.g., 1.0, 1.2.3)
-      # Regex accepts X.Y, X.Y.Z, X.Y.Z.W, etc. with numeric components only
-      # Pre-release or build metadata (e.g., -beta, +build.1) is not supported by Apple
+      # Apple allows "a string of one to three period-separated integers" (e.g., 1, 1.0, 1.2.3)
+      # This lane intentionally requires AT LEAST TWO numeric components (e.g., 1.0, 1.2.3)
+      # Regex accepts X.Y, X.Y.Z, X.Y.Z.W, etc. with numeric components only (no pre-release suffixes)
       unless version_number.match?(/^\d+(\.\d+)+$/)
-        UI.user_error!("Invalid version format: #{version_number}. Expected numeric dot-separated format like 1.0, 1.2.3, or 2.3.4.5 (no pre-release suffixes)")
+        UI.user_error!("Invalid version format: #{version_number}. Expected at least two numeric components like 1.0, 1.2.3, or 2.3.4.5 (no pre-release suffixes; single-component versions like '1' are not allowed)")
       end
       
       UI.important("📌 Extracted version #{version_number} from tag #{git_tag}")
@@ -220,10 +221,14 @@ platform :ios do
       # Set build number (CFBundleVersion) from git commit count
       # This ensures each build has a unique, monotonically increasing build number
       # Apple's CFBundleVersion accepts "a string of one to three period-separated integers"
+      # Here we intentionally use a single integer (the commit count) within that allowed range.
       # Using commit count provides:
       # 1. Unique, monotonically increasing build numbers (required by App Store)
-      # 2. Full traceability back to the git repository
-      # 3. Compliance with Apple's format requirements (single integer)
+      # 2. Correlation with git repository history for traceability
+      # 3. Simplicity and compliance with Apple's format requirements
+      # 
+      # IMPORTANT: Avoid rewriting git history (rebase, squash, filter-branch) after deployment,
+      # as this could result in a lower commit count and cause App Store Connect upload failures.
       commit_count = number_of_commits.to_s
       
       # Validate commit count is a non-negative integer
@@ -233,7 +238,7 @@ platform :ios do
       
       # Handle edge case where commit count is 0 (e.g., new repo or shallow clone)
       if commit_count.to_i < 1
-        UI.important("Git commit count was #{commit_count.inspect}, using default commit count 1")
+        UI.important("Git commit count was #{commit_count.inspect}, using fallback build number 1")
         commit_count = "1"
       end
       
@@ -249,9 +254,13 @@ platform :ios do
       UI.success("✅ Build number (CFBundleVersion) set to: #{build_number}")
       UI.success("✅ Version and build number synchronized with git tag #{git_tag} in #{(Time.now - version_start).round(1)}s")
       UI.important("📱 App Store Connect will show: Version #{version_number} (Build #{build_number})")
-      UI.important("🔍 Traceability: Git tag #{git_tag} at commit ##{build_number}")
+      UI.important("🔍 Traceability: Git tag #{git_tag} (total commits: #{build_number})")
+    rescue FastlaneCore::Interface::FastlaneError => ex
+      # Re-raise FastlaneError (including UI.user_error!) to preserve specific error messages
+      raise ex
     rescue => ex
-      UI.error("❌ Error setting version from git tag: #{ex.message}")
+      # Catch other unexpected errors
+      UI.error("❌ Unexpected error setting version from git tag: #{ex.message}")
       UI.error("Stack trace: #{ex.backtrace.first(3).join("\n")}")
       UI.user_error!("Failed to set version from git tag. Deployment cannot continue without proper version tagging.")
     end

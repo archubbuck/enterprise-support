@@ -92,14 +92,15 @@ git push origin v1.2.3
 
 # Result in App Store Connect:
 # Marketing Version: 1.2.3
-# Build Number: 42 (git commit count at the time of tagging)
+# Build Number: 42 (git commit count at the time of tagging, example value)
+#   (actual value will be the total git commit count in your repo when the tag is created)
 ```
 
 **Benefits:**
 
 - **No manual updates needed**: Version is always extracted from git tag
 - **Guaranteed consistency**: Version and build always match the git tag
-- **Full traceability**: Any App Store build can be traced to its git tag
+- **Traceability via commit count**: Any App Store build can be correlated with its git tag using the commit count
 - **Prevents mismatches**: Deployment fails if tag format is invalid
 - **Unique builds**: Commit count ensures each build is unique
 
@@ -108,7 +109,8 @@ git push origin v1.2.3
 - The deployment workflow **requires** a valid `v*` tag (e.g., `v1.2.3`)
 - You cannot manually set version in Xcode for App Store deployment—it's always overridden by the git tag
 - Invalid tag formats will cause deployment to fail with a clear error message
-- The version in Xcode project file is a fallback default and not used for tagged deployments
+- The version in the Xcode project file is not used for App Store deployments; the version always comes from the git tag
+- **Avoid rewriting git history** (rebase, squash, filter-branch) after deployment, as this could result in a lower commit count and cause App Store Connect upload failures
 
 **See Also:**
 - [CI/CD Pipeline - App Store Deployment](./CI_CD.md#app-store-deployment) for detailed versioning workflow
