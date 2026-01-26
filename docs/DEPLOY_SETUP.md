@@ -13,7 +13,8 @@ The deployment workflow (`.github/workflows/deploy.yml`) automatically builds an
 
 ## Prerequisites
 
-- Apple Developer Account with Admin or App Manager role
+- Active Apple Developer Program membership
+- App Store Connect account/user with Admin or App Manager role
 - GitHub repository with appropriate permissions
 - Private repository for storing certificates
 
@@ -54,8 +55,8 @@ This repository will be used by Fastlane Match to store and sync iOS signing cer
 4. Scopes: Select `repo` (Full control of private repositories)
 5. Set expiration date (recommended: 90 days, then rotate)
 6. Click "Generate token"
-7. **Copy the token** (starts with `ghp_`) - you won't see it again!
-8. Save as `GIT_AUTHORIZATION` secret (use raw format, e.g., `ghp_xxxx...`)
+7. **Copy the generated token** — you won't see it again!
+8. Save the token value as the `GIT_AUTHORIZATION` secret (paste the token string exactly as shown)
 
 #### 3. Create App Store Connect API Key
 
@@ -168,8 +169,8 @@ git push origin v1.0.0
 
 **Tag format requirements:**
 - ✅ Must start with `v`
-- ✅ Must use semantic versioning: `v1.0.0`, `v1.2.3`, etc.
-- ❌ Invalid: `release/2026.01.26`, `1.0.0` (missing `v`), `v1.0-beta`
+- ✅ Version must be numeric with at least two dot-separated components, no suffixes (e.g., `v1.0`, `v1.0.0`, `v1.2.3`, `v2.3.4.5`)
+- ❌ Invalid: `release/2026.01.26` (wrong prefix/format), `1.0.0` (missing `v`), `v1` (only one numeric component), `v1.0-beta` / `v1.0.0-beta` (suffix not allowed)
 
 The deployment workflow will automatically:
 1. Build the web application
