@@ -183,35 +183,53 @@ platform :ios do
     version_start = Time.now
     UI.important("🕐 Setting app version from git tag...")
     
-    # Get the current git tag
-    git_tag = sh("git describe --tags --exact-match 2>/dev/null || echo ''").strip
-    
-    if git_tag.empty?
-      UI.important("⚠️  No git tag found, using default version from Xcode project")
-    elsif git_tag.start_with?('v')
-      # Extract version number from tag (e.g., v1.2.3 -> 1.2.3)
-      version_number = git_tag.sub(/^v/, '')
-      UI.important("📌 Extracted version #{version_number} from tag #{git_tag}")
+    begin
+      # Get the current git tag with error handling
+      git_tag = sh("git describe --tags --exact-match 2>/dev/null || echo ''").strip
       
-      # Update the marketing version (CFBundleShortVersionString)
-      increment_version_number(
-        version_number: version_number,
-        xcodeproj: "App.xcodeproj"
-      )
-      
-      # Generate build number from git commits count for uniqueness
-      # This ensures each build has a unique, monotonically increasing build number
-      commit_count = sh("git rev-list --count HEAD").strip
-      UI.important("🔢 Setting build number to #{commit_count} (based on git commit count)")
-      
-      increment_build_number(
-        build_number: commit_count,
-        xcodeproj: "App.xcodeproj"
-      )
-      
-      UI.success("✅ Version set to #{version_number} (#{commit_count}) in #{(Time.now - version_start).round(1)}s")
-    else
-      UI.important("⚠️  Tag #{git_tag} doesn't match expected format (v*), using default version from Xcode project")
+      if git_tag.empty?
+        UI.important("⚠️  No git tag found, using default version from Xcode project")
+      elsif git_tag.start_with?('v')
+        # Extract version number from tag (e.g., v1.2.3 -> 1.2.3)
+        version_number = git_tag.sub(/^v/, '')
+        
+        # Validate version format: should contain at least one digit and dot (e.g., 1.0, 1.2.3)
+        # Allows semantic versioning with pre-release/build metadata (e.g., 1.2.3-beta, 1.2.3+build.1)
+        unless version_number.match?(/^\d+(\.\d+)+(-[a-zA-Z0-9.-]+)?(\+[a-zA-Z0-9.-]+)?$/)
+          UI.user_error!("Invalid version format: #{version_number}. Expected format: X.Y.Z (e.g., 1.0.0, 2.3.4, 1.0.0-beta)")
+        end
+        
+        UI.important("📌 Extracted version #{version_number} from tag #{git_tag}")
+        
+        # Update the marketing version (CFBundleShortVersionString)
+        increment_version_number(
+          version_number: version_number,
+          xcodeproj: "App.xcodeproj"
+        )
+        
+        # Generate build number from git commits count for uniqueness
+        # This ensures each build has a unique, monotonically increasing build number
+        commit_count = sh("git rev-list --count HEAD").strip
+        
+        # Validate commit count is a positive integer
+        unless commit_count.match?(/^\d+$/) && commit_count.to_i > 0
+          UI.user_error!("Invalid commit count: #{commit_count}")
+        end
+        
+        UI.important("🔢 Setting build number to #{commit_count} (based on git commit count)")
+        
+        increment_build_number(
+          build_number: commit_count,
+          xcodeproj: "App.xcodeproj"
+        )
+        
+        UI.success("✅ Version set to #{version_number} (#{commit_count}) in #{(Time.now - version_start).round(1)}s")
+      else
+        UI.important("⚠️  Tag #{git_tag} doesn't match expected format (v*), using default version from Xcode project")
+      end
+    rescue => ex
+      UI.error("❌ Error setting version from git tag: #{ex.message}")
+      UI.important("⚠️  Falling back to default version from Xcode project")
     end
 
     # Build the app with optimizations for faster CI/release builds
