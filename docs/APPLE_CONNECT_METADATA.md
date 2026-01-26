@@ -354,17 +354,18 @@ These are automatically uploaded with each deployment.
 When you push a version tag (e.g., `v1.0.0`):
 
 1. **GitHub Actions** triggers the deploy workflow (`.github/workflows/deploy.yml`)
-2. **Build Process:**
+2. **Validation:** Metadata folder structure is validated before deployment
+3. **Build Process:**
    - Installs dependencies
    - Builds the web app
    - Syncs to iOS with Capacitor
    - Builds the iOS archive
-3. **Metadata Processing:**
+4. **Metadata Processing:**
    - Fastlane reads all files from `metadata/` directory
    - Updates copyright year automatically
    - Validates screenshot dimensions
    - Packages everything for upload
-4. **Upload to App Store Connect:**
+5. **Upload to App Store Connect:**
    - IPA file is uploaded
    - Metadata is synced
    - Screenshots and previews are uploaded
@@ -513,6 +514,61 @@ Fastlane will automatically upload all locales.
 6. **Privacy Compliance:** Ensure privacy URL is current and accurate
 7. **Keyword Optimization:** Regularly review and optimize keywords
 8. **Monitor Uploads:** Check deployment logs for errors or warnings
+9. **Validate Before Pushing:** Run `npm run validate:metadata` to check metadata completeness
+10. **Follow the Standard:** All metadata MUST be in the `metadata` folder; do not manage it elsewhere
+
+## Metadata Validation
+
+This project includes automated validation to ensure metadata is properly configured before deployment.
+
+### Running Validation Locally
+
+```bash
+# Validate metadata folder structure and content
+npm run validate:metadata
+
+# Run all checks (includes metadata validation)
+npm run check
+```
+
+### What Gets Validated
+
+The validation script checks:
+
+- ✅ Required metadata files exist (description, keywords, URLs, etc.)
+- ✅ Character limits are respected (name: 30, description: 4000, etc.)
+- ✅ URLs are valid and properly formatted
+- ✅ Categories are valid Apple App Store categories
+- ✅ Copyright includes a year and © symbol
+- ✅ Screenshots directory exists and contains properly named files
+- ✅ Fastfile configuration is correct (`skip_metadata: false`, `metadata_path: "./metadata"`)
+
+### CI/CD Validation
+
+Metadata validation runs automatically in two places:
+
+1. **CI Workflow** (`.github/workflows/ci.yml`): Runs on every pull request and push to main
+2. **Deploy Workflow** (`.github/workflows/deploy.yml`): Runs before app deployment to App Store
+
+This ensures that:
+- Contributors cannot accidentally break metadata configuration
+- Invalid metadata is caught before deployment
+- All App Store submissions have complete and valid metadata
+
+### Fixing Validation Errors
+
+If validation fails:
+
+1. Read the error messages carefully
+2. Fix the issues in the `metadata/` folder
+3. Run `npm run validate:metadata` again
+4. Commit and push your changes
+
+Common issues:
+- Missing required files → Create them in the metadata folder
+- Character limits exceeded → Shorten the content
+- Invalid URLs → Check for typos and ensure URLs are accessible
+- Invalid categories → Use valid Apple App Store category names (all caps)
 
 ## Additional Resources
 

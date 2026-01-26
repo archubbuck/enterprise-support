@@ -266,6 +266,54 @@ If you need to change the encryption declaration:
 
 This project includes pre-configured App Store metadata in the `ios/App/fastlane/metadata/en-US/` directory. This metadata is automatically uploaded to App Store Connect when using Fastlane.
 
+**⚠️ IMPORTANT:** The `metadata` folder is the **canonical source** for all App Store metadata. All metadata management must be done through these files. Do not edit metadata directly in App Store Connect, as changes will be overwritten on the next deployment.
+
+### Metadata Folder Structure
+
+All App Store metadata is managed in the `ios/App/fastlane/metadata/` directory according to Fastlane conventions:
+
+```
+ios/App/fastlane/metadata/
+├── copyright.txt                    # Non-localized copyright (auto-updated with current year)
+├── primary_category.txt             # Required: Primary App Store category
+├── secondary_category.txt           # Optional: Secondary category
+└── en-US/                           # Locale-specific metadata
+    ├── name.txt                     # App display name
+    ├── subtitle.txt                 # App subtitle
+    ├── description.txt              # Full app description (required)
+    ├── keywords.txt                 # Search keywords (required)
+    ├── promotional_text.txt         # Promotional banner text
+    ├── release_notes.txt            # What's new text
+    ├── support_url.txt              # Support website URL (required)
+    ├── privacy_url.txt              # Privacy policy URL (required)
+    ├── marketing_url.txt            # Marketing website URL
+    └── screenshots/                 # App screenshots & preview videos
+        ├── 1_1.png                  # iPhone 6.7" screenshots
+        ├── 1_2.png
+        └── ...
+```
+
+For complete details on the metadata folder structure and how each file is used, see [Apple Connect Metadata Documentation](./APPLE_CONNECT_METADATA.md).
+
+#### Validating Metadata
+
+Before making changes or deploying, validate your metadata configuration:
+
+```bash
+# Validate metadata folder structure and content
+npm run validate:metadata
+
+# Run all checks (includes metadata validation)
+npm run check
+```
+
+This validation ensures:
+- All required files are present
+- Character limits are respected
+- URLs are valid
+- Categories are correct
+- Fastfile configuration is proper
+
 #### Available Metadata Files
 
 - **promotional_text.txt** - Short promotional text (max 170 characters)
@@ -318,16 +366,30 @@ To customize the App Store listing for your organization:
 
 1. Edit the metadata files in `ios/App/fastlane/metadata/en-US/`
 2. Keep within character limits (check with `wc -c <filename>`)
-3. The changes will be uploaded automatically during the next Fastlane deployment
+3. Validate your changes: `npm run validate:metadata`
+4. The changes will be uploaded automatically during the next Fastlane deployment
 
 Example:
 ```bash
+# Edit a metadata file
+nano ios/App/fastlane/metadata/en-US/promotional_text.txt
+
 # Check character count
 wc -c ios/App/fastlane/metadata/en-US/promotional_text.txt
 
-# Edit the file
-nano ios/App/fastlane/metadata/en-US/promotional_text.txt
+# Validate changes
+npm run validate:metadata
 ```
+
+**Character Limits:**
+- `name.txt`: 30 characters
+- `subtitle.txt`: 30 characters
+- `promotional_text.txt`: 170 characters
+- `description.txt`: 4,000 characters
+- `keywords.txt`: 100 characters
+- `release_notes.txt`: 4,000 characters
+
+For a complete list of metadata fields and best practices, see [Apple Connect Metadata Documentation](./APPLE_CONNECT_METADATA.md).
 
 #### Multiple Locales
 
@@ -340,7 +402,30 @@ To add metadata for additional languages:
 
 #### Metadata in CI/CD
 
-The GitHub Actions deployment workflow (`.github/workflows/deploy.yml`) uses Fastlane's `upload_to_app_store` action, which automatically uploads metadata alongside the app binary. The metadata upload can be controlled via the `skip_metadata` parameter in the Fastfile.
+The GitHub Actions deployment workflow (`.github/workflows/deploy.yml`) uses Fastlane's `upload_to_app_store` action, which automatically uploads metadata alongside the app binary.
+
+**Metadata Management Workflow:**
+1. All metadata is managed in the `ios/App/fastlane/metadata/` folder (version controlled)
+2. CI validates metadata structure on every pull request
+3. Deploy workflow validates metadata before uploading to App Store Connect
+4. Fastlane reads metadata from the folder and uploads to App Store Connect
+5. Manual changes in App Store Connect will be overwritten on next deployment
+
+**Configuration in Fastfile:**
+```ruby
+upload_to_app_store(
+  skip_metadata: false,        # Enables metadata upload
+  skip_screenshots: false,     # Enables screenshot upload
+  metadata_path: "./metadata", # Path to metadata folder
+  # ... other settings
+)
+```
+
+This ensures:
+- Metadata is always in sync with the codebase
+- All changes are version controlled and reviewed
+- Deployments are consistent and repeatable
+- Contributors cannot accidentally skip metadata updates
 
 ## Project Structure
 
