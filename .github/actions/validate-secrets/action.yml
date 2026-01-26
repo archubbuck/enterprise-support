@@ -27,49 +27,39 @@ runs:
   steps:
     - name: Validate required secrets
       shell: bash
+      env:
+        MATCH_PASSWORD: ${{ inputs.match_password }}
+        MATCH_GIT_URL: ${{ inputs.match_git_url }}
+        GIT_AUTHORIZATION: ${{ inputs.git_authorization }}
+        APPSTORE_ISSUER_ID: ${{ inputs.appstore_issuer_id }}
+        APPSTORE_KEY_ID: ${{ inputs.appstore_key_id }}
+        APPSTORE_P8: ${{ inputs.appstore_p8 }}
+        APPLE_TEAM_ID: ${{ inputs.apple_team_id }}
       run: |
         echo "::group::🔐 Validating Required Secrets"
 
-        # Array to track missing secrets
-        missing_secrets=()
+        # Source shared validation logic from repository root
+        VALIDATION_SCRIPT="$GITHUB_WORKSPACE/scripts/lib/validate-secrets.sh"
 
-        # Check each required secret
-        if [ -z "${{ inputs.match_password }}" ]; then
-          missing_secrets+=("MATCH_PASSWORD")
+        if [ ! -f "$VALIDATION_SCRIPT" ]; then
+          echo "❌ Validation script not found at: $VALIDATION_SCRIPT"
+          echo "   Expected location: ${VALIDATION_SCRIPT#$GITHUB_WORKSPACE/} in repository root"
+          exit 1
         fi
 
-        if [ -z "${{ inputs.match_git_url }}" ]; then
-          missing_secrets+=("MATCH_GIT_URL")
-        fi
+        source "$VALIDATION_SCRIPT"
 
-        if [ -z "${{ inputs.git_authorization }}" ]; then
-          missing_secrets+=("GIT_AUTHORIZATION")
-        fi
-
-        if [ -z "${{ inputs.appstore_issuer_id }}" ]; then
-          missing_secrets+=("APPSTORE_ISSUER_ID")
-        fi
-
-        if [ -z "${{ inputs.appstore_key_id }}" ]; then
-          missing_secrets+=("APPSTORE_KEY_ID")
-        fi
-
-        if [ -z "${{ inputs.appstore_p8 }}" ]; then
-          missing_secrets+=("APPSTORE_P8")
-        fi
-
-        if [ -z "${{ inputs.apple_team_id }}" ]; then
-          missing_secrets+=("APPLE_TEAM_ID")
-        fi
+        # Run validation using shared logic
+        validate_secrets
 
         # If any secrets are missing, report detailed error and exit
-        if [ ${#missing_secrets[@]} -gt 0 ]; then
+        if [ "$VALIDATION_PASSED" = "false" ]; then
           echo "::endgroup::"
           echo "::error::Missing required GitHub Actions secrets"
           echo ""
           echo "❌ Error: The following required secrets are not configured:"
           echo ""
-          for secret in "${missing_secrets[@]}"; do
+          for secret in "${MISSING_SECRETS[@]}"; do
             echo "  ❌ $secret"
             echo "::error title=Missing Secret::$secret is not configured"
           done
@@ -94,7 +84,7 @@ runs:
           echo ""
           echo "     • GIT_AUTHORIZATION"
           echo "       GitHub Personal Access Token with 'repo' scope"
-          echo "       Create at: https://github.com/settings/tokens"
+          echo "       Create at: ${{ github.server_url }}/settings/tokens"
           echo ""
           echo "     • APPSTORE_ISSUER_ID"
           echo "       App Store Connect API Issuer ID"
