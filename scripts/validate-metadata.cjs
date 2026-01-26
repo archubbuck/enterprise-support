@@ -6,7 +6,7 @@
  * This script validates that the Fastlane metadata folder structure is properly configured
  * for App Store Connect metadata uploads. It checks:
  * - Required metadata files exist
- * - File sizes are within limits
+ * - Character limits are respected
  * - Screenshots directory exists and contains properly named files
  * - Metadata folder structure follows Fastlane conventions
  * - Required non-localized metadata files are present
@@ -227,9 +227,9 @@ function validateCopyright(filePath) {
   }
   
   // Copyright should include a year (4 digits)
-  const yearMatch = content.match(/\b(19|20)\d{2}\b/);
+  const yearMatch = content.match(/\b(?:19|20)\d{2}\b/);
   if (!yearMatch) {
-    warning('Copyright does not contain a recognizable year (e.g., 2025)');
+    warning('Copyright does not contain a recognizable year (e.g., ' + new Date().getFullYear() + ')');
   }
   
   // Copyright should include © symbol or "Copyright"
@@ -260,7 +260,7 @@ function validateScreenshots() {
   success(`Found ${imageFiles.length} screenshot(s) and ${videoFiles.length} video(s)`);
   
   // Validate naming convention: {slot}_{number}.{ext}
-  const validPattern = /^(\d+)_(\d+)\.(png|jpg|jpeg|mov|m4v|mp4)$/i;
+  const validPattern = /^\d+_\d+\.(?:png|jpg|jpeg|mov|m4v|mp4)$/i;
   const allMediaFiles = [...imageFiles, ...videoFiles];
   
   allMediaFiles.forEach(file => {
@@ -345,17 +345,39 @@ function validateLocalizedMetadata() {
     const filePath = path.join(enUSDir, file);
     const fieldName = file.replace('.txt', '').replace(/_/g, ' ');
     
-    if (fs.existsSync(filePath)) {
-      if (file.includes('url')) {
-        validateURL(filePath, fieldName);
-      } else if (LIMITS[file.replace('.txt', '')]) {
-        const limit = LIMITS[file.replace('.txt', '')];
-        validateCharacterLimit(filePath, limit, fieldName);
+    if (!fs.existsSync(filePath)) {
+      info(`${fieldName} not provided (optional)`);
+      return;
+    }
+    
+    // Read content once for optional files
+    const content = fs.readFileSync(filePath, 'utf8').trim();
+    
+    if (content.length === 0) {
+      info(`${fieldName} provided but empty`);
+      return;
+    }
+    
+    if (file.includes('url')) {
+      // Validate URL
+      try {
+        new URL(content);
+        success(`${fieldName} is a valid URL`);
+      } catch (e) {
+        error(`${fieldName} contains an invalid URL: ${content}`);
+      }
+    } else if (LIMITS[file.replace('.txt', '')]) {
+      // Validate character limit
+      const limit = LIMITS[file.replace('.txt', '')];
+      const length = content.length;
+      
+      if (length > limit) {
+        error(`${fieldName} exceeds character limit: ${length}/${limit} characters`);
       } else {
-        success(`${fieldName} provided`);
+        success(`${fieldName}: ${length}/${limit} characters`);
       }
     } else {
-      info(`${fieldName} not provided (optional)`);
+      success(`${fieldName} provided`);
     }
   });
 }
