@@ -188,7 +188,7 @@ platform :ios do
       # This is more reliable than shell commands and has better error handling
       git_tag = last_git_tag
       
-      if git_tag.empty?
+      if git_tag.nil? || git_tag.empty?
         UI.important("⚠️  No git tag found, using default version from Xcode project")
       elsif git_tag.start_with?('v')
         # Extract version number from tag (e.g., v1.2.3 -> 1.2.3)
