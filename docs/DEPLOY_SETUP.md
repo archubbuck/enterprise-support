@@ -194,16 +194,20 @@ The deployment workflow includes automatic validation steps that run early to ca
 - Rejects pre-release suffixes (e.g., -beta, -rc1)
 - Runs immediately after checkout, before any build steps
 
-**Valid tag formats:**
-- ✅ `v1.0.0`, `v1.2.3`, `v2.0.0.1`
+> **Note:** The `deploy.yml` workflow only runs for tags matching `v*`. Tags like `release/*` or `1.0.0` won't trigger App Store deployment or this validation step—they are shown as examples of non-deployment tags.
 
-**Invalid tag formats:**
-- ❌ `release/2026.01.26.23` (reserved for automated GitHub releases)
-- ❌ `1.0.0` (missing 'v' prefix)
+**Valid tag formats for deployment:**
+- ✅ `v1.0.0`, `v1.2.3`, `v2.0.0.1` - will proceed with deployment
+
+**Invalid `v*` tags that will fail validation:**
 - ❌ `v1.0-beta` (suffixes not allowed)
 - ❌ `v1` (needs at least two components, e.g., v1.0)
 
-If validation fails, the workflow stops immediately with a clear error message explaining the issue and how to fix it. This saves CI minutes by not running expensive build operations with invalid tags.
+**Tags that won't trigger the deployment workflow at all:**
+- `release/2026.01.26.23` (reserved for automated GitHub releases)
+- `1.0.0` (missing 'v' prefix)
+
+If validation fails for a `v*` deployment tag, the workflow stops immediately with a clear error message explaining the issue and how to fix it. This saves CI minutes by not running expensive build operations with invalid tags.
 
 ### 2. Secret Validation
 
