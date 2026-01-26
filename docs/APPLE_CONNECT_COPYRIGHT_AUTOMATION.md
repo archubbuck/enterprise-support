@@ -38,7 +38,7 @@ The automation is part of the `release` lane in the Fastfile and executes before
 
 The copyright metadata is stored in:
 ```
-ios/App/fastlane/metadata/en-US/copyright.txt
+ios/App/fastlane/metadata/copyright.txt
 ```
 
 ### Supported Formats
@@ -106,7 +106,7 @@ To customize the copyright for your organization:
 
 1. Edit the copyright file:
    ```bash
-   nano ios/App/fastlane/metadata/en-US/copyright.txt
+   nano ios/App/fastlane/metadata/copyright.txt
    ```
 
 2. Set your company name (the © symbol and year will be added automatically):
@@ -211,7 +211,7 @@ A GitHub Action (`verify-copyright`) runs before the Fastlane deployment to vali
 Example validation output:
 ```
 📋 Checking copyright file...
-✅ Copyright file exists at: fastlane/metadata/en-US/copyright.txt
+✅ Copyright file exists at: fastlane/metadata/copyright.txt
 📝 Copyright value: © 2025 Enterprise Support
 ✅ Copyright format valid: © 2025 Enterprise Support
 ✅ Copyright metadata validation passed
@@ -350,27 +350,27 @@ The API key must have the following permissions:
 **Solutions:**
 1. Check the copyright file format:
    ```bash
-   cat ios/App/fastlane/metadata/en-US/copyright.txt
+   cat ios/App/fastlane/metadata/copyright.txt
    ```
 
 2. Ensure the file contains a valid format:
    ```bash
    # Valid examples:
-   echo "© 2025 Your Company Name" > ios/App/fastlane/metadata/en-US/copyright.txt
+   echo "© 2025 Your Company Name" > ios/App/fastlane/metadata/copyright.txt
    # or
-   echo "Your Company Name" > ios/App/fastlane/metadata/en-US/copyright.txt
+   echo "Your Company Name" > ios/App/fastlane/metadata/copyright.txt
    ```
 
 3. Avoid invalid formats:
    ```bash
    # Invalid: year only
-   echo "2025" > ios/App/fastlane/metadata/en-US/copyright.txt
+   echo "2025" > ios/App/fastlane/metadata/copyright.txt
    
    # Invalid: copyright symbol only
-   echo "©" > ios/App/fastlane/metadata/en-US/copyright.txt
+   echo "©" > ios/App/fastlane/metadata/copyright.txt
    
    # Invalid: copyright and year without company name
-   echo "© 2025" > ios/App/fastlane/metadata/en-US/copyright.txt
+   echo "© 2025" > ios/App/fastlane/metadata/copyright.txt
    ```
 
 ### Copyright Not Updating
@@ -382,17 +382,17 @@ The API key must have the following permissions:
 **Solutions:**
 1. Verify the file exists:
    ```bash
-   ls -la ios/App/fastlane/metadata/en-US/copyright.txt
+   ls -la ios/App/fastlane/metadata/copyright.txt
    ```
 
 2. Check file permissions:
    ```bash
-   chmod 644 ios/App/fastlane/metadata/en-US/copyright.txt
+   chmod 644 ios/App/fastlane/metadata/copyright.txt
    ```
 
 3. Verify file content:
    ```bash
-   cat ios/App/fastlane/metadata/en-US/copyright.txt
+   cat ios/App/fastlane/metadata/copyright.txt
    ```
 
 ### Wrong Company Name
@@ -403,7 +403,7 @@ The API key must have the following permissions:
 **Solutions:**
 1. Update the copyright file with your company name:
    ```bash
-   echo "Your Company Name" > ios/App/fastlane/metadata/en-US/copyright.txt
+   echo "Your Company Name" > ios/App/fastlane/metadata/copyright.txt
    ```
 
 2. Or change the default in the Fastfile:
@@ -454,13 +454,13 @@ While the Fastlane automation automatically updates the copyright year during de
 **How to update:**
 ```bash
 # Update to current year
-echo "© $(date +%Y) Enterprise Support" > ios/App/fastlane/metadata/en-US/copyright.txt
+echo "© $(date +%Y) Enterprise Support" > ios/App/fastlane/metadata/copyright.txt
 
 # Verify the update
-cat ios/App/fastlane/metadata/en-US/copyright.txt
+cat ios/App/fastlane/metadata/copyright.txt
 
 # Commit the change
-git add ios/App/fastlane/metadata/en-US/copyright.txt
+git add ios/App/fastlane/metadata/copyright.txt
 git commit -m "chore: update copyright year to $(date +%Y)"
 ```
 
@@ -490,7 +490,7 @@ jobs:
       - name: Update copyright year
         run: |
           CURRENT_YEAR="${{ steps.set_year.outputs.year }}"
-          sed -i "s/© [0-9]\{4\}/© ${CURRENT_YEAR}/" ios/App/fastlane/metadata/en-US/copyright.txt
+          sed -i "s/© [0-9]\{4\}/© ${CURRENT_YEAR}/" ios/App/fastlane/metadata/copyright.txt
       - name: Create pull request
         uses: peter-evans/create-pull-request@5e914681df9dc83aa4e4905692ca88beb2f9e91f  # v7.0.5
         with:

@@ -307,7 +307,7 @@ platform :ios do
     # See: docs/APPLE_CONNECT_COPYRIGHT_AUTOMATION.md for full documentation
     copyright_start = Time.now
     UI.important("🕐 Updating copyright metadata...")
-    copyright_path = File.join(Dir.pwd, "metadata", "en-US", "copyright.txt")
+    copyright_path = File.join(Dir.pwd, "metadata", "copyright.txt")
     default_company_name = "Enterprise Support"
     year_regex = /^\d{4}$/
     

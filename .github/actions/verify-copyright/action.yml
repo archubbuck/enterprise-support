@@ -8,7 +8,7 @@ runs:
       working-directory: ios/App
       run: |
         echo "📋 Checking copyright file..."
-        COPYRIGHT_FILE="fastlane/metadata/en-US/copyright.txt"
+        COPYRIGHT_FILE="fastlane/metadata/copyright.txt"
         
         # Check if file exists
         if [ ! -f "$COPYRIGHT_FILE" ]; then

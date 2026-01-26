@@ -79,7 +79,7 @@ The app version is managed through Xcode's build system.
 
 The copyright field is automatically updated to include the current year.
 
-**Location:** `ios/App/fastlane/metadata/en-US/copyright.txt`
+**Location:** `ios/App/fastlane/metadata/copyright.txt`
 
 **How It Works:**
 The Fastlane script automatically:
@@ -409,7 +409,7 @@ ios/App/fastlane/metadata/
 **Problem:** Copyright year doesn't update automatically.
 
 **Solutions:**
-1. Check `metadata/en-US/copyright.txt` exists
+1. Check `metadata/copyright.txt` exists
 2. Verify Fastfile copyright automation code is present
 3. Check deployment logs for copyright processing
 4. See [Apple Connect Copyright Automation](./APPLE_CONNECT_COPYRIGHT_AUTOMATION.md)
