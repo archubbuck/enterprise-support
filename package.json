@@ -22,7 +22,7 @@
         "cap:copy": "npx cap copy"
     },
     "dependencies": {
-        "@capacitor/core": "^8.0.0",
+        "@capacitor/core": "^8.0.1",
         "@capacitor/ios": "^8.0.1",
         "@github/spark": ">=0.43.1 <1",
         "@heroicons/react": "^2.2.0",
