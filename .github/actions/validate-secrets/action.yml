@@ -1,0 +1,136 @@
+name: 'Validate Required Secrets'
+description: 'Validates that all required secrets for iOS deployment are configured'
+inputs:
+  match_password:
+    description: 'MATCH_PASSWORD secret value'
+    required: true
+  match_git_url:
+    description: 'MATCH_GIT_URL secret value'
+    required: true
+  git_authorization:
+    description: 'GIT_AUTHORIZATION secret value'
+    required: true
+  appstore_issuer_id:
+    description: 'APPSTORE_ISSUER_ID secret value'
+    required: true
+  appstore_key_id:
+    description: 'APPSTORE_KEY_ID secret value'
+    required: true
+  appstore_p8:
+    description: 'APPSTORE_P8 secret value'
+    required: true
+  apple_team_id:
+    description: 'APPLE_TEAM_ID secret value'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: Validate required secrets
+      shell: bash
+      run: |
+        echo "::group::🔐 Validating Required Secrets"
+        
+        # Array to track missing secrets
+        missing_secrets=()
+        
+        # Check each required secret
+        if [ -z "${{ inputs.match_password }}" ]; then
+          missing_secrets+=("MATCH_PASSWORD")
+        fi
+        
+        if [ -z "${{ inputs.match_git_url }}" ]; then
+          missing_secrets+=("MATCH_GIT_URL")
+        fi
+        
+        if [ -z "${{ inputs.git_authorization }}" ]; then
+          missing_secrets+=("GIT_AUTHORIZATION")
+        fi
+        
+        if [ -z "${{ inputs.appstore_issuer_id }}" ]; then
+          missing_secrets+=("APPSTORE_ISSUER_ID")
+        fi
+        
+        if [ -z "${{ inputs.appstore_key_id }}" ]; then
+          missing_secrets+=("APPSTORE_KEY_ID")
+        fi
+        
+        if [ -z "${{ inputs.appstore_p8 }}" ]; then
+          missing_secrets+=("APPSTORE_P8")
+        fi
+        
+        if [ -z "${{ inputs.apple_team_id }}" ]; then
+          missing_secrets+=("APPLE_TEAM_ID")
+        fi
+        
+        # If any secrets are missing, report detailed error and exit
+        if [ ${#missing_secrets[@]} -gt 0 ]; then
+          echo "::endgroup::"
+          echo "::error::Missing required GitHub Actions secrets"
+          echo ""
+          echo "❌ Error: The following required secrets are not configured:"
+          echo ""
+          for secret in "${missing_secrets[@]}"; do
+            echo "  ❌ $secret"
+            echo "::error title=Missing Secret::$secret is not configured"
+          done
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "📝 How to fix:"
+          echo ""
+          echo "  1. Go to your repository settings:"
+          echo "     https://github.com/${{ github.repository }}/settings/secrets/actions"
+          echo ""
+          echo "  2. Click 'New repository secret' for each missing secret"
+          echo ""
+          echo "  3. Add the following secrets with their correct values:"
+          echo ""
+          echo "     • MATCH_PASSWORD"
+          echo "       Password for encrypting the certificates repository"
+          echo ""
+          echo "     • MATCH_GIT_URL"
+          echo "       Git URL of the match certificates repository"
+          echo "       Example: git@github.com:yourorg/certificates.git"
+          echo ""
+          echo "     • GIT_AUTHORIZATION"
+          echo "       GitHub Personal Access Token with 'repo' scope"
+          echo "       Create at: https://github.com/settings/tokens"
+          echo ""
+          echo "     • APPSTORE_ISSUER_ID"
+          echo "       App Store Connect API Issuer ID"
+          echo "       Find at: https://appstoreconnect.apple.com/access/api"
+          echo ""
+          echo "     • APPSTORE_KEY_ID"
+          echo "       App Store Connect API Key ID"
+          echo "       Find at: https://appstoreconnect.apple.com/access/api"
+          echo ""
+          echo "     • APPSTORE_P8"
+          echo "       App Store Connect API .p8 key content (raw text, not base64)"
+          echo "       Download from: https://appstoreconnect.apple.com/access/api"
+          echo ""
+          echo "     • APPLE_TEAM_ID"
+          echo "       Apple Developer Team ID"
+          echo "       Find at: https://developer.apple.com/account"
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "📖 For more information:"
+          echo "   - See the workflow comments in .github/workflows/deploy.yml"
+          echo "   - Check the repository README for setup instructions"
+          echo ""
+          exit 1
+        fi
+        
+        # All secrets are configured
+        echo "✅ All required secrets are configured (7/7)"
+        echo ""
+        echo "Validated secrets:"
+        echo "  ✓ MATCH_PASSWORD"
+        echo "  ✓ MATCH_GIT_URL"
+        echo "  ✓ GIT_AUTHORIZATION"
+        echo "  ✓ APPSTORE_ISSUER_ID"
+        echo "  ✓ APPSTORE_KEY_ID"
+        echo "  ✓ APPSTORE_P8"
+        echo "  ✓ APPLE_TEAM_ID"
+        echo ""
+        echo "::endgroup::"

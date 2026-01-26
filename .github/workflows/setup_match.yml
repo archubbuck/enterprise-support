@@ -33,61 +33,15 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Validate required secrets
-        run: |
-          # Check if all required secrets are configured
-          missing_secrets=()
-          
-          if [ -z "${{ secrets.MATCH_PASSWORD }}" ]; then
-            missing_secrets+=("MATCH_PASSWORD")
-          fi
-          
-          if [ -z "${{ secrets.MATCH_GIT_URL }}" ]; then
-            missing_secrets+=("MATCH_GIT_URL")
-          fi
-          
-          if [ -z "${{ secrets.GIT_AUTHORIZATION }}" ]; then
-            missing_secrets+=("GIT_AUTHORIZATION")
-          fi
-          
-          if [ -z "${{ secrets.APPSTORE_ISSUER_ID }}" ]; then
-            missing_secrets+=("APPSTORE_ISSUER_ID")
-          fi
-          
-          if [ -z "${{ secrets.APPSTORE_KEY_ID }}" ]; then
-            missing_secrets+=("APPSTORE_KEY_ID")
-          fi
-          
-          if [ -z "${{ secrets.APPSTORE_P8 }}" ]; then
-            missing_secrets+=("APPSTORE_P8")
-          fi
-          
-          if [ -z "${{ secrets.APPLE_TEAM_ID }}" ]; then
-            missing_secrets+=("APPLE_TEAM_ID")
-          fi
-          
-          if [ ${#missing_secrets[@]} -gt 0 ]; then
-            echo "❌ Error: The following required secrets are not configured:"
-            for secret in "${missing_secrets[@]}"; do
-              echo "  - $secret"
-            done
-            echo ""
-            echo "📝 Please configure these secrets in your repository settings:"
-            echo "   Settings > Secrets and variables > Actions > Repository secrets"
-            echo ""
-            echo "Required secrets:"
-            echo "  • MATCH_PASSWORD: Password for encrypting the certificates repository"
-            echo "  • MATCH_GIT_URL: Git URL of the match certificates repository"
-            echo "  • GIT_AUTHORIZATION: GitHub Personal Access Token with repo access"
-            echo "  • APPSTORE_ISSUER_ID: App Store Connect API Issuer ID"
-            echo "  • APPSTORE_KEY_ID: App Store Connect API Key ID"
-            echo "  • APPSTORE_P8: App Store Connect API .p8 key content (raw, not base64)"
-            echo "  • APPLE_TEAM_ID: Apple Developer Team ID"
-            echo ""
-            echo "For more information, see the README or workflow comments."
-            exit 1
-          fi
-          
-          echo "✅ All required secrets are configured"
+        uses: ./.github/actions/validate-secrets
+        with:
+          match_password: ${{ secrets.MATCH_PASSWORD }}
+          match_git_url: ${{ secrets.MATCH_GIT_URL }}
+          git_authorization: ${{ secrets.GIT_AUTHORIZATION }}
+          appstore_issuer_id: ${{ secrets.APPSTORE_ISSUER_ID }}
+          appstore_key_id: ${{ secrets.APPSTORE_KEY_ID }}
+          appstore_p8: ${{ secrets.APPSTORE_P8 }}
+          apple_team_id: ${{ secrets.APPLE_TEAM_ID }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
