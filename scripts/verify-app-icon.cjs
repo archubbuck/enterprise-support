@@ -315,6 +315,16 @@ function checkFastfile() {
   
   success('Fastfile includes upload_to_app_store action');
   
+  // Check for metadata_path setting
+  const metadataPathMatch = fastfileContent.match(/metadata_path:\s*["']([^"']+)["']/);
+  if (metadataPathMatch) {
+    const metadataPath = metadataPathMatch[1];
+    success(`metadata_path is set to: "${metadataPath}"`);
+    info('       All App Store metadata should be managed in the metadata folder');
+  } else {
+    info('metadata_path not explicitly set (uses default metadata folder)');
+  }
+  
   // Check for skip_metadata setting
   const skipMetadataMatch = fastfileContent.match(/skip_metadata:\s*(true|false)/);
   if (skipMetadataMatch) {
@@ -324,6 +334,7 @@ function checkFastfile() {
       info('       Note: This does not affect the App Store icon, which is taken from the built IPA, not Fastlane metadata.');
     } else {
       success('skip_metadata is set to false (App Store Connect metadata will be uploaded by Fastlane)');
+      info('       Metadata is managed in ios/App/fastlane/metadata/ folder');
     }
   } else {
     info('skip_metadata setting not found (defaults to false, which is correct)');
@@ -337,6 +348,7 @@ function checkFastfile() {
       info('skip_screenshots is set to true (screenshots will not be uploaded)');
     } else {
       info('skip_screenshots is set to false (screenshots will be uploaded)');
+      info('       Screenshots should be placed in ios/App/fastlane/metadata/en-US/screenshots/');
     }
   }
 }
