@@ -112,7 +112,7 @@ git push origin v1.2.3
 
 **See Also:**
 - [CI/CD Pipeline - App Store Deployment](./CI_CD.md#app-store-deployment) for detailed versioning workflow
-- `ios/App/fastlane/Fastfile` (lines 181-260) for version extraction implementation
+- `ios/App/fastlane/Fastfile` (release lane, version management section) for the version extraction implementation
 
 ### 4. Copyright ✅
 
