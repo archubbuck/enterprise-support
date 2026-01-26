@@ -178,10 +178,12 @@ platform :ios do
     configure_code_signing(APP_IDENTIFIER)
     UI.success("✅ Code signing configured in #{(Time.now - signing_start).round(1)}s")
 
-    # Update version number from git tag
-    # This ensures the app version matches the release tag (e.g., v1.2.3 -> 1.2.3)
+    # Update version number and build number from git tag
+    # This ensures both the app version and build number match the release tag (e.g., v1.2.3 -> 1.2.3)
+    # Both CFBundleShortVersionString (marketing version) and CFBundleVersion (build number) are set
+    # directly from the git tag to ensure consistency in App Store Connect.
     version_start = Time.now
-    UI.important("🕐 Setting app version from git tag...")
+    UI.important("🕐 Setting app version and build number from git tag...")
     
     begin
       # Get the current git tag using Fastlane's built-in action
@@ -189,56 +191,69 @@ platform :ios do
       git_tag = last_git_tag
       
       if git_tag.nil? || git_tag.empty?
-        UI.important("⚠️  No git tag found, using default version from Xcode project")
-      elsif git_tag.start_with?('v')
-        # Extract version number from tag (e.g., v1.2.3 -> 1.2.3)
-        version_number = git_tag.sub(/^v/, '')
-        
-        # Validate version format for CFBundleShortVersionString (MARKETING_VERSION):
-        # must be a period-separated list of integers (e.g., 1.0, 1.2.3)
-        # Regex accepts X.Y, X.Y.Z, X.Y.Z.W, etc. with numeric components only
-        # Pre-release or build metadata (e.g., -beta, +build.1) is not supported by Apple
-        unless version_number.match?(/^\d+(\.\d+)+$/)
-          UI.user_error!("Invalid version format: #{version_number}. Expected numeric dot-separated format like 1.0, 1.2.3, or 2.3.4.5")
-        end
-        
-        UI.important("📌 Extracted version #{version_number} from tag #{git_tag}")
-        
-        # Update the marketing version (CFBundleShortVersionString)
-        increment_version_number(
-          version_number: version_number,
-          xcodeproj: "App.xcodeproj"
-        )
-        
-        # Generate build number from git commit count for uniqueness
-        # This ensures each build has a unique, monotonically increasing build number
-        commit_count = number_of_commits.to_s
-        
-        # Validate commit count is a non-negative integer
-        unless commit_count.match?(/^\d+$/)
-          UI.user_error!("Invalid commit count: #{commit_count}")
-        end
-        
-        # Handle edge case where commit count is 0 (e.g., new repo or shallow clone)
-        if commit_count.to_i < 1
-          UI.important("Git commit count was #{commit_count.inspect}, using default build number 1")
-          commit_count = "1"
-        end
-        
-        UI.important("🔢 Setting build number to #{commit_count} (based on git commit count)")
-        
-        increment_build_number(
-          build_number: commit_count,
-          xcodeproj: "App.xcodeproj"
-        )
-        
-        UI.success("✅ Version set to #{version_number} (#{commit_count}) in #{(Time.now - version_start).round(1)}s")
-      else
-        UI.important("⚠️  Tag #{git_tag} doesn't match expected format (v*), using default version from Xcode project")
+        UI.user_error!("No git tag found. For App Store deployment, a version tag (e.g., v1.2.3) is required.")
+      elsif !git_tag.start_with?('v')
+        UI.user_error!("Git tag '#{git_tag}' doesn't match expected format. Expected 'v*' (e.g., v1.2.3) for App Store deployment.")
       end
+      
+      # Extract version number from tag (e.g., v1.2.3 -> 1.2.3)
+      version_number = git_tag.sub(/^v/, '')
+      
+      # Validate version format for CFBundleShortVersionString (MARKETING_VERSION):
+      # must be a period-separated list of integers (e.g., 1.0, 1.2.3)
+      # Regex accepts X.Y, X.Y.Z, X.Y.Z.W, etc. with numeric components only
+      # Pre-release or build metadata (e.g., -beta, +build.1) is not supported by Apple
+      unless version_number.match?(/^\d+(\.\d+)+$/)
+        UI.user_error!("Invalid version format: #{version_number}. Expected numeric dot-separated format like 1.0, 1.2.3, or 2.3.4.5 (no pre-release suffixes)")
+      end
+      
+      UI.important("📌 Extracted version #{version_number} from tag #{git_tag}")
+      
+      # Update the marketing version (CFBundleShortVersionString)
+      # This is the user-facing version shown in App Store
+      increment_version_number(
+        version_number: version_number,
+        xcodeproj: "App.xcodeproj"
+      )
+      UI.success("✅ Marketing version (CFBundleShortVersionString) set to: #{version_number}")
+      
+      # Set build number (CFBundleVersion) from the version number
+      # Apple allows CFBundleVersion to be the same as CFBundleShortVersionString
+      # This ensures version and build are always in sync with the git tag
+      # For multiple builds of the same version, append the commit count
+      commit_count = number_of_commits.to_s
+      
+      # Validate commit count is a non-negative integer
+      unless commit_count.match?(/^\d+$/)
+        UI.user_error!("Invalid commit count: #{commit_count}")
+      end
+      
+      # Handle edge case where commit count is 0 (e.g., new repo or shallow clone)
+      if commit_count.to_i < 1
+        UI.important("Git commit count was #{commit_count.inspect}, using default commit count 1")
+        commit_count = "1"
+      end
+      
+      # Build number format: version.commit_count (e.g., 1.2.3.42)
+      # This ensures uniqueness while maintaining version consistency
+      # Apple's CFBundleVersion accepts up to 3 period-separated integers, but many apps
+      # use 4 segments (major.minor.patch.build) for better build tracking
+      build_number = "#{version_number}.#{commit_count}"
+      
+      UI.important("🔢 Setting build number to #{build_number} (version + commit count for uniqueness)")
+      
+      increment_build_number(
+        build_number: build_number,
+        xcodeproj: "App.xcodeproj"
+      )
+      
+      UI.success("✅ Build number (CFBundleVersion) set to: #{build_number}")
+      UI.success("✅ Version and build number synchronized with git tag #{git_tag} in #{(Time.now - version_start).round(1)}s")
+      UI.important("📱 App Store Connect will show: Version #{version_number} (#{build_number})")
     rescue => ex
       UI.error("❌ Error setting version from git tag: #{ex.message}")
-      UI.important("⚠️  Falling back to default version from Xcode project")
+      UI.error("Stack trace: #{ex.backtrace.first(3).join("\n")}")
+      UI.user_error!("Failed to set version from git tag. Deployment cannot continue without proper version tagging.")
     end
 
     # Build the app with optimizations for faster CI/release builds
