@@ -18,7 +18,7 @@ During a successful App Store deployment, Fastlane's precheck validation identif
 
 ### 1. Copyright Date Warning
 
-**Cause:** The copyright file (`ios/App/fastlane/metadata/en-US/copyright.txt`) contained "© 2025 Enterprise Support" while the current year was 2026.
+**Cause:** The copyright file (`ios/App/fastlane/metadata/copyright.txt`) contained "© 2025 Enterprise Support" while the current year was 2026.
 
 **Why it occurred:**
 - While Fastlane automatically updates the copyright year during deployment (see "Update copyright with current year" section in Fastfile)
@@ -60,7 +60,7 @@ Both URLs are accessible and return HTTP 200.
 ### Changes Made
 
 1. **Updated Copyright Year**
-   - File: `ios/App/fastlane/metadata/en-US/copyright.txt`
+   - File: `ios/App/fastlane/metadata/copyright.txt`
    - Change: Updated from "© 2025 Enterprise Support" to "© 2026 Enterprise Support"
    - Reason: Keep the base file current to avoid precheck warnings
 
@@ -115,14 +115,14 @@ The changes ensure:
 ### Recommended Practices
 
 1. **Annual Review**: At the start of each year, review and update:
-   - Copyright year in `ios/App/fastlane/metadata/en-US/copyright.txt`
+   - Copyright year in `ios/App/fastlane/metadata/copyright.txt`
    - Privacy policy date in `docs/PRIVACY.md`
    - Support documentation relevance
 
 2. **Pre-Deployment Checklist**:
    ```bash
    # Verify copyright is current
-   cat ios/App/fastlane/metadata/en-US/copyright.txt
+   cat ios/App/fastlane/metadata/copyright.txt
    
    # Test privacy URL
    curl -I https://github.com/archubbuck/enterprise-support/blob/main/docs/PRIVACY.md
