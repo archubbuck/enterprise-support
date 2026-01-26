@@ -201,8 +201,8 @@ platform :ios do
       version_number = git_tag.sub(/^v/, '')
       
       # Validate version format for CFBundleShortVersionString (MARKETING_VERSION):
-      # Apple allows "a string of one to three period-separated integers" (e.g., 1, 1.0, 1.2.3)
-      # This lane intentionally requires AT LEAST TWO numeric components (e.g., 1.0, 1.2.3)
+      # While Apple allows "a string of one to three period-separated integers" (e.g., 1, 1.0, 1.2.3),
+      # this lane intentionally requires AT LEAST TWO numeric components (e.g., 1.0, 1.2.3) for consistency.
       # Regex accepts X.Y, X.Y.Z, X.Y.Z.W, etc. with numeric components only (no pre-release suffixes)
       unless version_number.match?(/^\d+(\.\d+)+$/)
         UI.user_error!("Invalid version format: #{version_number}. Expected at least two numeric components like 1.0, 1.2.3, or 2.3.4.5 (no pre-release suffixes; single-component versions like '1' are not allowed)")
@@ -224,7 +224,7 @@ platform :ios do
       # Here we intentionally use a single integer (the commit count) within that allowed range.
       # Using commit count provides:
       # 1. Unique, monotonically increasing build numbers (required by App Store)
-      # 2. Correlation with git repository history for traceability
+      # 2. Git repository history correlation for debugging and audit purposes
       # 3. Simplicity and compliance with Apple's format requirements
       # 
       # IMPORTANT: Avoid rewriting git history (rebase, squash, filter-branch) after deployment,
@@ -255,9 +255,9 @@ platform :ios do
       UI.success("✅ Version and build number synchronized with git tag #{git_tag} in #{(Time.now - version_start).round(1)}s")
       UI.important("📱 App Store Connect will show: Version #{version_number} (Build #{build_number})")
       UI.important("🔍 Traceability: Git tag #{git_tag} (total commits: #{build_number})")
-    rescue FastlaneCore::Interface::FastlaneError => ex
+    rescue FastlaneCore::Interface::FastlaneError
       # Re-raise FastlaneError (including UI.user_error!) to preserve specific error messages
-      raise ex
+      raise
     rescue => ex
       # Catch other unexpected errors
       UI.error("❌ Unexpected error setting version from git tag: #{ex.message}")

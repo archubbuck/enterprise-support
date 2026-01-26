@@ -257,7 +257,7 @@ git push origin v1.2.3
 **Why this approach?**
 
 - **Consistency**: Version always reflects the git tag exactly
-- **Traceability**: Build number (commit count) provides a unique, monotonically increasing identifier that can be correlated with the repository history or associated commit SHA
+- **Traceability**: Build number (commit count) provides a unique, monotonically increasing identifier. The total commit count can be used to correlate with repository history for debugging and audit purposes.
 - **Uniqueness**: Each build has a unique, monotonically increasing build number
 - **No manual updates**: No need to manually update version in Xcode
 - **No mismatches**: Impossible to deploy with version different from git tag
