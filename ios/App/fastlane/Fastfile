@@ -217,17 +217,6 @@ platform :ios do
       )
       UI.success("✅ Marketing version (CFBundleShortVersionString) set to: #{version_number}")
       
-      # Set build number (CFBundleVersion) from the version number
-      # Apple allows CFBundleVersion to be the same as CFBundleShortVersionString
-      # This ensures version and build are always in sync with the git tag
-      # For multiple builds of the same version, append the commit count
-      commit_count = number_of_commits.to_s
-      
-      # Validate commit count is a non-negative integer
-      unless commit_count.match?(/^\d+$/)
-        UI.user_error!("Invalid commit count: #{commit_count}")
-      end
-      
       # Set build number (CFBundleVersion) from git commit count
       # This ensures each build has a unique, monotonically increasing build number
       # Apple's CFBundleVersion accepts "a string of one to three period-separated integers"
