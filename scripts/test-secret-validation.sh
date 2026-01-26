@@ -1,9 +1,15 @@
 #!/bin/bash
 
 # Test script for secret validation action
-# This script tests the secret validation logic locally
+# This script tests the secret validation logic from the shared validation script
 
 set -euo pipefail
+
+# Get the directory of this script
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Source shared validation logic
+source "$SCRIPT_DIR/lib/validate-secrets.sh"
 
 echo "=========================================="
 echo "Secret Validation Test Suite"
@@ -19,52 +25,53 @@ NC='\033[0m' # No Color
 TESTS_PASSED=0
 TESTS_FAILED=0
 
-# Test function to simulate the validation logic
+# Test function to exercise the shared validation logic
 test_secret_validation() {
     local test_name="$1"
     shift
-    local secrets=("$@")
 
     echo "----------------------------------------"
     echo "Test: $test_name"
 
-    # Array to track missing secrets
-    local missing_secrets=()
-    local secret_names=("MATCH_PASSWORD" "MATCH_GIT_URL" "GIT_AUTHORIZATION" "APPSTORE_ISSUER_ID" "APPSTORE_KEY_ID" "APPSTORE_P8" "APPLE_TEAM_ID")
-    
-    # Check each secret
-    for i in "${!secrets[@]}"; do
-        if [ -z "${secrets[$i]}" ]; then
-            missing_secrets+=("${secret_names[$i]}")
-        fi
-    done
-    
-    # Determine if validation should pass or fail
-    if [ ${#missing_secrets[@]} -gt 0 ]; then
-        echo "Expected result: FAIL (missing ${#missing_secrets[@]} secrets)"
-        echo "Missing secrets: ${missing_secrets[*]}"
-        
-        # This test simulates a failure condition
-        if [ "$test_name" == *"should pass"* ]; then
-            echo -e "${RED}✗ TEST FAIL${NC} - Expected to pass but validation failed"
-            TESTS_FAILED=$((TESTS_FAILED + 1))
-        else
-            echo -e "${GREEN}✓ TEST PASS${NC} - Correctly detected missing secrets"
-            TESTS_PASSED=$((TESTS_PASSED + 1))
-        fi
-    else
-        echo "Expected result: PASS (all secrets present)"
-        
-        # This test simulates a success condition
-        if [ "$test_name" == *"should fail"* ]; then
-            echo -e "${RED}✗ TEST FAIL${NC} - Expected to fail but validation passed"
-            TESTS_FAILED=$((TESTS_FAILED + 1))
-        else
-            echo -e "${GREEN}✓ TEST PASS${NC} - All secrets validated successfully"
-            TESTS_PASSED=$((TESTS_PASSED + 1))
-        fi
+    # Map positional arguments to the expected secret environment variables
+    export MATCH_PASSWORD="${1-}"
+    export MATCH_GIT_URL="${2-}"
+    export GIT_AUTHORIZATION="${3-}"
+    export APPSTORE_ISSUER_ID="${4-}"
+    export APPSTORE_KEY_ID="${5-}"
+    export APPSTORE_P8="${6-}"
+    export APPLE_TEAM_ID="${7-}"
+
+    # Determine expected outcome from test name
+    local expected_result="FAIL"
+    if [[ "$test_name" == *"should pass"* ]]; then
+        expected_result="PASS"
     fi
-    
+
+    # Run the shared validation logic
+    validate_secrets
+
+    # Check actual result
+    local actual_result="FAIL"
+    if [ "$VALIDATION_PASSED" = "true" ]; then
+        actual_result="PASS"
+    fi
+
+    echo "Expected result: $expected_result"
+    echo "Actual result:   $actual_result"
+
+    if [ ${#MISSING_SECRETS[@]} -gt 0 ]; then
+        echo "Missing secrets: ${MISSING_SECRETS[*]}"
+    fi
+
+    if [ "$expected_result" = "$actual_result" ]; then
+        echo -e "${GREEN}✓ TEST PASS${NC}"
+        TESTS_PASSED=$((TESTS_PASSED + 1))
+    else
+        echo -e "${RED}✗ TEST FAIL${NC} - Expected $expected_result but got $actual_result"
+        TESTS_FAILED=$((TESTS_FAILED + 1))
+    fi
+
     echo ""
 }
 
