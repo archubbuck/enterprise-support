@@ -203,7 +203,7 @@ platform :ios do
       # Validate version format for CFBundleShortVersionString (MARKETING_VERSION):
       # While Apple allows "a string of one to three period-separated integers" (e.g., 1, 1.0, 1.2.3),
       # this lane intentionally requires AT LEAST TWO numeric components (e.g., 1.0, 1.2.3) for consistency.
-      # Regex accepts X.Y, X.Y.Z, X.Y.Z.W, etc. with numeric components only (no pre-release suffixes)
+      # Regex accepts X.Y, X.Y.Z, X.Y.Z.W with numeric components only (no pre-release suffixes)
       unless version_number.match?(/^\d+(\.\d+)+$/)
         UI.user_error!("Invalid version format: #{version_number}. Expected at least two numeric components like 1.0, 1.2.3, or 2.3.4.5 (no pre-release suffixes; single-component versions like '1' are not allowed)")
       end
