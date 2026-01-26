@@ -68,13 +68,14 @@ When you push a version tag (e.g., `v1.2.3`):
    - Tag `v1.2.3` → Version `1.2.3`
    - This is the user-facing version shown in the App Store
 
-2. **Build Number (CFBundleVersion)** is set as version + commit count:
-   - Format: `{version}.{commit_count}` (e.g., `1.2.3.42`)
+2. **Build Number (CFBundleVersion)** is set to git commit count:
+   - Uses the total number of git commits (e.g., `42`)
    - Ensures each build is unique and monotonically increasing
+   - Provides full traceability to the git repository
 
 **Xcode Project Location:** `ios/App/App.xcodeproj/project.pbxproj`
 - `MARKETING_VERSION`: Set automatically from git tag during deployment
-- `CURRENT_PROJECT_VERSION`: Set automatically to version + commit count
+- `CURRENT_PROJECT_VERSION`: Set automatically to git commit count
 
 **Version Format Requirements:**
 
@@ -91,7 +92,7 @@ git push origin v1.2.3
 
 # Result in App Store Connect:
 # Marketing Version: 1.2.3
-# Build Number: 1.2.3.42 (where 42 = git commit count)
+# Build Number: 42 (git commit count at the time of tagging)
 ```
 
 **Benefits:**

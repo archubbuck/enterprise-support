@@ -228,19 +228,29 @@ platform :ios do
         UI.user_error!("Invalid commit count: #{commit_count}")
       end
       
+      # Set build number (CFBundleVersion) from git commit count
+      # This ensures each build has a unique, monotonically increasing build number
+      # Apple's CFBundleVersion accepts "a string of one to three period-separated integers"
+      # Using commit count provides:
+      # 1. Unique, monotonically increasing build numbers (required by App Store)
+      # 2. Full traceability back to the git repository
+      # 3. Compliance with Apple's format requirements (single integer)
+      commit_count = number_of_commits.to_s
+      
+      # Validate commit count is a non-negative integer
+      unless commit_count.match?(/^\d+$/)
+        UI.user_error!("Invalid commit count: #{commit_count}")
+      end
+      
       # Handle edge case where commit count is 0 (e.g., new repo or shallow clone)
       if commit_count.to_i < 1
         UI.important("Git commit count was #{commit_count.inspect}, using default commit count 1")
         commit_count = "1"
       end
       
-      # Build number format: version.commit_count (e.g., 1.2.3.42)
-      # This ensures uniqueness while maintaining version consistency
-      # Apple's CFBundleVersion accepts up to 3 period-separated integers, but many apps
-      # use 4 segments (major.minor.patch.build) for better build tracking
-      build_number = "#{version_number}.#{commit_count}"
+      build_number = commit_count
       
-      UI.important("🔢 Setting build number to #{build_number} (version + commit count for uniqueness)")
+      UI.important("🔢 Setting build number to #{build_number} (git commit count for uniqueness)")
       
       increment_build_number(
         build_number: build_number,
@@ -249,7 +259,8 @@ platform :ios do
       
       UI.success("✅ Build number (CFBundleVersion) set to: #{build_number}")
       UI.success("✅ Version and build number synchronized with git tag #{git_tag} in #{(Time.now - version_start).round(1)}s")
-      UI.important("📱 App Store Connect will show: Version #{version_number} (#{build_number})")
+      UI.important("📱 App Store Connect will show: Version #{version_number} (Build #{build_number})")
+      UI.important("🔍 Traceability: Git tag #{git_tag} at commit ##{build_number}")
     rescue => ex
       UI.error("❌ Error setting version from git tag: #{ex.message}")
       UI.error("Stack trace: #{ex.backtrace.first(3).join("\n")}")

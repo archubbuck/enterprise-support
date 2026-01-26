@@ -229,9 +229,9 @@ When you push a version tag (e.g., `v1.2.3`), the deployment workflow automatica
    - Set directly from the git tag (e.g., `1.2.3`)
 
 3. **Sets the Build Number** (CFBundleVersion):
-   - Format: `{version}.{commit_count}` (e.g., `1.2.3.42`)
-   - Combines the version with the git commit count for uniqueness
+   - Set to the git commit count (e.g., `42`)
    - Ensures each build is unique and monotonically increasing
+   - Provides full traceability to the git repository
 
 **Version Format Requirements:**
 
@@ -250,16 +250,17 @@ git push origin v1.2.3
 
 # Result in App Store Connect:
 # - Marketing Version: 1.2.3
-# - Build Number: 1.2.3.42 (where 42 is the git commit count)
+# - Build Number: 42 (git commit count)
 ```
 
 **Why this approach?**
 
-- **Consistency**: Version and build always reflect the git tag
-- **Traceability**: You can trace any App Store build back to its git tag
-- **Uniqueness**: Each build has a unique build number (version + commit count)
+- **Consistency**: Version always reflects the git tag exactly
+- **Traceability**: Build number (commit count) traces back to exact git commit
+- **Uniqueness**: Each build has a unique, monotonically increasing build number
 - **No manual updates**: No need to manually update version in Xcode
 - **No mismatches**: Impossible to deploy with version different from git tag
+- **Apple compliance**: Build number format follows Apple's official guidelines
 
 **Important Notes:**
 
