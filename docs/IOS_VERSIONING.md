@@ -21,9 +21,10 @@ The iOS app uses a two-part versioning system that ensures proper version manage
 
 ### Local Development Builds
 - The Xcode project contains default values for both version components
-- These defaults are set to reasonable values based on the latest git state at the time of the commit
-- Default values: `MARKETING_VERSION = 1.0.69`, `CURRENT_PROJECT_VERSION = 2`
+- These defaults are set to reasonable values based on the git repository state at the time of this commit
+- Default values: `MARKETING_VERSION = 1.0.69` (from git tag `v1.0.69`), `CURRENT_PROJECT_VERSION = 2` (from `git rev-list --count HEAD`)
 - Local builds use these defaults unless explicitly changed in Xcode
+- **Note**: These defaults are snapshots and don't auto-update; they should be manually updated when preparing major version bumps
 
 ### CI/CD Builds (Fastlane)
 - The CI/CD workflow automatically overrides the default values during build
@@ -59,19 +60,41 @@ The iOS app uses a two-part versioning system that ensures proper version manage
 ### Build Number Strategy
 - Uses git commit count for build numbers
 - Provides unique, monotonically increasing values
-- **IMPORTANT**: Never rewrite git history (rebase, squash, filter-branch) after deploying
-  - This could decrease the commit count and cause App Store Connect upload failures
-  - App Store requires build numbers to always increase
+- **IMPORTANT**: Never rewrite git history (rebase, squash, filter-branch) **after uploading a build to App Store Connect**
+  - This could decrease the commit count and cause upload failures because App Store requires each new build to have a higher build number than previous uploads
+  - Git history rewriting is safe before any uploads (e.g., during feature branch development)
+  - Once a build is uploaded to App Store Connect with build number N, all future uploads must have build numbers > N
 
-## Updating Default Version
-When the repository progresses to a new version, update the default values in the Xcode project:
+## Maintaining Default Versions in Xcode Project
 
+The Xcode project file (`ios/App/App.xcodeproj/project.pbxproj`) contains hardcoded default values for version and build number. These serve as fallbacks for local builds:
+
+### When to Update
+Update these defaults when:
+- Preparing for a new major version release
+- The defaults are significantly out of date (e.g., more than a few versions behind)
+- You notice local builds showing outdated version information
+
+### How to Update
 ```bash
-# Edit ios/App/App.xcodeproj/project.pbxproj
-# Update both Debug and Release configurations:
-MARKETING_VERSION = <new-version>;     # e.g., 1.0.70
-CURRENT_PROJECT_VERSION = <commit-count>;  # e.g., git rev-list --count HEAD
+# 1. Get the latest version tag
+git describe --tags --match "v*" --abbrev=0
+# Example output: v1.0.70
+
+# 2. Get the current commit count
+git rev-list --count HEAD
+# Example output: 285
+
+# 3. Edit ios/App/App.xcodeproj/project.pbxproj
+# Update both Debug and Release configurations (appears twice in the file):
+MARKETING_VERSION = 1.0.70;        # Use version from step 1 (without 'v' prefix)
+CURRENT_PROJECT_VERSION = 285;     # Use commit count from step 2
 ```
+
+### Important Notes
+- These are **fallback defaults only** - CI/CD builds always override them with dynamic values from Fastlane
+- The defaults don't need to be updated with every commit; they're mainly to prevent "Version 1.0 (Build 1)" confusion
+- Fastlane's `increment_version_number` and `increment_build_number` actions will override these during deployment
 
 ## Troubleshooting
 
