@@ -132,7 +132,44 @@ function checkFileExists(filePath, description) {
     return false;
   }
   
-  const stats = fs.statSync(filePath);
+  const stats = fs.lstatSync(filePath);
+  
+  // Security: Reject symlinks to prevent path traversal attacks
+  if (stats.isSymbolicLink()) {
+    error(`${description} is a symbolic link, which is not allowed for security reasons: ${filePath}`);
+    return false;
+  }
+  
+  if (!stats.isFile()) {
+    error(`${description} is not a file: ${filePath}`);
+    return false;
+  }
+  
+  // Security: Verify file is within the expected metadata directory
+  const realFilePath = fs.realpathSync(filePath);
+  const realMetadataDir = fs.realpathSync(metadataDir);
+  if (!realFilePath.startsWith(realMetadataDir)) {
+    error(`${description} is outside the metadata directory: ${filePath}`);
+    return false;
+  }
+  
+  return true;
+}
+
+function checkNonMetadataFileExists(filePath, description) {
+  if (!fs.existsSync(filePath)) {
+    error(`${description} not found at: ${filePath}`);
+    return false;
+  }
+  
+  const stats = fs.lstatSync(filePath);
+  
+  // Security: Reject symlinks to prevent path traversal attacks
+  if (stats.isSymbolicLink()) {
+    error(`${description} is a symbolic link, which is not allowed for security reasons: ${filePath}`);
+    return false;
+  }
+  
   if (!stats.isFile()) {
     error(`${description} is not a file: ${filePath}`);
     return false;
@@ -188,17 +225,26 @@ function validateURL(filePath, fieldName) {
     return false;
   }
   
+  // Security: Limit content length to prevent logging excessively large data
+  const maxUrlLength = 2048;
+  if (content.length > maxUrlLength) {
+    error(`${fieldName} exceeds maximum URL length of ${maxUrlLength} characters`);
+    return false;
+  }
+  
   // Basic URL validation with HTTPS scheme check
   try {
     const url = new URL(content);
     if (url.protocol !== 'https:') {
-      warning(`${fieldName} should use HTTPS: ${content}`);
+      // Security: Only log sanitized URL (hostname only, no path/query)
+      warning(`${fieldName} should use HTTPS (currently using ${url.protocol}//${url.hostname})`);
     } else {
       success(`${fieldName} is a valid URL`);
     }
     return true;
   } catch (e) {
-    error(`${fieldName} contains an invalid URL: ${content}`);
+    // Security: Don't log the invalid URL content to prevent data leakage
+    error(`${fieldName} contains an invalid URL format`);
     return false;
   }
 }
@@ -215,8 +261,14 @@ function validateCategory(filePath, fieldName) {
     return;
   }
   
+  // Security: Validate content is a known category before logging
   if (!VALID_CATEGORIES.includes(content)) {
-    error(`${fieldName} contains invalid category: ${content}`);
+    // Security: Only log if it's a valid category format (alphanumeric/underscore only)
+    if (/^[A-Z_]+$/.test(content) && content.length < 50) {
+      error(`${fieldName} contains invalid category: ${content}`);
+    } else {
+      error(`${fieldName} contains invalid category format`);
+    }
     info(`Valid categories: ${VALID_CATEGORIES.join(', ')}`);
   } else {
     success(`${fieldName}: ${content}`);
@@ -235,6 +287,12 @@ function validateCopyright(filePath) {
     return;
   }
   
+  // Security: Limit content length
+  if (content.length > 200) {
+    error('Copyright text is too long (max 200 characters)');
+    return;
+  }
+  
   // Copyright should include a year (4 digits)
   const yearMatch = content.match(/\b(?:19|20)\d{2}\b/);
   if (!yearMatch) {
@@ -246,7 +304,12 @@ function validateCopyright(filePath) {
     warning('Copyright does not contain © symbol or "Copyright" text');
   }
   
-  success(`Copyright: ${content}`);
+  // Security: Only log if content looks like a valid copyright (contains year and reasonable chars)
+  if (/^[©\w\s\d\-,\.]+$/.test(content) && yearMatch) {
+    success(`Copyright: ${content}`);
+  } else {
+    success('Copyright format validated');
+  }
 }
 
 function validateScreenshots() {
@@ -359,43 +422,37 @@ function validateLocalizedMetadata() {
       return;
     }
     
-    // Read content once for optional files
-    const content = fs.readFileSync(filePath, 'utf8').trim();
-    
-    if (content.length === 0) {
-      info(`${fieldName} provided but empty`);
+    // Check if it's a symlink before proceeding
+    const stats = fs.lstatSync(filePath);
+    if (stats.isSymbolicLink()) {
+      error(`${fieldName} is a symbolic link, which is not allowed for security reasons`);
       return;
     }
     
     if (file.includes('url')) {
       // Validate URL using shared helper
+      validateURL(filePath, fieldName);
+    } else {
       const content = fs.readFileSync(filePath, 'utf8').trim();
+      
       if (content.length === 0) {
         info(`${fieldName} provided but empty`);
-      } else {
-        try {
-          const url = new URL(content);
-          if (url.protocol !== 'https:') {
-            warning(`${fieldName} should use HTTPS: ${content}`);
-          } else {
-            success(`${fieldName} is a valid URL`);
-          }
-        } catch (e) {
-          error(`${fieldName} contains an invalid URL: ${content}`);
-        }
+        return;
       }
-    } else if (LIMITS[file.replace('.txt', '')]) {
-      // Validate character limit
-      const limit = LIMITS[file.replace('.txt', '')];
-      const length = content.length;
       
-      if (length > limit) {
-        error(`${fieldName} exceeds character limit: ${length}/${limit} characters`);
+      if (LIMITS[file.replace('.txt', '')]) {
+        // Validate character limit
+        const limit = LIMITS[file.replace('.txt', '')];
+        const length = content.length;
+        
+        if (length > limit) {
+          error(`${fieldName} exceeds character limit: ${length}/${limit} characters`);
+        } else {
+          success(`${fieldName}: ${length}/${limit} characters`);
+        }
       } else {
-        success(`${fieldName}: ${length}/${limit} characters`);
+        success(`${fieldName} provided`);
       }
-    } else {
-      success(`${fieldName} provided`);
     }
   });
 }
@@ -405,7 +462,7 @@ function validateFastfileConfiguration() {
   
   const fastfilePath = path.join(rootDir, 'ios/App/fastlane/Fastfile');
   
-  if (!checkFileExists(fastfilePath, 'Fastfile')) {
+  if (!checkNonMetadataFileExists(fastfilePath, 'Fastfile')) {
     return;
   }
   
