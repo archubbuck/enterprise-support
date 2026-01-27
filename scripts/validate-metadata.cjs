@@ -100,6 +100,9 @@ const VALID_CATEGORIES = [
   'MUSIC',
   'GAMES',
   'CATALOGS',
+  'MAGAZINES',
+  'DEVELOPER_TOOLS',
+  'GRAPHICS_AND_DESIGN',
 ];
 
 let errors = 0;
@@ -175,22 +178,28 @@ function validateCharacterLimit(filePath, limit, fieldName) {
 
 function validateURL(filePath, fieldName) {
   if (!checkFileExists(filePath, fieldName)) {
-    return;
+    return false;
   }
   
   const content = fs.readFileSync(filePath, 'utf8').trim();
   
   if (content.length === 0) {
     warning(`${fieldName} is empty`);
-    return;
+    return false;
   }
   
-  // Basic URL validation
+  // Basic URL validation with HTTPS scheme check
   try {
-    new URL(content);
-    success(`${fieldName} is a valid URL`);
+    const url = new URL(content);
+    if (url.protocol !== 'https:') {
+      warning(`${fieldName} should use HTTPS: ${content}`);
+    } else {
+      success(`${fieldName} is a valid URL`);
+    }
+    return true;
   } catch (e) {
     error(`${fieldName} contains an invalid URL: ${content}`);
+    return false;
   }
 }
 
@@ -359,12 +368,21 @@ function validateLocalizedMetadata() {
     }
     
     if (file.includes('url')) {
-      // Validate URL
-      try {
-        new URL(content);
-        success(`${fieldName} is a valid URL`);
-      } catch (e) {
-        error(`${fieldName} contains an invalid URL: ${content}`);
+      // Validate URL using shared helper
+      const content = fs.readFileSync(filePath, 'utf8').trim();
+      if (content.length === 0) {
+        info(`${fieldName} provided but empty`);
+      } else {
+        try {
+          const url = new URL(content);
+          if (url.protocol !== 'https:') {
+            warning(`${fieldName} should use HTTPS: ${content}`);
+          } else {
+            success(`${fieldName} is a valid URL`);
+          }
+        } catch (e) {
+          error(`${fieldName} contains an invalid URL: ${content}`);
+        }
       }
     } else if (LIMITS[file.replace('.txt', '')]) {
       // Validate character limit
