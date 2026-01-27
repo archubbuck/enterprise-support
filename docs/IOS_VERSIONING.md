@@ -22,14 +22,14 @@ The iOS app uses a two-part versioning system that ensures proper version manage
 ### Local Development Builds
 - The Xcode project contains default values for both version components
 - These defaults are set to reasonable values based on the git repository state at the time of this commit
-- Default values: `MARKETING_VERSION = 1.0.69` (from git tag `v1.0.69`), `CURRENT_PROJECT_VERSION = 2` (from `git rev-list --count HEAD`)
+- Default values: `MARKETING_VERSION = 1.0.69` (from git tag `v1.0.69`), `CURRENT_PROJECT_VERSION = 281` (from full-history `git rev-list --count HEAD`)
 - Local builds use these defaults unless explicitly changed in Xcode
-- **Note**: These defaults are snapshots and don't auto-update; they should be manually updated when preparing major version bumps
+- **Note**: These defaults are snapshots and don't auto-update; they should be manually updated when preparing major version bumps. When recomputing `CURRENT_PROJECT_VERSION` locally using `git rev-list --count HEAD`, ensure you're using a non-shallow clone (run `git fetch --unshallow` if needed) so that the commit count matches the CI/CD environment.
 
 ### CI/CD Builds (Fastlane)
 - The CI/CD workflow automatically overrides the default values during build
 - Version is extracted from the git tag that triggered the deployment (e.g., `v1.0.68` → version `1.0.68`)
-- Build number is set to the total commit count (e.g., `277`)
+- Build number is set to the total commit count from the full git history in a non-shallow clone (e.g., `277`)
 - This ensures every App Store deployment has unique, traceable version information
 
 ### Workflow Process
@@ -77,18 +77,22 @@ Update these defaults when:
 
 ### How to Update
 ```bash
-# 1. Get the latest version tag
+# 1. Ensure you have full git history (not a shallow clone)
+git fetch --unshallow  # Only needed if you have a shallow clone
+# Or clone without --depth: git clone https://github.com/...
+
+# 2. Get the latest version tag
 git describe --tags --match "v*" --abbrev=0
 # Example output: v1.0.70
 
-# 2. Get the current commit count
+# 3. Get the current commit count from full history
 git rev-list --count HEAD
-# Example output: 285
+# Example output: 285 (must be from full history, not shallow clone)
 
-# 3. Edit ios/App/App.xcodeproj/project.pbxproj
+# 4. Edit ios/App/App.xcodeproj/project.pbxproj
 # Update both Debug and Release configurations (appears twice in the file):
-MARKETING_VERSION = 1.0.70;        # Use version from step 1 (without 'v' prefix)
-CURRENT_PROJECT_VERSION = 285;     # Use commit count from step 2
+MARKETING_VERSION = 1.0.70;        # Use version from step 2 (without 'v' prefix)
+CURRENT_PROJECT_VERSION = 285;     # Use commit count from step 3 (from full history)
 ```
 
 ### Important Notes
