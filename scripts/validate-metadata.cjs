@@ -53,13 +53,13 @@ const LIMITS = {
 };
 
 // Validation limits
-const MAX_URL_LENGTH = 2048;
 const MAX_CATEGORY_LENGTH = 50;
 const MAX_COPYRIGHT_LENGTH = 200;
 
 // Regular expressions for validation
 const CATEGORY_FORMAT_REGEX = /^[A-Z_]+$/;
-const COPYRIGHT_FORMAT_REGEX = /^[©\w\s\d\-,\.]+$/; // Allows ©, word chars, spaces, digits, hyphens, commas, dots
+// Allows ©, word chars, spaces, digits, hyphens (at start/end), commas, dots (escaped)
+const COPYRIGHT_FORMAT_REGEX = /^[-©\w\s\d,\.]+$/;
 
 // Required non-localized metadata files
 const REQUIRED_NON_LOCALIZED = [
@@ -192,6 +192,7 @@ function checkNonMetadataFileExists(filePath, description) {
     return false;
   }
   
+  // Note: No path validation for non-metadata files (e.g., Fastfile)
   return true;
 }
 
@@ -243,8 +244,10 @@ function validateURL(filePath, fieldName) {
   }
   
   // Security: Limit content length to prevent logging excessively large data
-  if (content.length > MAX_URL_LENGTH) {
-    error(`${fieldName} exceeds maximum URL length of ${MAX_URL_LENGTH} characters`);
+  // Use the maximum URL limit from LIMITS object
+  const maxUrlLength = Math.max(LIMITS.marketing_url, LIMITS.support_url, LIMITS.privacy_url);
+  if (content.length > maxUrlLength) {
+    error(`${fieldName} exceeds maximum URL length of ${maxUrlLength} characters`);
     return false;
   }
   
@@ -279,13 +282,15 @@ function validateCategory(filePath, fieldName) {
   
   // Security: Validate content is a known category before logging
   if (!VALID_CATEGORIES.includes(content)) {
-    // Security: Only log if it matches expected category format
-    if (CATEGORY_FORMAT_REGEX.test(content) && content.length < MAX_CATEGORY_LENGTH) {
+    // Security: Only log if it matches expected category format AND is within reasonable length
+    // This prevents logging of potentially malicious content
+    if (CATEGORY_FORMAT_REGEX.test(content) && content.length <= MAX_CATEGORY_LENGTH) {
       error(`${fieldName} contains invalid category: ${content}`);
+      info(`Valid categories: ${VALID_CATEGORIES.join(', ')}`);
     } else {
-      error(`${fieldName} contains invalid category format`);
+      error(`${fieldName} contains invalid category format or is too long`);
+      info(`Valid categories: ${VALID_CATEGORIES.join(', ')}`);
     }
-    info(`Valid categories: ${VALID_CATEGORIES.join(', ')}`);
   } else {
     success(`${fieldName}: ${content}`);
   }
