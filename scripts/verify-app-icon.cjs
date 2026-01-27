@@ -326,9 +326,9 @@ function checkFastfile() {
   }
   
   // Check for skip_metadata setting
-  const skipMetadataMatch = fastfileContent.match(/skip_metadata:\s*(?:true|false)/);
+  const skipMetadataMatch = fastfileContent.match(/skip_metadata:\s*(true|false)/);
   if (skipMetadataMatch) {
-    const skipMetadata = skipMetadataMatch[0].includes('true');
+    const skipMetadata = skipMetadataMatch[1] === 'true';
     if (skipMetadata) {
       warning('skip_metadata is set to true. App Store Connect metadata (description, keywords, etc.) will not be uploaded by Fastlane.');
       info('Note: This does not affect the App Store icon, which is taken from the built IPA, not Fastlane metadata.');
@@ -341,9 +341,9 @@ function checkFastfile() {
   }
   
   // Check for skip_screenshots setting
-  const skipScreenshotsMatch = fastfileContent.match(/skip_screenshots:\s*(?:true|false)/);
+  const skipScreenshotsMatch = fastfileContent.match(/skip_screenshots:\s*(true|false)/);
   if (skipScreenshotsMatch) {
-    const skipScreenshots = skipScreenshotsMatch[0].includes('true');
+    const skipScreenshots = skipScreenshotsMatch[1] === 'true';
     if (skipScreenshots) {
       info('skip_screenshots is set to true (screenshots will not be uploaded)');
     } else {
