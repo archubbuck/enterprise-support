@@ -52,6 +52,15 @@ const LIMITS = {
   privacy_url: 2048,
 };
 
+// Validation limits
+const MAX_URL_LENGTH = 2048;
+const MAX_CATEGORY_LENGTH = 50;
+const MAX_COPYRIGHT_LENGTH = 200;
+
+// Regular expressions for validation
+const CATEGORY_FORMAT_REGEX = /^[A-Z_]+$/;
+const COPYRIGHT_FORMAT_REGEX = /^[©\w\s\d\-,\.]+$/; // Allows ©, word chars, spaces, digits, hyphens, commas, dots
+
 // Required non-localized metadata files
 const REQUIRED_NON_LOCALIZED = [
   'primary_category.txt',
@@ -146,10 +155,18 @@ function checkFileExists(filePath, description) {
   }
   
   // Security: Verify file is within the expected metadata directory
-  const realFilePath = fs.realpathSync(filePath);
-  const realMetadataDir = fs.realpathSync(metadataDir);
-  if (!realFilePath.startsWith(realMetadataDir)) {
-    error(`${description} is outside the metadata directory: ${filePath}`);
+  try {
+    const realFilePath = fs.realpathSync(filePath);
+    const realMetadataDir = fs.realpathSync(metadataDir);
+    const relativePath = path.relative(realMetadataDir, realFilePath);
+    
+    // Check if path escapes the metadata directory (starts with .. or is absolute)
+    if (relativePath.startsWith('..') || path.isAbsolute(relativePath)) {
+      error(`${description} is outside the metadata directory: ${filePath}`);
+      return false;
+    }
+  } catch (e) {
+    error(`${description} path validation failed: ${e.message}`);
     return false;
   }
   
@@ -226,9 +243,8 @@ function validateURL(filePath, fieldName) {
   }
   
   // Security: Limit content length to prevent logging excessively large data
-  const maxUrlLength = 2048;
-  if (content.length > maxUrlLength) {
-    error(`${fieldName} exceeds maximum URL length of ${maxUrlLength} characters`);
+  if (content.length > MAX_URL_LENGTH) {
+    error(`${fieldName} exceeds maximum URL length of ${MAX_URL_LENGTH} characters`);
     return false;
   }
   
@@ -263,8 +279,8 @@ function validateCategory(filePath, fieldName) {
   
   // Security: Validate content is a known category before logging
   if (!VALID_CATEGORIES.includes(content)) {
-    // Security: Only log if it's a valid category format (alphanumeric/underscore only)
-    if (/^[A-Z_]+$/.test(content) && content.length < 50) {
+    // Security: Only log if it matches expected category format
+    if (CATEGORY_FORMAT_REGEX.test(content) && content.length < MAX_CATEGORY_LENGTH) {
       error(`${fieldName} contains invalid category: ${content}`);
     } else {
       error(`${fieldName} contains invalid category format`);
@@ -288,8 +304,8 @@ function validateCopyright(filePath) {
   }
   
   // Security: Limit content length
-  if (content.length > 200) {
-    error('Copyright text is too long (max 200 characters)');
+  if (content.length > MAX_COPYRIGHT_LENGTH) {
+    error(`Copyright text is too long (max ${MAX_COPYRIGHT_LENGTH} characters)`);
     return;
   }
   
@@ -304,8 +320,8 @@ function validateCopyright(filePath) {
     warning('Copyright does not contain © symbol or "Copyright" text');
   }
   
-  // Security: Only log if content looks like a valid copyright (contains year and reasonable chars)
-  if (/^[©\w\s\d\-,\.]+$/.test(content) && yearMatch) {
+  // Security: Only log if content matches expected copyright format
+  if (COPYRIGHT_FORMAT_REGEX.test(content) && yearMatch) {
     success(`Copyright: ${content}`);
   } else {
     success('Copyright format validated');
@@ -422,17 +438,15 @@ function validateLocalizedMetadata() {
       return;
     }
     
-    // Check if it's a symlink before proceeding
-    const stats = fs.lstatSync(filePath);
-    if (stats.isSymbolicLink()) {
-      error(`${fieldName} is a symbolic link, which is not allowed for security reasons`);
-      return;
-    }
-    
     if (file.includes('url')) {
-      // Validate URL using shared helper
+      // Validate URL using shared helper (includes symlink and path checks)
       validateURL(filePath, fieldName);
     } else {
+      // For non-URL files, check file exists first (includes symlink and path checks)
+      if (!checkFileExists(filePath, fieldName)) {
+        return;
+      }
+      
       const content = fs.readFileSync(filePath, 'utf8').trim();
       
       if (content.length === 0) {
