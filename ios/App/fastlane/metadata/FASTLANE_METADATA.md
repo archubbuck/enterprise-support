@@ -1,10 +1,90 @@
-# Fastlane Metadata Files - Scaffold Information
+# Fastlane Metadata Files - Configuration Guide
 
-This document explains the metadata files that have been scaffolded for fastlane App Store deployment.
+This document explains the metadata files that have been scaffolded for fastlane App Store deployment and how to configure them using environment variables.
 
 ## Overview
 
-All metadata files that fastlane can detect have been created as empty placeholders. Files will only be used by fastlane when they contain content.
+All metadata files that fastlane can detect have been created as empty placeholders. **Sensitive metadata values (like phone numbers and emails) should be defined in environment variables** instead of being committed to the repository.
+
+## Environment-Based Configuration (Recommended)
+
+To prevent sensitive information from being committed to git, metadata values can be injected from environment variables:
+
+1. **Copy the example file:**
+   ```bash
+   cp ios/App/fastlane/.env.example ios/App/fastlane/.env
+   ```
+
+2. **Edit `.env` with your values:**
+   ```bash
+   # Add your review contact information
+   METADATA_REVIEW_FIRST_NAME=John
+   METADATA_REVIEW_LAST_NAME=Doe
+   METADATA_REVIEW_PHONE=+1-555-123-4567
+   METADATA_REVIEW_EMAIL=review@example.com
+   ```
+
+3. **Run fastlane:**
+   When you run the `release` lane, metadata values are automatically injected from environment variables into the metadata files before upload.
+
+### Available Environment Variables
+
+#### Review Information (Sensitive)
+- `METADATA_REVIEW_FIRST_NAME` - First name of App Store review contact
+- `METADATA_REVIEW_LAST_NAME` - Last name of App Store review contact
+- `METADATA_REVIEW_PHONE` - Phone number for review team
+- `METADATA_REVIEW_EMAIL` - Email address for review team
+- `METADATA_REVIEW_DEMO_USER` - Demo account username
+- `METADATA_REVIEW_DEMO_PASSWORD` - Demo account password
+- `METADATA_REVIEW_NOTES` - Notes for reviewers
+
+#### Trade Representative Contact (Sensitive)
+- `METADATA_TRADE_REP_FIRST_NAME` - Trade rep first name
+- `METADATA_TRADE_REP_LAST_NAME` - Trade rep last name
+- `METADATA_TRADE_REP_ADDRESS_LINE1` - Address line 1
+- `METADATA_TRADE_REP_ADDRESS_LINE2` - Address line 2
+- `METADATA_TRADE_REP_ADDRESS_LINE3` - Address line 3
+- `METADATA_TRADE_REP_CITY` - City name
+- `METADATA_TRADE_REP_STATE` - State/Province
+- `METADATA_TRADE_REP_COUNTRY` - Country
+- `METADATA_TRADE_REP_POSTAL_CODE` - Postal code
+- `METADATA_TRADE_REP_PHONE` - Contact phone
+- `METADATA_TRADE_REP_EMAIL` - Contact email
+- `METADATA_TRADE_REP_DISPLAY_ON_APP_STORE` - Display on Korean App Store (true/false)
+
+#### Optional Metadata
+- `METADATA_PRIMARY_FIRST_SUB_CATEGORY` - Primary category first subcategory
+- `METADATA_PRIMARY_SECOND_SUB_CATEGORY` - Primary category second subcategory
+- `METADATA_SECONDARY_FIRST_SUB_CATEGORY` - Secondary category first subcategory
+- `METADATA_SECONDARY_SECOND_SUB_CATEGORY` - Secondary category second subcategory
+- `METADATA_APPLE_TV_PRIVACY_POLICY` - Apple TV privacy policy text
+
+### CI/CD Integration
+
+In GitHub Actions or other CI environments, set these as secrets:
+
+```yaml
+env:
+  METADATA_REVIEW_FIRST_NAME: ${{ secrets.METADATA_REVIEW_FIRST_NAME }}
+  METADATA_REVIEW_LAST_NAME: ${{ secrets.METADATA_REVIEW_LAST_NAME }}
+  METADATA_REVIEW_PHONE: ${{ secrets.METADATA_REVIEW_PHONE }}
+  METADATA_REVIEW_EMAIL: ${{ secrets.METADATA_REVIEW_EMAIL }}
+  # ... other variables
+```
+
+## Manual File Configuration (Alternative)
+
+If you prefer to manage metadata files directly without environment variables:
+
+1. **Leave Empty:** Files you don't need can remain empty. Fastlane will skip them.
+
+2. **Add Content:** Simply add text content to any file to enable that metadata field.
+
+3. **Validation:** Run `npm run validate:metadata` to check your changes.
+
+4. **Deployment:** These files are automatically read by the `fastlane deliver` action during deployment.
+
+**Note:** Direct file editing is not recommended for sensitive information like phone numbers and emails.
 
 ## Files Created
 
@@ -60,42 +140,62 @@ Located in `metadata/trade_representative_contact_information/`:
 - `email_address.txt` - Contact email address
 - `is_displayed_on_app_store.txt` - Whether to display on Korean App Store (true/false)
 
-**Usage:** Required for Korean App Store distribution. Leave empty if not distributing in Korea.
+**Usage:** Required for Korean App Store distribution. Use environment variables to avoid committing sensitive contact information.
 
-## How to Use These Files
+## How the Injection Works
 
-1. **Leave Empty:** Files you don't need can remain empty. Fastlane will skip them.
+When the `release` lane runs in fastlane:
 
-2. **Add Content:** Simply add text content to any file to enable that metadata field.
+1. The `inject_metadata.rb` script reads environment variables
+2. Values are written to corresponding metadata files
+3. Fastlane reads the metadata files and uploads to App Store Connect
+4. Files are not committed to git (they remain empty placeholders in the repository)
 
-3. **Validation:** Run `npm run validate:metadata` to check your changes.
+This approach ensures:
+- ✅ Sensitive information stays out of git history
+- ✅ Easy configuration through .env files or CI secrets
+- ✅ Same metadata structure as manual file editing
+- ✅ Automatic injection on every deployment
 
-4. **Deployment:** These files are automatically read by the `fastlane deliver` action during deployment.
-
-## Examples
-
-### Adding Review Information
+## Example: Local Development Setup
 
 ```bash
-# Add review contact information
-echo "John" > metadata/review_information/first_name.txt
-echo "Doe" > metadata/review_information/last_name.txt
-echo "+1 555-123-4567" > metadata/review_information/phone_number.txt
-echo "review@example.com" > metadata/review_information/email_address.txt
+# 1. Copy the example environment file
+cp ios/App/fastlane/.env.example ios/App/fastlane/.env
 
-# Add demo credentials (if app requires login)
-echo "demo_user" > metadata/review_information/demo_user.txt
-echo "demo_pass123" > metadata/review_information/demo_password.txt
+# 2. Edit the .env file with your values
+nano ios/App/fastlane/.env
 
-# Add notes for reviewers
-echo "Please use the demo account to test all features." > metadata/review_information/notes.txt
+# 3. Add your review information
+METADATA_REVIEW_FIRST_NAME=John
+METADATA_REVIEW_LAST_NAME=Doe
+METADATA_REVIEW_PHONE=+1-555-123-4567
+METADATA_REVIEW_EMAIL=review@example.com
+METADATA_REVIEW_DEMO_USER=demo_user
+METADATA_REVIEW_DEMO_PASSWORD=demo_pass123
+
+# 4. Run fastlane (metadata is automatically injected)
+cd ios/App
+bundle exec fastlane release
 ```
 
-### Adding Subcategories
+## Testing Metadata Injection
+
+You can test the metadata injection script without running the full release:
 
 ```bash
-# If your primary category is BUSINESS, you might add:
-echo "ENTERPRISE" > metadata/primary_first_sub_category.txt
+cd ios/App/fastlane
+
+# Set some test environment variables
+export METADATA_REVIEW_FIRST_NAME="Test User"
+export METADATA_REVIEW_EMAIL="test@example.com"
+
+# Run the injection script
+ruby scripts/inject_metadata.rb
+
+# Check the injected files
+cat metadata/review_information/first_name.txt
+cat metadata/review_information/email_address.txt
 ```
 
 ## Documentation
