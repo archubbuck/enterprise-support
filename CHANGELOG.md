@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated cross-references between documentation files
 - Improved LICENSE file with proper attribution
 - Updated GitHub Actions workflows to use latest-stable Xcode version for automatic SDK compliance
-- Updated prerequisites documentation with Node.js v22+ and npm v10+ requirements
+- Corrected prerequisites documentation to match package.json requirements (Node.js v22+, npm v10+)
 
 ### Performance
 - Optimized iOS build performance with CocoaPods caching in GitHub Actions
