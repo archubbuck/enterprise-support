@@ -54,9 +54,9 @@ npm run ios:open
 ## Technology Stack
 
 - **React 19** - UI framework with functional components and hooks
-- **TypeScript 5.7** - Type safety and better developer experience
-- **Vite 7** - Fast build tool and dev server
-- **Tailwind CSS 4** - Utility-first styling
+- **TypeScript 5.9** - Type safety and better developer experience
+- **Vite 7.3** - Fast build tool and dev server
+- **Tailwind CSS 4.1** - Utility-first styling
 - **Capacitor 8** - Native iOS wrapper
 - **Framer Motion** - Animations
 - **Radix UI** - Accessible component primitives
@@ -121,7 +121,7 @@ npm run validate:app-config
 ```
 
 ### Theme System
-The app supports multiple color themes defined in `src/lib/themes.ts`:
+The app supports multiple color themes defined in `src/lib/theme-config.ts`:
 - Themes use Tailwind CSS variables
 - Users can switch themes at runtime
 - Theme configuration is documented in `docs/THEME_CONFIGURATION.md`
@@ -325,7 +325,7 @@ Update relevant documentation when:
 5. Update `docs/CONFIGURATION.md`
 
 ### Adding a New Theme
-1. Add theme definition to `src/lib/themes.ts`
+1. Add theme definition to `src/lib/theme-config.ts`
 2. Define color variables using Tailwind format
 3. Test theme switching in UI
 4. Update `docs/THEME_CONFIGURATION.md`
