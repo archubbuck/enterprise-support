@@ -33,8 +33,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Expected 30-50% reduction in build times for CI/CD deployments
 
 ### Fixed
-- Resolved App Store Connect SDK version warnings by ensuring builds use latest stable Xcode
-- Ensured automatic compliance with Apple's iOS SDK requirements
+- Updated workflows to track the latest stable Xcode available in CI to address App Store Connect SDK version warnings
+- Improved alignment with Apple's iOS SDK requirements by using latest available Xcode in CI
 
 ## [0.0.0] - Initial Release
 

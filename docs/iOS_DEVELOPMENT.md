@@ -736,9 +736,9 @@ Apple regularly updates its requirements for the iOS SDK version used to build a
 - The specific SDK version requirement is communicated via App Store Connect
 
 **This Project's Configuration:**
-- GitHub Actions workflows automatically use the **latest stable version of Xcode**
-- This ensures builds always use the most recent iOS SDK available
-- No manual updates needed when Apple releases new Xcode versions
+- GitHub Actions workflows are configured to use the **latest stable version of Xcode available on GitHub's macOS runner image**
+- This generally tracks recent Xcode and iOS SDK releases, but may lag behind the very latest versions from Apple
+- You may still need to update your workflow configuration, runner image, or local Xcode to meet new App Store SDK requirements
 
 ### Checking Your Local Xcode Version
 
@@ -782,9 +782,9 @@ The GitHub Actions workflows (`.github/workflows/deploy.yml` and `.github/workfl
 
 This configuration:
 - ✅ Automatically uses the latest stable Xcode version available on GitHub's macOS runners
-- ✅ Ensures builds always use a recent iOS SDK
-- ✅ Eliminates manual version updates in workflows
-- ✅ Guarantees App Store submission requirements are met
+- ✅ Helps keep builds aligned with recent iOS SDK versions
+- ✅ Reduces the frequency of manual version updates in workflows
+- ✅ Helps keep CI builds aligned with Apple's SDK requirements
 
 ### App Store Connect Warnings
 
