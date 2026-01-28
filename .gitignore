@@ -61,3 +61,4 @@ ios/App/fastlane/logs
 ios/App/fastlane/report.xml
 ios/App/fastlane/test_output
 ios/App/fastlane/README.md
+ios/App/fastlane/.env

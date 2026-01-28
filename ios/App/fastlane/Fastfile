@@ -17,6 +17,12 @@
 # - FASTLANE_UPLOAD_MAX_RETRIES: Maximum number of upload retry attempts (default: 3)
 # - FASTLANE_UPLOAD_RETRY_DELAY: Initial retry delay in seconds (default: 60)
 #   Note: Delay doubles with each retry attempt (exponential backoff)
+#
+# Optional metadata environment variables (see .env.example for complete list):
+# - METADATA_REVIEW_FIRST_NAME, METADATA_REVIEW_LAST_NAME, etc.: Review contact information
+# - METADATA_TRADE_REP_*: Trade representative contact (for Korean App Store)
+# - METADATA_*_SUB_CATEGORY: App category subcategories
+# See ios/App/fastlane/.env.example for full list and documentation
 
 default_platform(:ios)
 
@@ -114,6 +120,14 @@ platform :ios do
   lane :release do
     start_time = Time.now
     UI.important("🕐 Release lane started at #{start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+    
+    # Inject metadata from environment variables
+    # This allows sensitive values (phone numbers, emails, etc.) to be defined in .env
+    # instead of being committed to the repository
+    inject_start = Time.now
+    UI.important("🕐 Injecting metadata from environment variables...")
+    sh("ruby scripts/inject_metadata.rb")
+    UI.success("✅ Metadata injection completed in #{(Time.now - inject_start).round(1)}s")
     
     # Explicitly select Xcode using the DEVELOPER_DIR environment variable
     # This ensures fastlane uses the correct Xcode installation for finding tools like iTMSTransporter
