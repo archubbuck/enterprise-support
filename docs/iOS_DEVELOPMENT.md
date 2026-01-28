@@ -26,11 +26,12 @@ The `appId` is particularly important for iOS as it's used as the bundle identif
 ### For Mac Development
 
 1. **macOS** (required for building iOS apps)
-2. **Xcode** (latest version recommended)
+2. **Xcode** (latest stable version required)
    - Install from the Mac App Store
    - Install Xcode Command Line Tools: `xcode-select --install`
-3. **Node.js** (v16 or higher)
-4. **npm** or **yarn**
+   - **Important**: Always use the latest stable version of Xcode to ensure compliance with App Store requirements. Apple requires apps to be built with recent iOS SDKs.
+3. **Node.js** (v22 or higher)
+4. **npm** (v10 or higher)
 5. **CocoaPods** (for iOS dependencies)
    - Install: `sudo gem install cocoapods`
 
@@ -722,6 +723,87 @@ If builds are still slow:
 2. **Review build logs**: Check `ios/App/fastlane/logs` for bottlenecks
 3. **Verify caching**: Confirm CocoaPods cache is being used in workflow logs
 4. **Clean build**: Sometimes a clean build is needed: `cd ios/App && pod deintegrate && pod install`
+
+## Xcode and iOS SDK Version Requirements
+
+### App Store SDK Requirements
+
+Apple regularly updates its requirements for the iOS SDK version used to build apps submitted to the App Store. This ensures apps take advantage of the latest security features, performance improvements, and APIs.
+
+**Current Requirement:**
+- Apps must be built with a recent iOS SDK version
+- Apple typically requires apps to use an SDK from within the last year
+- The specific SDK version requirement is communicated via App Store Connect
+
+**This Project's Configuration:**
+- GitHub Actions workflows automatically use the **latest stable version of Xcode**
+- This ensures builds always use the most recent iOS SDK available
+- No manual updates needed when Apple releases new Xcode versions
+
+### Checking Your Local Xcode Version
+
+To verify your local Xcode version and iOS SDK:
+
+```bash
+# Check Xcode version
+xcodebuild -version
+
+# Check available iOS SDKs
+xcodebuild -showsdks | grep iOS
+```
+
+### Updating Xcode Locally
+
+1. **Via Mac App Store** (Recommended):
+   - Open the App Store app
+   - Search for "Xcode"
+   - Click "Update" if an update is available
+
+2. **Via Apple Developer Portal**:
+   - Go to [developer.apple.com/download](https://developer.apple.com/download/)
+   - Download the latest Xcode release
+   - Install by dragging to Applications folder
+
+3. **Select Xcode Version** (if multiple versions installed):
+   ```bash
+   sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
+   ```
+
+### GitHub Actions Xcode Configuration
+
+The GitHub Actions workflows (`.github/workflows/deploy.yml` and `.github/workflows/setup_match.yml`) are configured to use:
+
+```yaml
+- name: Setup Xcode
+  uses: maxim-lobanov/setup-xcode@v1
+  with:
+    xcode-version: 'latest-stable'
+```
+
+This configuration:
+- ✅ Automatically uses the latest stable Xcode version available on GitHub's macOS runners
+- ✅ Ensures builds always use a recent iOS SDK
+- ✅ Eliminates manual version updates in workflows
+- ✅ Guarantees App Store submission requirements are met
+
+### App Store Connect Warnings
+
+If you receive a warning from App Store Connect about SDK version, such as:
+
+```
+ITMS-90725: SDK version issue - This app was built with the iOS X.X SDK. 
+Starting [Date], all iOS and iPadOS apps must be built with the iOS Y.Y SDK 
+or later, included in Xcode Y or later.
+```
+
+**Actions to Take:**
+
+1. **For CI/CD Builds**: No action needed - workflows automatically use the latest stable Xcode
+2. **For Local Development**: Update Xcode to the latest stable version (see instructions above)
+3. **Verify Build**: After updating, rebuild and test your app locally
+4. **Redeploy**: Push a new version tag to trigger an automated deployment with the updated SDK
+
+The automated CI/CD pipeline will handle the SDK version requirement automatically, ensuring compliance with Apple's guidelines.
 
 ## Resources
 
