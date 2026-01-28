@@ -144,9 +144,22 @@ The app supports multiple color themes defined in `src/lib/theme-config.ts`:
   "id": "unique-id",
   "title": "Document Title",
   "category": "category-name",
-  "path": "/documents/filename.md",
-  "description": "Brief description",
+  "icon": "icon-name",
+  "file": "filename.md",
   "tags": ["tag1", "tag2"]
+}
+```
+
+For non-markdown documents (PDF, Word, images), add a `type` field:
+```json
+{
+  "id": "security-policy",
+  "title": "IT Security Policy (PDF)",
+  "category": "Security",
+  "icon": "file",
+  "file": "sample-policy.pdf",
+  "type": "pdf",
+  "tags": ["security", "policy"]
 }
 ```
 
@@ -182,12 +195,40 @@ npm run ios:build
 ## Common Patterns
 
 ### Loading Configuration
+
+Configuration can be accessed in two ways depending on the context:
+
+#### At Build Time (vite.config.ts, capacitor.config.ts)
+For build-time configuration files, import directly:
 ```typescript
-import appConfig from '../app.config.json';
+import appConfig from './app.config.json';
 
 // Access configuration values
 const companyName = appConfig.companyName;
+const appId = appConfig.appId;
 ```
+
+#### At Runtime (React Components)
+For React components, use the `useAppConfig` hook:
+```typescript
+import { useAppConfig } from '@/hooks/useAppConfig';
+
+function MyComponent() {
+  const { config, loading, error } = useAppConfig();
+  
+  if (loading) return <Spinner />;
+  if (error) return <ErrorMessage error={error} />;
+  if (!config) return null;
+  
+  return <div>{config.companyName}</div>;
+}
+```
+
+The `useAppConfig` hook provides:
+- Automatic caching with localStorage (24-hour TTL)
+- Stale-while-revalidate pattern for offline resilience
+- Loading and error states
+- Type safety through AppConfig interface
 
 ### Markdown Document Loading
 Documents are loaded from `public/documents/` and parsed with `marked`:
