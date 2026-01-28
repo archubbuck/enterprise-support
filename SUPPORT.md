@@ -66,7 +66,7 @@ See our [Feature Request Template](./.github/ISSUE_TEMPLATE/feature_request.md) 
 
 **Do not report security vulnerabilities through public GitHub issues.**
 
-Please see our [Security Policy](SECURITY.md) for instructions on reporting security vulnerabilities.
+Please see our [Security Policy](./.github/SECURITY.md) for instructions on reporting security vulnerabilities.
 
 ## Documentation
 
