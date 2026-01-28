@@ -87,6 +87,13 @@ jobs:
         with:
           xcode-version: 'latest-stable'
 
+      - name: Log resolved Xcode version
+        run: |
+          echo "Resolved Xcode version:"
+          xcodebuild -version
+          echo "Available iOS SDKs:"
+          xcodebuild -showsdks | grep iOS
+
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
