@@ -16,11 +16,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GitHub issue templates for bug reports and feature requests
 - Pull request template for standardized submissions
 - Build performance optimizations documentation in iOS Development Guide
+- Comprehensive Xcode and iOS SDK version requirements documentation
 
 ### Changed
 - Reorganized documentation files into docs/ directory
 - Updated cross-references between documentation files
 - Improved LICENSE file with proper attribution
+- Updated GitHub Actions workflows to use latest-stable Xcode version for automatic SDK compliance
+- Updated prerequisites documentation with Node.js v22+ and npm v10+ requirements
 
 ### Performance
 - Optimized iOS build performance with CocoaPods caching in GitHub Actions
@@ -28,6 +31,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Disabled code signing for CocoaPods frameworks during build (speeds up "[CP] Embed Pods Frameworks" step)
 - Enhanced Podfile with post_install hook for build optimization settings
 - Expected 30-50% reduction in build times for CI/CD deployments
+
+### Fixed
+- Resolved App Store Connect SDK version warnings by ensuring builds use latest stable Xcode
+- Ensured automatic compliance with Apple's iOS SDK requirements
 
 ## [0.0.0] - Initial Release
 
