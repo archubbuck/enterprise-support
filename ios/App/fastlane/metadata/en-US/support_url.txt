@@ -1,1 +1,1 @@
-https://github.com/archubbuck/enterprise-support/blob/main/.github/SUPPORT.md
+https://github.com/archubbuck/enterprise-support/blob/main/SUPPORT.md
