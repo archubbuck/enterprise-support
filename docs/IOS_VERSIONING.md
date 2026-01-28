@@ -14,7 +14,7 @@ The iOS app uses a two-part versioning system that ensures proper version manage
 ### 2. Build Number (`CURRENT_PROJECT_VERSION` / `CFBundleVersion`)
 - **What it is**: Internal build identifier used by App Store Connect
 - **Format**: Integer (e.g., `277`, `2`)
-- **Source**: Total git commit count in the repository
+- **Source**: Git commit count reachable from current HEAD (`git rev-list --count HEAD`)
 - **Purpose**: Provides unique, monotonically increasing build numbers required by Apple
 
 ## How Versioning Works
@@ -78,8 +78,12 @@ Update these defaults when:
 ### How to Update
 ```bash
 # 1. Ensure you have full git history (not a shallow clone)
-git fetch --unshallow  # Only needed if you have a shallow clone
-# Or clone without --depth: git clone https://github.com/...
+# Check if this is a shallow clone and fetch full history if needed
+if [ -f .git/shallow ]; then
+  git fetch --unshallow
+else
+  git fetch --tags --prune
+fi
 
 # 2. Get the latest version tag
 git describe --tags --match "v*" --abbrev=0
