@@ -741,7 +741,7 @@ App.tsx
 ### **Custom Hooks:**
 - **useAppConfig()** - Access application configuration
 - **useFeatureFlag(flag)** - Check if feature is enabled
-- **useMobile()** - Detect mobile viewport
+- **useIsMobile()** - Detect mobile viewport
 - **useThemeConfig()** - Access theme configuration
 
 ### **Component Best Practices:**
