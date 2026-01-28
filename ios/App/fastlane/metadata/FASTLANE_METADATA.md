@@ -187,7 +187,7 @@ You can test the metadata injection script without running the full release:
 cd ios/App/fastlane
 
 # Set some test environment variables
-export METADATA_REVIEW_FIRST_NAME="Test User"
+export METADATA_REVIEW_FIRST_NAME="Test"
 export METADATA_REVIEW_EMAIL="test@example.com"
 
 # Run the injection script

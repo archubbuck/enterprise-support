@@ -30,7 +30,7 @@ You can test the script manually:
 cd ios/App/fastlane
 
 # Set environment variables
-export METADATA_REVIEW_FIRST_NAME="John Doe"
+export METADATA_REVIEW_FIRST_NAME="John"
 export METADATA_REVIEW_EMAIL="john@example.com"
 
 # Run the script
