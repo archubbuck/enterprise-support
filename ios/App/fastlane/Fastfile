@@ -413,6 +413,7 @@ platform :ios do
     UI.important("🔑 API Key configured: #{!api_key.nil?}")
     UI.important("📁 Metadata path: ./metadata")
     UI.important("📸 Screenshots path: ./metadata/en-US/screenshots")
+    UI.important("📱 Version: #{version_number}, Build: #{build_number}")
     
     # Retry configuration - can be customized via environment variables
     max_retries = ENV["FASTLANE_UPLOAD_MAX_RETRIES"] ? ENV["FASTLANE_UPLOAD_MAX_RETRIES"].to_i : 3
@@ -427,6 +428,8 @@ platform :ios do
         skip_metadata: false,
         skip_screenshots: false,
         metadata_path: "./metadata",  # Relative path from fastlane directory
+        app_version: version_number,  # Explicitly specify the version to update
+        build_number: build_number,   # Explicitly specify which build to use for this version
         submit_for_review: false,
         precheck_include_in_app_purchases: false,
         force: true,

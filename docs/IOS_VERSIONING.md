@@ -39,7 +39,9 @@ The iOS app uses a two-part versioning system that ensures proper version manage
    - Extracts version from tag: `v1.0.70` → `1.0.70`
    - Counts commits: e.g., `280`
    - Updates Xcode project: `MARKETING_VERSION = 1.0.70`, `CURRENT_PROJECT_VERSION = 280`
-   - Builds and uploads to App Store Connect
+   - Builds the IPA with the updated version and build number
+   - Uploads to App Store Connect with explicit version (`app_version`) and build number (`build_number`) parameters
+   - This ensures App Store Connect correctly associates the uploaded build with the intended version
 4. App Store Connect displays: "Version 1.0.70 (Build 280)"
 
 ## Important Notes
@@ -106,13 +108,16 @@ CURRENT_PROJECT_VERSION = 285;     # Use commit count from step 3 (from full his
 
 ## Troubleshooting
 
-### Problem: App Store Connect shows "Version 1.0 (Build 1)"
-**Cause**: A build was uploaded manually without using the CI/CD workflow
+### Problem: App Store Connect shows "Version 1.0 (Build 1)" or wrong build selected
+**Cause**: One of the following:
+- A build was uploaded manually without using the CI/CD workflow
+- The deployment workflow didn't explicitly specify which build to associate with the version (fixed in recent updates)
 
 **Solution**: 
 1. Delete the incorrect build from App Store Connect (if not yet submitted)
 2. Create and push a proper version tag: `git tag v1.0.70 && git push origin v1.0.70`
 3. Let the CI/CD workflow build and upload automatically
+4. The workflow now explicitly specifies both version and build number during upload to ensure proper association
 
 ### Problem: Build upload fails with "Build version already exists"
 **Cause**: Trying to upload a build with the same build number as an existing build
