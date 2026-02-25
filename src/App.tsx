@@ -8,7 +8,7 @@ import { DocumentTile } from '@/components/DocumentTile';
 import { DocumentViewer } from '@/components/DocumentViewer';
 import { ContactsView } from '@/components/ContactsView';
 import { TagFilter } from '@/components/TagFilter';
-import { loadSupportDocuments, SupportDocument, initializeDocuments } from '@/lib/documents';
+import { loadSupportDocuments, SupportDocument, initializeDocuments, loadDocumentContent } from '@/lib/documents';
 import { useFeaturePreview } from '@/hooks/useFeaturePreview';
 import { useAppConfig } from '@/hooks/useAppConfig';
 
@@ -63,7 +63,8 @@ function App() {
         doc.type === 'markdown' || // markdown is always enabled
         (doc.type === 'pdf' && isPdfEnabled) ||
         (doc.type === 'word' && isWordEnabled) ||
-        (doc.type === 'image' && isImageEnabled);
+        (doc.type === 'image' && isImageEnabled) ||
+        doc.type === 'unknown'; // unknown types visible but handled in viewer
 
       return matchesSearch && matchesTags && isTypeEnabled;
     });
@@ -79,6 +80,16 @@ function App() {
 
   const handleClearAllTags = () => {
     setSelectedTags([]);
+  };
+
+  // Load document content on-demand when user selects a tile
+  const handleSelectDocument = async (doc: SupportDocument) => {
+    if (doc.type === 'markdown' && !doc.content) {
+      const content = await loadDocumentContent(doc);
+      setSelectedDocument({ ...doc, content });
+    } else {
+      setSelectedDocument(doc);
+    }
   };
 
   // Show loading state while config is loading
@@ -212,7 +223,7 @@ function App() {
                   <DocumentTile
                     key={doc.id}
                     document={doc}
-                    onSelect={setSelectedDocument}
+                    onSelect={handleSelectDocument}
                   />
                 ))}
               </div>

@@ -21,7 +21,7 @@ function getConfig(): AppConfig {
   return _appConfig;
 }
 
-export type DocumentType = 'markdown' | 'pdf' | 'image' | 'word';
+export type DocumentType = 'markdown' | 'pdf' | 'image' | 'word' | 'unknown';
 
 export interface SupportDocument {
   id: string;
@@ -65,7 +65,8 @@ function detectDocumentType(filename: string): DocumentType {
     case 'docx':
       return 'word';
     default:
-      return 'markdown'; // Default to markdown for backward compatibility
+      console.warn(`[documents] Unknown file extension "${extension}" — file will be treated as unsupported.`);
+      return 'unknown';
   }
 }
 
@@ -97,20 +98,9 @@ async function loadDocumentsFromAssets(): Promise<SupportDocument[]> {
           const documentType = item.type || detectDocumentType(item.file);
           const fileUrl = `/documents/${item.file}`;
           
-          let content = '';
-          
-          // For markdown, load and process the content
-          if (documentType === 'markdown') {
-            const fileResponse = await fetch(fileUrl);
-            if (!fileResponse.ok) {
-              throw new Error(`Failed to fetch ${item.file}`);
-            }
-            content = replacePlaceholders(await fileResponse.text());
-          } else {
-            // For other file types (PDF, Word, images), we'll just store the URL
-            // Content can be a simple message or empty
-            content = `This is a ${documentType} file. View below.`;
-          }
+          // Defer heavy content loading — only fetch metadata and file URLs here.
+          // Markdown content is loaded on-demand via loadDocumentContent().
+          const content = '';
           
           const title = replacePlaceholders(item.title);
           
@@ -780,6 +770,44 @@ export async function loadSupportDocuments(): Promise<SupportDocument[]> {
   const documents = await loadDocumentsFromAssets();
   // If loading from assets fails, use fallback (processed with config values)
   return documents.length > 0 ? documents : processedFallbackDocuments();
+}
+
+// In-memory cache for loaded content keyed by document id
+const _contentCache = new Map<string, string>();
+
+/**
+ * Load the full content for a document on demand.
+ * For markdown documents this fetches and placeholder-processes the file.
+ * For other types the content is a minimal descriptor (the viewer uses fileUrl directly).
+ * Results are cached so repeated opens are instant.
+ */
+export async function loadDocumentContent(doc: SupportDocument): Promise<string> {
+  // Return cached value if available
+  if (_contentCache.has(doc.id)) return _contentCache.get(doc.id)!;
+
+  // If the document already has inline content (e.g. from fallback), return it
+  if (doc.content) {
+    _contentCache.set(doc.id, doc.content);
+    return doc.content;
+  }
+
+  if (doc.type === 'markdown' && doc.fileUrl) {
+    try {
+      const res = await fetch(doc.fileUrl);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const text = replacePlaceholders(await res.text());
+      _contentCache.set(doc.id, text);
+      return text;
+    } catch (err) {
+      console.error(`[documents] Failed to load content for ${doc.id}:`, err);
+      return '';
+    }
+  }
+
+  // Non-markdown types are rendered via their fileUrl; return empty content.
+  const placeholder = '';
+  _contentCache.set(doc.id, placeholder);
+  return placeholder;
 }
 
 export interface ContactRegion {

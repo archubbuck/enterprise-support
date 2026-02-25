@@ -1,24 +1,70 @@
+import { useState, useCallback, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, DownloadSimple } from '@phosphor-icons/react';
+import { ArrowLeft, DownloadSimple, ArrowSquareOut } from '@phosphor-icons/react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { SupportDocument } from '@/lib/documents';
 import { marked } from 'marked';
+import DOMPurify from 'dompurify';
 import { PdfViewerLazy } from './PdfViewerLazy';
+import { WordViewerLazy } from './WordViewerLazy';
 
 interface DocumentViewerProps {
   document: SupportDocument;
   onBack: () => void;
 }
 
+/**
+ * Full-screen document viewer with embed-first strategy.
+ *
+ * Rendering order per type:
+ *   markdown → sanitised HTML via marked + DOMPurify
+ *   pdf      → react-pdf inline viewer (lazy), fallback external open
+ *   image    → inline <img>, fallback external open
+ *   word     → mammoth HTML conversion (lazy), fallback download
+ *
+ * If the embedded viewer reports an error, an "Open externally" button
+ * is shown automatically so the user is never stuck.
+ */
 export function DocumentViewer({ document, onBack }: DocumentViewerProps) {
-  const htmlContent = document.type === 'markdown' ? marked.parse(document.content) as string : '';
+  // Track whether the embedded viewer failed so we can surface the fallback action
+  const [embedFailed, setEmbedFailed] = useState(false);
+
+  const handleEmbedError = useCallback(() => setEmbedFailed(true), []);
+
+  // Sanitised markdown HTML (memoised to avoid re-parsing on re-render)
+  const htmlContent = useMemo(() => {
+    if (document.type !== 'markdown') return '';
+    const raw = marked.parse(document.content) as string;
+    return DOMPurify.sanitize(raw, {
+      ALLOWED_TAGS: [
+        'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+        'p', 'br', 'hr',
+        'ul', 'ol', 'li',
+        'table', 'thead', 'tbody', 'tr', 'th', 'td', 'caption', 'colgroup', 'col',
+        'strong', 'em', 'u', 's', 'del', 'ins', 'sub', 'sup',
+        'a', 'img', 'blockquote', 'pre', 'code', 'span',
+        'dl', 'dt', 'dd', 'details', 'summary',
+      ],
+      ALLOWED_ATTR: [
+        'href', 'src', 'alt', 'title', 'class', 'id',
+        'colspan', 'rowspan', 'target', 'rel',
+      ],
+      ALLOW_DATA_ATTR: false,
+      ADD_ATTR: ['target'], // allow target="_blank" links
+    });
+  }, [document.type, document.content]);
+
+  /** Open the file URL externally (new tab / system handler) */
+  const openExternally = useCallback(() => {
+    if (document.fileUrl) window.open(document.fileUrl, '_blank');
+  }, [document.fileUrl]);
 
   const renderDocumentContent = () => {
     switch (document.type) {
       case 'markdown':
         return (
-          <article 
+          <article
             className="prose prose-sm max-w-none
               prose-headings:text-foreground prose-headings:font-semibold prose-headings:tracking-tight
               prose-h1:text-lg prose-h1:mb-4 prose-h1:mt-0
@@ -35,89 +81,56 @@ export function DocumentViewer({ document, onBack }: DocumentViewerProps) {
             dangerouslySetInnerHTML={{ __html: htmlContent }}
           />
         );
-      
+
       case 'pdf':
         if (!document.fileUrl) {
           return <div className="text-center py-8 text-sm text-muted-foreground">File URL not available</div>;
         }
         return (
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
-              <span className="text-sm text-muted-foreground">PDF Document</span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => window.open(document.fileUrl, '_blank')}
-                className="gap-2"
-              >
-                <DownloadSimple className="w-4 h-4" />
-                Open PDF
-              </Button>
-            </div>
-            <PdfViewerLazy fileUrl={document.fileUrl} title={document.title} />
+            <PdfViewerLazy fileUrl={document.fileUrl} title={document.title} onError={handleEmbedError} />
+            {embedFailed && <FallbackAction label="Open PDF" onClick={openExternally} />}
           </div>
         );
-      
+
       case 'image':
         if (!document.fileUrl) {
           return <div className="text-center py-8 text-sm text-muted-foreground">File URL not available</div>;
         }
         return (
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
-              <span className="text-sm text-muted-foreground">Image Document</span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => window.open(document.fileUrl, '_blank')}
-                className="gap-2"
-              >
-                <DownloadSimple className="w-4 h-4" />
-                Open Image
-              </Button>
-            </div>
             <img
               src={document.fileUrl}
               alt={document.title}
               className="w-full h-auto rounded-lg border border-border"
+              onError={handleEmbedError}
             />
+            {embedFailed && <FallbackAction label="Open Image" onClick={openExternally} />}
           </div>
         );
-      
+
       case 'word':
         if (!document.fileUrl) {
           return <div className="text-center py-8 text-sm text-muted-foreground">File URL not available</div>;
         }
         return (
           <div className="space-y-4">
-            <div className="p-6 bg-muted/50 rounded-lg text-center space-y-4">
-              <div className="w-16 h-16 mx-auto bg-[var(--info-surface)] rounded-full flex items-center justify-center">
-                <svg className="w-8 h-8 text-[var(--info-on-surface)]" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zM6 20V4h7v5h5v11H6z"/>
-                  <path d="M8 15h8v2H8zm0-3h8v2H8zm0-3h5v2H8z"/>
-                </svg>
-              </div>
-              <div>
-                <h3 className="text-base font-semibold text-foreground mb-2">Word Document</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  This is a Microsoft Word document. Download it to view the full content.
-                </p>
-              </div>
-              <Button
-                onClick={() => window.open(document.fileUrl, '_blank')}
-                className="gap-2"
-              >
-                <DownloadSimple className="w-4 h-4" />
-                Download Document
-              </Button>
-            </div>
+            <WordViewerLazy fileUrl={document.fileUrl} title={document.title} onError={handleEmbedError} />
+            {embedFailed && <FallbackAction label="Download Document" onClick={openExternally} />}
           </div>
         );
-      
+
+      case 'unknown':
       default:
         return (
           <div className="text-center py-8">
-            <p className="text-sm text-muted-foreground">Unsupported document type</p>
+            <p className="text-sm text-muted-foreground">This document type is not supported for in-app viewing.</p>
+            {document.fileUrl && (
+              <Button variant="outline" size="sm" onClick={openExternally} className="mt-4 gap-2">
+                <DownloadSimple className="w-4 h-4" />
+                Open Externally
+              </Button>
+            )}
           </div>
         );
     }
@@ -144,6 +157,19 @@ export function DocumentViewer({ document, onBack }: DocumentViewerProps) {
           <h1 className="font-semibold text-sm truncate text-foreground">{document.title}</h1>
           <p className="text-xs text-muted-foreground">{document.category}</p>
         </div>
+
+        {/* Secondary action: always offer external open for file-backed documents */}
+        {document.fileUrl && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={openExternally}
+            className="shrink-0 h-9 w-9"
+            title="Open externally"
+          >
+            <ArrowSquareOut className="w-5 h-5" />
+          </Button>
+        )}
       </header>
 
       <ScrollArea className="flex-1">
@@ -152,5 +178,20 @@ export function DocumentViewer({ document, onBack }: DocumentViewerProps) {
         </div>
       </ScrollArea>
     </motion.div>
+  );
+}
+
+/** Auto-fallback action shown when embedded viewing fails */
+function FallbackAction({ label, onClick }: { label: string; onClick: () => void }) {
+  return (
+    <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
+      <span className="text-sm text-muted-foreground">
+        Unable to display inline — open externally instead.
+      </span>
+      <Button variant="outline" size="sm" onClick={onClick} className="gap-2 shrink-0 ml-3">
+        <DownloadSimple className="w-4 h-4" />
+        {label}
+      </Button>
+    </div>
   );
 }

@@ -63,9 +63,10 @@ For emergencies, contact {emergencyEmail}.
 
 1. App loads and calls `loadSupportDocuments()`
 2. Function fetches `manifest.json` from `/documents/manifest.json`
-3. For each document in the manifest, fetches the corresponding `.md` file
-4. Replaces all placeholders with values from `app.config.json`
-5. Returns array of document objects with parsed content
+3. Returns document metadata (title, category, tags, type, fileUrl) without fetching file content
+4. When the user opens a document, `loadDocumentContent()` fetches and caches the full content on demand
+5. For markdown files, placeholders are replaced with values from `app.config.json`
+6. For PDF, Word, and image files the viewer uses the `fileUrl` directly — no content pre-fetch required
 
 ### iOS Environment
 
@@ -112,9 +113,17 @@ The app now supports PDF, Word (.doc, .docx), and image files (.jpg, .png, .gif,
    ```
 3. Document types:
    - `"type": "markdown"` - Markdown files (default if type is omitted)
-   - `"type": "pdf"` - PDF files (displayed inline with viewer)
-   - `"type": "image"` - Image files (displayed inline)
-   - `"type": "word"` - Word documents (download prompt)
+   - `"type": "pdf"` - PDF files (embedded inline with react-pdf viewer)
+   - `"type": "image"` - Image files (embedded inline)
+   - `"type": "word"` - Word documents (converted to HTML and embedded inline via mammoth)
+
+   All types use an **embed-first** strategy: the document is rendered inside the
+   app whenever possible. If the embedded viewer fails, an "Open externally" fallback
+   button is shown automatically. An external-open icon is always available in the
+   viewer header for any file-backed document.
+
+   Files with unrecognised extensions are assigned the `"unknown"` type and present
+   an "Open Externally" button in the viewer.
 
 ### Configuration
 
@@ -123,12 +132,11 @@ The app now supports PDF, Word (.doc, .docx), and image files (.jpg, .png, .gif,
 
 ## Feature Flags
 
-Document types can be enabled or disabled using feature flags in `runtime.config.json`:
+Document types can be enabled or disabled using feature flags in `app.config.json`:
 
 ```json
 {
-  "app": "68f9bd1cd2bc86b055e9",
-  "featurePreviews": {
+  "features": {
     "tagFiltering": false,
     "pdfDocuments": true,
     "wordDocuments": true,
