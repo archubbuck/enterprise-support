@@ -226,13 +226,4 @@ export function useFeatureFlag(feature: keyof AppConfig['features']): boolean {
   return config?.features[feature] ?? false;
 }
 
-/**
- * Hook to access theme configuration
- * Returns null while config is loading
- * 
- * @returns Theme configuration or null if loading
- */
-export function useThemeConfig(): AppConfig['theme'] | null {
-  const { config } = useAppConfig();
-  return config?.theme ?? null;
-}
+

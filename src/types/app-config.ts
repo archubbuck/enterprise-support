@@ -32,58 +32,6 @@ export interface FeatureConfig {
 }
 
 /**
- * Theme definition for UI customization
- */
-export interface Theme {
-  /**
-   * Unique theme identifier used in CSS class names and storage
-   * @example "light"
-   * @example "dark"
-   * @example "corporate-blue"
-   */
-  id: string;
-  
-  /**
-   * Human-readable theme name shown in the theme selector
-   * @example "Light"
-   * @example "Dark Mode"
-   */
-  name: string;
-  
-  /**
-   * Optional description of the theme
-   */
-  description?: string;
-  
-  /**
-   * Whether this theme is available for selection
-   */
-  enabled: boolean;
-}
-
-/**
- * Theme configuration for application appearance
- */
-export interface ThemeConfig {
-  /**
-   * Default theme ID applied on first load
-   * Must match one of the theme IDs in the themes array
-   */
-  defaultTheme: string;
-  
-  /**
-   * Show theme selector in the UI
-   * Set to false to lock users to the default theme
-   */
-  enableThemeSwitcher: boolean;
-  
-  /**
-   * Available themes for the application
-   */
-  themes: Theme[];
-}
-
-/**
  * Regional office contact information
  */
 export interface RegionalContact {
@@ -222,11 +170,6 @@ export interface AppConfig {
    * Feature flags to enable or disable application features
    */
   features: FeatureConfig;
-  
-  /**
-   * Theme configuration for application appearance
-   */
-  theme: ThemeConfig;
 }
 
 /**
@@ -268,17 +211,7 @@ export function isAppConfig(obj: unknown): obj is AppConfig {
   
   if (!hasFeatures) return false;
   
-  // Check theme object
-  const hasTheme = (
-    typeof config.theme === 'object' &&
-    config.theme !== null &&
-    typeof config.theme.defaultTheme === 'string' &&
-    typeof config.theme.enableThemeSwitcher === 'boolean' &&
-    Array.isArray(config.theme.themes) &&
-    config.theme.themes.length > 0
-  );
-  
-  return hasTheme;
+  return true;
 }
 
 /**
@@ -290,7 +223,7 @@ export function isAppConfig(obj: unknown): obj is AppConfig {
  */
 export function validateAppConfig(config: unknown): asserts config is AppConfig {
   if (!isAppConfig(config)) {
-    throw new Error('Invalid app configuration: Missing required fields ($version, companyName, appName, appId, domain, contacts, features, theme)');
+    throw new Error('Invalid app configuration: Missing required fields ($version, companyName, appName, appId, domain, contacts, features)');
   }
   
   // Validate version format
@@ -347,35 +280,5 @@ export function validateAppConfig(config: unknown): asserts config is AppConfig 
         );
       }
     });
-  }
-  
-  // Validate theme configuration
-  const themeIdPattern = /^[a-z][a-z0-9-]*$/;
-  config.theme.themes.forEach((theme, index) => {
-    if (!theme.id || !theme.name || typeof theme.enabled !== 'boolean') {
-      throw new Error(
-        `Invalid theme at index ${index}: Missing required fields (id, name, enabled)`
-      );
-    }
-    
-    if (!themeIdPattern.test(theme.id)) {
-      throw new Error(
-        `Invalid theme id at index ${index}: "${theme.id}". Must be lowercase alphanumeric with hyphens`
-      );
-    }
-  });
-  
-  // Validate defaultTheme references a valid theme
-  const validThemeIds = config.theme.themes.map(t => t.id);
-  if (!validThemeIds.includes(config.theme.defaultTheme)) {
-    throw new Error(
-      `Invalid defaultTheme: "${config.theme.defaultTheme}". Must match one of: ${validThemeIds.join(', ')}`
-    );
-  }
-  
-  // Ensure at least one theme is enabled
-  const enabledThemes = config.theme.themes.filter(t => t.enabled);
-  if (enabledThemes.length === 0) {
-    throw new Error('At least one theme must be enabled');
   }
 }

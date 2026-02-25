@@ -8,7 +8,6 @@ import { DocumentTile } from '@/components/DocumentTile';
 import { DocumentViewer } from '@/components/DocumentViewer';
 import { ContactsView } from '@/components/ContactsView';
 import { TagFilter } from '@/components/TagFilter';
-import { ThemeSelector } from '@/components/ThemeSelector';
 import { loadSupportDocuments, SupportDocument, initializeDocuments } from '@/lib/documents';
 import { useFeaturePreview } from '@/hooks/useFeaturePreview';
 import { useAppConfig } from '@/hooks/useAppConfig';
@@ -113,17 +112,12 @@ function App() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <header className="px-5 pt-6 pb-4">
-        <div className="flex items-center gap-3 mb-1">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-            <svg viewBox="0 0 24 24" className="w-4 h-4 text-primary-foreground">
-              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </div>
-          <h1 className="text-xl font-semibold tracking-tight text-foreground flex-1">{config.appName}</h1>
-          <ThemeSelector />
+      <header className="px-5 py-4 mb-4 bg-[var(--bxd-blue-140)]">
+        <div className="flex items-center gap-3">
+          <img src="/barings-logo.svg" alt="Barings" className="h-7" />
+          <div className="w-px h-6 bg-[var(--inverse-on-surface)]/40" />
+          <h1 className="text-lg font-semibold tracking-tight text-[var(--inverse-on-surface)] flex-1">{config.appName}</h1>
         </div>
-        <p className="text-sm text-muted-foreground ml-11">{config.appSubtitle}</p>
       </header>
 
       <nav className="px-5 mb-4">

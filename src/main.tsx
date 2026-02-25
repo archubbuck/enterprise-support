@@ -4,19 +4,14 @@ import "@github/spark/spark"
 
 import App from './App.tsx'
 import { ErrorFallback } from './ErrorFallback.tsx'
-import { ThemeProvider } from './components/ThemeProvider.tsx'
 import { AppConfigProvider } from './hooks/useAppConfig.tsx'
 
 import "./main.css"
-import "./styles/theme.css"
-import "./index.css"
 
 createRoot(document.getElementById('root')!).render(
   <ErrorBoundary FallbackComponent={ErrorFallback}>
     <AppConfigProvider>
-      <ThemeProvider>
-        <App />
-      </ThemeProvider>
+      <App />
     </AppConfigProvider>
    </ErrorBoundary>
 )

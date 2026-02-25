@@ -25,10 +25,10 @@ export function ContactsView() {
 
       <button
         onClick={() => window.location.href = `mailto:${contactInfo.email}`}
-        className="w-full flex items-center gap-4 p-4 bg-accent/10 rounded-xl hover:bg-accent/15 transition-colors text-left group"
+        className="w-full flex items-center gap-4 p-4 bg-card rounded-xl border border-transparent hover:bg-[var(--base-surface)] hover:border-[var(--border-subtle)] hover:shadow-sm transition-colors text-left group"
       >
-        <div className="w-11 h-11 rounded-xl bg-accent/20 flex items-center justify-center shrink-0">
-          <EnvelopeSimple className="w-5 h-5 text-accent" weight="duotone" />
+        <div className="w-11 h-11 rounded-xl bg-[var(--info-surface)] flex items-center justify-center shrink-0">
+          <EnvelopeSimple className="w-5 h-5 text-[var(--info-on-surface)]" weight="duotone" />
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-xs text-muted-foreground mb-0.5">Global Email Support</p>
@@ -49,10 +49,10 @@ export function ContactsView() {
                 <button
                   key={index}
                   onClick={() => window.location.href = `tel:${contact.phone.replace(/\s/g, '')}`}
-                  className="w-full flex items-center gap-4 p-4 bg-card rounded-xl hover:bg-muted/50 transition-colors text-left group"
+                  className="w-full flex items-center gap-4 p-4 bg-card rounded-xl border border-transparent hover:bg-[var(--base-surface)] hover:border-[var(--border-subtle)] hover:shadow-sm transition-colors text-left group"
                 >
-                  <div className="w-11 h-11 rounded-xl bg-muted flex items-center justify-center shrink-0">
-                    <MapPin className="w-5 h-5 text-foreground/70" weight="duotone" />
+                  <div className="w-11 h-11 rounded-xl bg-[var(--base-surface)] flex items-center justify-center shrink-0">
+                    <MapPin className="w-5 h-5 text-[var(--base-on-surface)]" weight="duotone" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-foreground">{contact.city}</p>
@@ -78,10 +78,10 @@ export function ContactsView() {
       <div className="pt-2">
         <button
           onClick={() => window.location.href = `mailto:${contactInfo.emergencyEmail}`}
-          className="w-full flex items-center gap-4 p-4 bg-destructive/10 rounded-xl hover:bg-destructive/15 transition-colors text-left group"
+          className="w-full flex items-center gap-4 p-4 bg-card rounded-xl border border-transparent hover:bg-[var(--base-surface)] hover:border-[var(--border-subtle)] hover:shadow-sm transition-colors text-left group"
         >
-          <div className="w-11 h-11 rounded-xl bg-destructive/20 flex items-center justify-center shrink-0">
-            <EnvelopeSimple className="w-5 h-5 text-destructive" weight="duotone" />
+          <div className="w-11 h-11 rounded-xl bg-[var(--error-surface)] flex items-center justify-center shrink-0">
+            <EnvelopeSimple className="w-5 h-5 text-[var(--error-on-surface)]" weight="duotone" />
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-xs text-muted-foreground mb-0.5">Security Incidents</p>

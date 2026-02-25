@@ -16,17 +16,5 @@
     "pdfDocuments": true,
     "wordDocuments": false,
     "imageDocuments": true
-  },
-  "theme": {
-    "defaultTheme": "light",
-    "enableThemeSwitcher": false,
-    "themes": [
-      {
-        "id": "light",
-        "name": "Light",
-        "description": "Clean light theme",
-        "enabled": true
-      }
-    ]
   }
 }

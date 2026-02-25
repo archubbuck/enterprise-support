@@ -91,8 +91,8 @@ export function DocumentViewer({ document, onBack }: DocumentViewerProps) {
         return (
           <div className="space-y-4">
             <div className="p-6 bg-muted/50 rounded-lg text-center space-y-4">
-              <div className="w-16 h-16 mx-auto bg-blue-100 rounded-full flex items-center justify-center">
-                <svg className="w-8 h-8 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+              <div className="w-16 h-16 mx-auto bg-[var(--info-surface)] rounded-full flex items-center justify-center">
+                <svg className="w-8 h-8 text-[var(--info-on-surface)]" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zM6 20V4h7v5h5v11H6z"/>
                   <path d="M8 15h8v2H8zm0-3h8v2H8zm0-3h5v2H8z"/>
                 </svg>

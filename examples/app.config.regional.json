@@ -30,23 +30,5 @@
     "pdfDocuments": true,
     "wordDocuments": true,
     "imageDocuments": true
-  },
-  "theme": {
-    "defaultTheme": "light",
-    "enableThemeSwitcher": true,
-    "themes": [
-      {
-        "id": "light",
-        "name": "Light",
-        "description": "Clean light theme",
-        "enabled": true
-      },
-      {
-        "id": "dark",
-        "name": "Dark",
-        "description": "Dark mode theme",
-        "enabled": true
-      }
-    ]
   }
 }

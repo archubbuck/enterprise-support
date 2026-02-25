@@ -28,12 +28,12 @@ const iconMap = {
 };
 
 const categoryStyles: Record<string, { bg: string; text: string }> = {
-  Network: { bg: 'bg-blue-50', text: 'text-blue-600' },
-  Collaboration: { bg: 'bg-violet-50', text: 'text-violet-600' },
-  Communication: { bg: 'bg-emerald-50', text: 'text-emerald-600' },
-  Security: { bg: 'bg-rose-50', text: 'text-rose-600' },
-  Hardware: { bg: 'bg-amber-50', text: 'text-amber-600' },
-  General: { bg: 'bg-slate-50', text: 'text-slate-600' },
+  Network: { bg: 'bg-[var(--info-surface)]', text: 'text-[var(--info-on-surface)]' },
+  Collaboration: { bg: 'bg-[var(--tertiary-surface)]', text: 'text-[var(--tertiary-on-surface)]' },
+  Communication: { bg: 'bg-[var(--success-surface)]', text: 'text-[var(--success-on-surface)]' },
+  Security: { bg: 'bg-[var(--error-surface)]', text: 'text-[var(--error-on-surface)]' },
+  Hardware: { bg: 'bg-[var(--warning-surface)]', text: 'text-[var(--warning-on-surface)]' },
+  General: { bg: 'bg-[var(--base-surface)]', text: 'text-[var(--base-on-surface)]' },
 };
 
 interface DocumentTileProps {
@@ -50,7 +50,7 @@ export function DocumentTile({ document, onSelect }: DocumentTileProps) {
       whileTap={{ scale: 0.98 }}
       transition={{ type: 'spring', stiffness: 400, damping: 30 }}
       onClick={() => onSelect(document)}
-      className="w-full flex items-center gap-4 p-4 bg-card rounded-xl hover:bg-muted/50 transition-colors text-left group"
+      className="w-full flex items-center gap-4 p-4 bg-card rounded-xl border border-transparent hover:bg-[var(--base-surface)] hover:border-[var(--border-subtle)] hover:shadow-sm transition-colors text-left group"
     >
       <div className={`w-11 h-11 rounded-xl ${style.bg} flex items-center justify-center shrink-0`}>
         <Icon className={`w-5 h-5 ${style.text}`} weight="duotone" />
