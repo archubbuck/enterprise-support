@@ -1,10 +1,10 @@
 # App Configuration Examples
 
-This directory contains example configurations for different types of organizations. Use these as templates when setting up your own `app.config.json`.
+This directory documents configuration scenarios for different organization types. Use these scenarios while populating `.env` / `.env.<mode>` `APP_CONFIG_*` values.
 
 ## Available Examples
 
-### 1. Startup Configuration (`app.config.startup.json`)
+### 1. Startup Configuration
 
 **Best for:** Small companies, startups, single-location businesses
 
@@ -19,7 +19,7 @@ This directory contains example configurations for different types of organizati
 - Need a quick, simple setup
 - Don't need regional office contacts
 
-### 2. Enterprise Configuration (`app.config.enterprise.json`)
+### 2. Enterprise Configuration
 
 **Best for:** Large multinational corporations, global enterprises
 
@@ -35,7 +35,7 @@ This directory contains example configurations for different types of organizati
 - Have dedicated IT teams in different locations
 - Support a large, distributed workforce
 
-### 3. Regional Configuration (`app.config.regional.json`)
+### 3. Regional Configuration
 
 **Best for:** Medium-sized businesses with multiple domestic locations
 
@@ -53,14 +53,14 @@ This directory contains example configurations for different types of organizati
 ## How to Use These Examples
 
 1. **Choose the template** that best matches your organization's size and structure
-2. **Copy the example** to the root directory as `app.config.json`:
+2. **Copy `.env.example`** to your environment file:
    ```bash
-   cp examples/app.config.startup.json app.config.json
+   cp .env.example .env.development
    ```
-3. **Edit the values** to match your organization's information
+3. **Use the selected JSON example as reference** while editing `APP_CONFIG_*` values
 4. **Validate your configuration**:
    ```bash
-   npm run validate:json
+   npm run validate:app-config
    ```
 5. **Test your configuration**:
    ```bash
@@ -104,13 +104,13 @@ This directory contains example configurations for different types of organizati
 
 1. **Keep it Simple**: Start with minimal configuration and add regions as needed
 2. **Test Thoroughly**: Always test after making changes
-3. **Use Validation**: Run `npm run validate:json` before deploying
+3. **Use Validation**: Run `npm run validate:app-config` before deploying
 4. **Document Changes**: Keep notes on why you chose specific values
 5. **Review Regularly**: Update contact information as your organization changes
 
 ## Validation
 
-All example configurations are validated against the JSON schema at `../schemas/app.config.schema.json`. This ensures:
+Use `npm run validate:app-config` to ensure your environment configuration is valid. Validation ensures:
 - All required fields are present
 - Field formats are correct (emails, phone numbers, app IDs)
 - No typos or structural errors
@@ -119,7 +119,7 @@ All example configurations are validated against the JSON schema at `../schemas/
 
 - See the [Configuration Guide](../docs/CONFIGURATION.md) for detailed documentation
 - Check the [Quick Start Guide](../docs/QUICK_START.md) for setup instructions
-- Review the [JSON Schema](../schemas/app.config.schema.json) for all available options
+- Review [.env.example](../.env.example) for all available keys
 
 ## Contributing
 

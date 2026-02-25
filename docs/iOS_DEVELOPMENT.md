@@ -8,18 +8,15 @@ This app is built using **Capacitor**, which wraps the React web application int
 
 ## Configuration
 
-Before building the iOS app, configure it for your enterprise by editing `app.config.json`:
+Before building the iOS app, configure it for your enterprise with `APP_CONFIG_*` values:
 
-```json
-{
-  "companyName": "Your Company",
-  "appName": "Your Company Support",
-  "appId": "com.yourcompany.support",
-  // ... other settings
-}
+```bash
+cp .env.example .env.development
 ```
 
-The `appId` is particularly important for iOS as it's used as the bundle identifier.
+Then edit `.env.development` (or `.env.production`) with your company values.
+
+The `APP_CONFIG_APP_ID` value is particularly important for iOS as it's used as the bundle identifier.
 
 ## Prerequisites
 
@@ -353,7 +350,7 @@ enterprise-support/
 │       ├── App/           # iOS app code and resources
 │       ├── Pods/          # CocoaPods dependencies
 │       └── App.xcodeproj  # Xcode project file
-├── app.config.json        # App-specific configuration
+├── .env.example           # App configuration template
 ├── capacitor.config.ts    # Capacitor configuration
 └── package.json           # Node.js dependencies and scripts
 ```

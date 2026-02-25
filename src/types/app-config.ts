@@ -1,7 +1,7 @@
 /**
  * Type definitions for app configuration
  * 
- * These types provide compile-time type safety when working with the app.config.json file.
+ * These types provide compile-time type safety when working with APP_CONFIG_* environment-derived configuration.
  * They ensure that all required fields are present and properly typed.
  */
 

@@ -3,7 +3,7 @@
 /**
  * App Configuration Validation Script
  * 
- * This script validates app.config.json against the JSON schema to ensure
+ * This script validates APP_CONFIG_* environment variables to ensure
  * all required fields are present and properly formatted.
  * 
  * Usage:
@@ -11,8 +11,8 @@
  *   node scripts/validate-app-config.cjs
  */
 
-const fs = require('fs');
 const path = require('path');
+const { config: loadEnv } = require('dotenv');
 
 // Colors for terminal output
 const colors = {
@@ -224,6 +224,77 @@ function validateConfig(config, filePath) {
   return { errors, warnings };
 }
 
+function parseBooleanEnv(value, key) {
+  if (value === 'true') return true;
+  if (value === 'false') return false;
+  throw new Error(`${key} must be true or false`);
+}
+
+function parseRegionsEnv(value) {
+  if (!value || value.trim() === '') {
+    return [];
+  }
+
+  const parsed = JSON.parse(value);
+  if (!Array.isArray(parsed)) {
+    throw new Error('APP_CONFIG_CONTACTS_REGIONS_JSON must be a JSON array');
+  }
+
+  return parsed;
+}
+
+function requireEnvValue(value, key) {
+  if (!value || value.trim() === '') {
+    throw new Error(`Missing required environment variable: ${key}`);
+  }
+
+  return value;
+}
+
+function loadEnvFiles(mode) {
+  loadEnv({ path: path.join(process.cwd(), '.env.example'), quiet: true });
+  loadEnv({ path: path.join(process.cwd(), '.env'), quiet: true });
+  loadEnv({ path: path.join(process.cwd(), '.env.local'), override: true, quiet: true });
+  loadEnv({ path: path.join(process.cwd(), `.env.${mode}`), override: true, quiet: true });
+  loadEnv({ path: path.join(process.cwd(), `.env.${mode}.local`), override: true, quiet: true });
+}
+
+function loadAppConfigFromEnv(mode = process.env.NODE_ENV || 'development') {
+  loadEnvFiles(mode);
+
+  const config = {
+    $version: requireEnvValue(process.env.APP_CONFIG_VERSION, 'APP_CONFIG_VERSION'),
+    companyName: requireEnvValue(process.env.APP_CONFIG_COMPANY_NAME, 'APP_CONFIG_COMPANY_NAME'),
+    appName: requireEnvValue(process.env.APP_CONFIG_APP_NAME, 'APP_CONFIG_APP_NAME'),
+    appId: requireEnvValue(process.env.APP_CONFIG_APP_ID, 'APP_CONFIG_APP_ID'),
+    domain: requireEnvValue(process.env.APP_CONFIG_DOMAIN, 'APP_CONFIG_DOMAIN'),
+    contacts: {
+      email: requireEnvValue(process.env.APP_CONFIG_CONTACTS_EMAIL, 'APP_CONFIG_CONTACTS_EMAIL'),
+      regions: parseRegionsEnv(process.env.APP_CONFIG_CONTACTS_REGIONS_JSON),
+    },
+    features: {
+      tagFiltering: parseBooleanEnv(process.env.APP_CONFIG_FEATURES_TAG_FILTERING, 'APP_CONFIG_FEATURES_TAG_FILTERING'),
+      pdfDocuments: parseBooleanEnv(process.env.APP_CONFIG_FEATURES_PDF_DOCUMENTS, 'APP_CONFIG_FEATURES_PDF_DOCUMENTS'),
+      wordDocuments: parseBooleanEnv(process.env.APP_CONFIG_FEATURES_WORD_DOCUMENTS, 'APP_CONFIG_FEATURES_WORD_DOCUMENTS'),
+      imageDocuments: parseBooleanEnv(process.env.APP_CONFIG_FEATURES_IMAGE_DOCUMENTS, 'APP_CONFIG_FEATURES_IMAGE_DOCUMENTS'),
+    },
+  };
+
+  if (process.env.APP_CONFIG_APP_SUBTITLE && process.env.APP_CONFIG_APP_SUBTITLE.trim() !== '') {
+    config.appSubtitle = process.env.APP_CONFIG_APP_SUBTITLE;
+  }
+
+  if (process.env.APP_CONFIG_VPN_PORTAL && process.env.APP_CONFIG_VPN_PORTAL.trim() !== '') {
+    config.vpnPortal = process.env.APP_CONFIG_VPN_PORTAL;
+  }
+
+  if (process.env.APP_CONFIG_CONTACTS_EMERGENCY_EMAIL && process.env.APP_CONFIG_CONTACTS_EMERGENCY_EMAIL.trim() !== '') {
+    config.contacts.emergencyEmail = process.env.APP_CONFIG_CONTACTS_EMERGENCY_EMAIL;
+  }
+
+  return config;
+}
+
 /**
  * Main execution
  */
@@ -232,38 +303,22 @@ function main() {
   console.log(`${colors.cyan}║     App Config Validation Report         ║${colors.reset}`);
   console.log(`${colors.cyan}╚═══════════════════════════════════════════╝${colors.reset}\n`);
   
-  const configPath = path.join(process.cwd(), 'app.config.json');
-  const schemaPath = path.join(process.cwd(), 'schemas', 'app.config.schema.json');
+  const mode = process.env.NODE_ENV || 'development';
   
-  // Check if config file exists
-  if (!fs.existsSync(configPath)) {
-    console.log(`${colors.red}✗ Error: app.config.json not found${colors.reset}`);
-    console.log(`  Expected at: ${configPath}\n`);
-    process.exit(1);
-  }
-  
-  // Check if schema file exists
-  if (!fs.existsSync(schemaPath)) {
-    console.log(`${colors.yellow}⚠ Warning: schemas/app.config.schema.json not found${colors.reset}`);
-    console.log(`  Expected at: ${schemaPath}`);
-    console.log(`  Validation will be limited to basic checks.\n`);
-  }
-  
-  // Load and parse config
+  // Load and parse config from environment variables
   let config;
   try {
-    const configContent = fs.readFileSync(configPath, 'utf8');
-    config = JSON.parse(configContent);
+    config = loadAppConfigFromEnv(mode);
   } catch (error) {
-    console.log(`${colors.red}✗ Error parsing app.config.json:${colors.reset}`);
+    console.log(`${colors.red}✗ Error loading APP_CONFIG_* environment variables:${colors.reset}`);
     console.log(`  ${error.message}\n`);
     process.exit(1);
   }
   
-  console.log(`${colors.blue}Validating:${colors.reset} ${configPath}\n`);
+  console.log(`${colors.blue}Validating:${colors.reset} APP_CONFIG_* (mode: ${mode})\n`);
   
   // Validate configuration
-  const { errors, warnings } = validateConfig(config, configPath);
+  const { errors, warnings } = validateConfig(config, 'environment variables');
   
   // Display results
   if (errors.length === 0 && warnings.length === 0) {
@@ -306,11 +361,11 @@ function main() {
     // Help section
     if (errors.length > 0) {
       console.log(`${colors.cyan}How to fix:${colors.reset}`);
-      console.log(`  1. Open app.config.json in your editor`);
-      console.log(`  2. Fix the errors listed above`);
+      console.log(`  1. Open your .env file in the project root`);
+      console.log(`  2. Fix the APP_CONFIG_* values listed above`);
       console.log(`  3. Run this validation again: npm run validate:app-config`);
       console.log(`  4. See docs/CONFIGURATION.md for detailed guidance`);
-      console.log(`  5. Check examples/ directory for sample configurations\n`);
+      console.log(`  5. Use .env.example as the reference template\n`);
       
       process.exit(1);
     } else if (warnings.length > 0) {
@@ -322,5 +377,13 @@ function main() {
   process.exit(0);
 }
 
+module.exports = {
+  validateConfig,
+  loadAppConfigFromEnv,
+  colors,
+};
+
 // Run the script
-main();
+if (require.main === module) {
+  main();
+}

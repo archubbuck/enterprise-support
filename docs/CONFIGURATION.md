@@ -5,7 +5,7 @@ This application is designed to be enterprise-agnostic, meaning you can easily r
 ## Table of Contents
 
 - [Quick Start](#quick-start)
-- [Configuration File](#configuration-file)
+- [Environment Configuration (.env)](#environment-configuration-env)
 - [Schema and Validation](#schema-and-validation)
 - [Configuration Examples](#configuration-examples)
 - [Field Reference](#field-reference)
@@ -14,67 +14,85 @@ This application is designed to be enterprise-agnostic, meaning you can easily r
 
 ## Quick Start
 
-For the fastest setup, use one of our pre-configured examples:
+For the fastest setup, start from the environment template:
 
 ```bash
-# For startups/small businesses
-cp examples/app.config.startup.json app.config.json
-
-# For large enterprises
-cp examples/app.config.enterprise.json app.config.json
-
-# For regional organizations
-cp examples/app.config.regional.json app.config.json
+cp .env.example .env.development
 ```
 
 Then edit the copied file with your organization's information.
 
-## Configuration File
+## Environment Configuration (.env)
 
-All app-specific settings are stored in `app.config.json` at the root of the project. This file controls:
+This project uses `.env` files as the source of truth for app configuration.
 
-- **Company branding** - Name, app name, and subtitle
-- **App identifiers** - Bundle ID for iOS App Store
-- **Domain information** - Email domains and VPN portals
-- **Contact information** - IT helpdesk and emergency contacts
-- **Regional offices** - Multi-location support information
+### How It Works
 
-### File Structure
+- `APP_CONFIG_*` values from `.env` files are read directly by the app
+- Vite reads env values for build-time settings (like HTML title)
+- Capacitor reads env values for native metadata (`appId`, `appName`)
+- Validation commands validate env-derived configuration
 
-```json
-{
-  "$schema": "./schemas/app.config.schema.json",
-  "companyName": "YourCompany",
-  "appName": "YourCompany Support",
-  "appId": "com.yourcompany.support",
-  "appSubtitle": "IT Help & Documentation",
-  "domain": "yourcompany.com",
-  "vpnPortal": "vpn.yourcompany.com",
-  "contacts": {
-    "email": "ithelpdesk@yourcompany.com",
-    "emergencyEmail": "security@yourcompany.com",
-    "regions": [
-      {
-        "region": "Americas",
-        "city": "New York, NY (HQ)",
-        "phone": "+1 (555) 123-4567",
-        "hours": "8:00 AM - 6:00 PM EST"
-      }
-    ]
-  }
-}
+### File Precedence
+
+Environment files load in this order (later files override earlier files):
+
+1. `.env`
+2. `.env.local`
+3. `.env.<mode>`
+4. `.env.<mode>.local`
+
+Modes used by npm scripts:
+
+- `npm run dev` → `development`
+- `npm run build` → `production`
+- `npm run validate:app-config` → `development`
+
+### Supported Keys
+
+Use `.env.example` as the source of truth for supported keys. Common keys include:
+
+- `APP_CONFIG_COMPANY_NAME`
+- `APP_CONFIG_APP_NAME`
+- `APP_CONFIG_APP_ID`
+- `APP_CONFIG_DOMAIN`
+- `APP_CONFIG_CONTACTS_EMAIL`
+- `APP_CONFIG_FEATURES_TAG_FILTERING`
+- `APP_CONFIG_CONTACTS_REGIONS_JSON` (JSON array)
+
+### Example
+
+```bash
+cp .env.example .env.development
 ```
 
-> **Note:** The `$schema` field enables IDE autocomplete and inline validation when editing the config file.
+```dotenv
+APP_CONFIG_COMPANY_NAME=Contoso
+APP_CONFIG_APP_NAME=Contoso Support
+APP_CONFIG_FEATURES_TAG_FILTERING=true
+APP_CONFIG_CONTACTS_REGIONS_JSON=[{"region":"Americas","city":"Charlotte, NC (HQ)","phone":"+1 (704) 805-7200","hours":"7:00 AM - 7:00 PM EST"}]
+```
+
+Then run:
+
+```bash
+npm run dev
+```
+
+### Notes
+
+- Required `APP_CONFIG_*` keys must be present for app startup and validation
+- Optional fields can be cleared with an empty value for optional keys
+- Never store secrets in `.env` files; all values are client-visible
 
 ## Schema and Validation
 
-### JSON Schema
+### Runtime Validation
 
-The configuration is validated against a JSON Schema (`app.config.schema.json`) that ensures:
+Configuration is validated against the app's runtime validation rules, which ensure:
 - All required fields are present
 - Field formats are correct (emails, domains, app IDs)
-- No typos or structural errors
+- Feature flags are valid booleans
 
 ### TypeScript Types
 
@@ -95,11 +113,11 @@ npm run check
 
 ## Configuration Examples
 
-We provide three complete examples for different organization types:
+Use `.env.example` as the primary configuration template.
+
+The following scenarios can guide your values:
 
 ### 1. Startup Configuration
-**File:** `examples/app.config.startup.json`
-
 **Best for:** Small companies, startups, single-location businesses (< 50 employees)
 
 **Features:**
@@ -108,8 +126,6 @@ We provide three complete examples for different organization types:
 - Quick setup
 
 ### 2. Enterprise Configuration
-**File:** `examples/app.config.enterprise.json`
-
 **Best for:** Large multinational corporations (500+ employees)
 
 **Features:**
@@ -118,8 +134,6 @@ We provide three complete examples for different organization types:
 - Comprehensive contact information
 
 ### 3. Regional Configuration
-**File:** `examples/app.config.regional.json`
-
 **Best for:** Medium-sized businesses with multiple domestic locations (50-500 employees)
 
 **Features:**
@@ -127,7 +141,7 @@ We provide three complete examples for different organization types:
 - Region-specific contacts
 - Localized support hours
 
-See the [examples directory](../examples/) for complete configurations and detailed guidance.
+See [.env.example](../.env.example) for all available keys and defaults.
 
 ## Field Reference
 
@@ -276,7 +290,7 @@ npm run ios:open
 
 ## Customizing Document Content
 
-The support documents are in `src/lib/documents.ts`. They automatically use values from `app.config.json`, but you can also:
+The support documents are in `src/lib/documents.ts`. They automatically use values from environment-driven app config, but you can also:
 
 1. Add new documents
 2. Modify existing document content
@@ -299,7 +313,7 @@ If you need to maintain apps for multiple enterprises:
 
 **Option 1: Git Branches**
 1. Create separate Git branches for each company
-2. Maintain different `app.config.json` in each branch
+2. Maintain different `.env` files in each branch
 3. Use different `appId` values for each deployment
 4. Build and deploy separately for each organization
 
@@ -308,26 +322,17 @@ If you need to maintain apps for multiple enterprises:
    - `app.config.dev.json`
    - `app.config.staging.json`
    - `app.config.prod.json`
-2. Use a build script to copy the appropriate file to `app.config.json`
+2. Use environment files (`.env.development`, `.env.production`) per deployment target
 3. Set up CI/CD to select the right config per environment
 
 ### IDE Integration
 
-For better editing experience, add the `$schema` field to your `app.config.json`:
+For better editing experience, keep `.env.example` updated with all required keys and value examples:
 
-```json
-{
-  "$schema": "./schemas/app.config.schema.json",
-  "companyName": "Your Company",
-  ...
-}
-```
-
-This enables:
-- ✓ Autocomplete in VS Code and other editors
-- ✓ Inline validation while editing
-- ✓ Hover documentation for fields
-- ✓ Error highlighting
+This improves:
+- ✓ Team onboarding and consistency
+- ✓ Faster environment setup
+- ✓ Clear expected keys in one place
 
 ### Programmatic Validation
 
@@ -335,9 +340,10 @@ You can validate configurations programmatically in your code:
 
 ```typescript
 import { validateAppConfig } from '@/types/app-config';
-import appConfig from '../app.config.json';
+import { getAppConfigFromEnv } from '@/hooks/useAppConfig';
 
 try {
+  const appConfig = getAppConfigFromEnv();
   validateAppConfig(appConfig);
   console.log('Configuration is valid!');
 } catch (error) {

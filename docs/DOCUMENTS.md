@@ -40,7 +40,7 @@ The `public/documents/manifest.json` file describes all available documents:
 
 ## Placeholders
 
-Documents support dynamic placeholders that are replaced at runtime with values from `app.config.json`:
+Documents support dynamic placeholders that are replaced at runtime with values from app configuration derived from `APP_CONFIG_*` environment variables:
 
 - `{companyName}` - Replaced with the company name
 - `{companyName.toUpperCase()}` - Replaced with uppercase company name
@@ -65,7 +65,7 @@ For emergencies, contact {emergencyEmail}.
 2. Function fetches `manifest.json` from `/documents/manifest.json`
 3. Returns document metadata (title, category, tags, type, fileUrl) without fetching file content
 4. When the user opens a document, `loadDocumentContent()` fetches and caches the full content on demand
-5. For markdown files, placeholders are replaced with values from `app.config.json`
+5. For markdown files, placeholders are replaced with values from app configuration
 6. For PDF, Word, and image files the viewer uses the `fileUrl` directly — no content pre-fetch required
 
 ### iOS Environment
@@ -132,17 +132,13 @@ The app now supports PDF, Word (.doc, .docx), and image files (.jpg, .png, .gif,
 
 ## Feature Flags
 
-Document types can be enabled or disabled using feature flags in `app.config.json`:
+Document types can be enabled or disabled using `APP_CONFIG_*` feature flags:
 
-```json
-{
-  "features": {
-    "tagFiltering": false,
-    "pdfDocuments": true,
-    "wordDocuments": true,
-    "imageDocuments": true
-  }
-}
+```dotenv
+APP_CONFIG_FEATURES_TAG_FILTERING=false
+APP_CONFIG_FEATURES_PDF_DOCUMENTS=true
+APP_CONFIG_FEATURES_WORD_DOCUMENTS=true
+APP_CONFIG_FEATURES_IMAGE_DOCUMENTS=true
 ```
 
 ### Available Feature Flags
