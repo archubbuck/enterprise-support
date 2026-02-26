@@ -1,12 +1,12 @@
 ---
 model: GPT-5.1-Codex    
 tools: [execute, read]
-description: Generate one consistent, copy-ready commit message from repository changes and return it in a fenced code block.
+description: Write one consistent, copy-ready commit message from repository changes and return it in a fenced code block.
 agent: agent
 argument-hint: "Optional: provide a brief change description and/or file/folder references (comma-separated, newline-separated, or mixed) to scope the commit to those paths."
-name: generateCommitMessage
+name: writeCommitMessage
 ---
-Generate exactly one commit message from the repository changes.
+Write exactly one commit message from the repository changes.
 
 ## Inputs
 
@@ -18,7 +18,17 @@ Generate exactly one commit message from the repository changes.
 	- mixed file and folder paths
 - Normalize referenced paths, then inspect only changes associated with those paths.
 - If no references are provided, inspect repository changes normally.
+- Inspect both staged and unstaged changes when determining intent and scope.
+- Detect renames using rename-aware git output (for example, --name-status -M) rather than assuming add/delete pairs.
 - If needed, inspect git diff/log to infer the primary intent of the change. When references are provided, constrain this inference to the referenced paths.
+
+## Change Inspection Rules
+
+- Include staged changes in analysis (for example, git diff --cached --name-status -M).
+- Include unstaged changes in analysis (for example, git diff --name-status -M).
+- When using history to infer intent, keep rename detection enabled.
+- Treat R status as a rename and preserve both source and destination paths for summary generation.
+- If file/folder references are provided, consider a rename in-scope when either old path or new path matches the referenced targets.
 
 ## Required Commit Structure
 
@@ -40,9 +50,15 @@ Produce a Conventional Commit with this structure and order:
 ### Scope Resolution Rules
 
 - If file/folder references are provided, derive `scope` from the primary area represented by changes in those referenced paths.
+- For rename entries, use the destination path as the primary signal for scope, with source path as secondary context.
 - If referenced paths map to multiple unrelated areas, choose the dominant area based on the greatest amount of relevant change among referenced paths.
 - If the area cannot be determined confidently, use `repo`.
 - If no references are provided, derive `scope` from the primary area changed across repository changes.
+
+### Rename Reporting Rules
+
+- If one or more rename entries (`R`) are present, include at least one body line that explicitly names the rename path transition in `old-path -> new-path` format.
+- Prefer concrete rename details over generic wording like "reorganized files" when rename data is available.
 
 ### Consistency Defaults
 

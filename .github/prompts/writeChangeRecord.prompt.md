@@ -1,12 +1,12 @@
 ---
 model: GPT-5.1-Codex
 tools: [execute, read]
-description: Generate one AI-enhanced change record for a single commit and return it directly in chat.
+description: Write one AI-enhanced change record for a single commit and return it directly in chat.
 agent: agent
 argument-hint: "Optional: provide a commit target (SHA/ref), a range/date/'last N commits' lookup, and/or file/folder references (comma-separated, newline-separated, or mixed) to focus analysis on selected paths."
-name: generateChangeRecord
+name: writeChangeRecord
 ---
-Generate a single enhanced change record from git history and return it as the chat response.
+Write a single enhanced change record from git history and return it as the chat response.
 
 You are a senior software engineer generating an enhanced change record for **AssetSim Pro**.
 For project context and coding standards, refer to [copilot-instructions.md](../copilot-instructions.md).
