@@ -1,23 +1,28 @@
 {
-    "name": "spark-template",
+    "name": "enterprise-support",
     "private": true,
-    "version": "0.0.0",
+    "version": "1.0.0",
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "kill": "fuser -k 5000/tcp",
-        "build": "tsc -b --noCheck && vite build",
+        "dev:kill": "fuser -k 5000/tcp",
+        "build": "tsc -b && vite build",
+        "typecheck": "tsc --noEmit",
         "lint": "eslint .",
-        "optimize": "vite optimize",
+        "test": "vitest run",
+        "test:watch": "vitest",
+        "test:coverage": "vitest run --coverage",
+        "build:optimize": "vite optimize",
         "preview": "vite preview",
         "validate:json": "node scripts/validate-json.cjs",
         "validate:app-config": "node scripts/validate-app-config.cjs",
-        "check": "npm run validate:json && npm run validate:app-config && npm run lint",
+        "validate:all": "npm run validate:json && npm run validate:app-config && npm run lint",
         "ios:build": "npm run build && npx cap sync ios",
         "ios:open": "npx cap open ios",
         "ios:run": "npm run ios:build && npm run ios:open",
         "cap:sync": "npx cap sync",
-        "cap:copy": "npx cap copy"
+        "cap:copy": "npx cap copy",
+        "prepare": "husky"
     },
     "dependencies": {
         "@capacitor/core": "^8.0.0",
@@ -103,11 +108,22 @@
         "tailwindcss": "^4.1.18",
         "typescript": "~5.9.3",
         "typescript-eslint": "^8.51.0",
-        "vite": "^7.3.0"
+        "vite": "^7.3.0",
+        "vitest": "^3.2.1",
+        "@testing-library/react": "^16.3.0",
+        "@testing-library/jest-dom": "^6.6.3",
+        "@testing-library/user-event": "^14.6.1",
+        "jsdom": "^26.1.0",
+        "eslint-plugin-import": "^2.31.0",
+        "husky": "^9.1.7",
+        "lint-staged": "^16.1.0"
     },
-    "workspaces": {
-        "packages": [
-            "packages/*"
+    "lint-staged": {
+        "*.{ts,tsx}": [
+            "eslint --fix"
+        ],
+        "*.json": [
+            "node scripts/validate-json.cjs"
         ]
     },
     "engines": {

@@ -117,8 +117,8 @@ Use `npm run validate:app-config` to ensure your environment configuration is va
 
 ## Need Help?
 
-- See the [Configuration Guide](../docs/CONFIGURATION.md) for detailed documentation
-- Check the [Quick Start Guide](../docs/QUICK_START.md) for setup instructions
+- See the [Configuration Guide](../docs/configuration.md) for detailed documentation
+- Check the [Quick Start Guide](../docs/quick-start.md) for setup instructions
 - Review [.env.example](../.env.example) for all available keys
 
 ## Contributing

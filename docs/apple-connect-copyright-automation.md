@@ -464,8 +464,8 @@ Potential improvements to consider:
 
 ## Related Documentation
 
-- [iOS Development Guide](./iOS_DEVELOPMENT.md) - General iOS development and deployment
-- [CI/CD Pipeline](./CI_CD.md) - Continuous integration and deployment setup
+- [iOS Development Guide](./ios-development.md) - General iOS development and deployment
+- [CI/CD Pipeline](./ci-cd.md) - Continuous integration and deployment setup
 - [Fastlane Documentation](https://docs.fastlane.tools) - Official Fastlane documentation
 - [App Store Connect API](https://developer.apple.com/documentation/appstoreconnectapi) - Apple's API documentation
 

@@ -175,8 +175,8 @@ The upload is controlled by the `skip_screenshots` parameter in the Fastfile (cu
 
 ## Additional Resources
 
-- [iOS Development Guide](../../../../../docs/iOS_DEVELOPMENT.md)
-- [Apple Connect Metadata Automation](../../../../../docs/APPLE_CONNECT_METADATA.md)
+- [iOS Development Guide](../../../../../docs/ios-development.md)
+- [Apple Connect Metadata Automation](../../../../../docs/apple-connect-metadata.md)
 - [Apple's App Store Screenshot Guidelines](https://developer.apple.com/app-store/product-page/)
 - [Apple's App Preview Specifications](https://developer.apple.com/help/app-store-connect/reference/app-information/app-preview-specifications)
 - [Fastlane Screenshots Documentation](https://docs.fastlane.tools/getting-started/ios/screenshots/)

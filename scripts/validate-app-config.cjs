@@ -364,7 +364,7 @@ function main() {
       console.log(`  1. Open your .env file in the project root`);
       console.log(`  2. Fix the APP_CONFIG_* values listed above`);
       console.log(`  3. Run this validation again: npm run validate:app-config`);
-      console.log(`  4. See docs/CONFIGURATION.md for detailed guidance`);
+      console.log(`  4. See docs/configuration.md for detailed guidance`);
       console.log(`  5. Use .env.example as the reference template\n`);
       
       process.exit(1);

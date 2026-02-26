@@ -241,7 +241,7 @@ platform :ios do
     # 4. Writes updated copyright back to file in format: "© YYYY Company Name"
     # 5. Uploads with metadata to App Store Connect
     #
-    # See: docs/APPLE_CONNECT_COPYRIGHT_AUTOMATION.md for full documentation
+    # See: docs/apple-connect-copyright-automation.md for full documentation
     copyright_start = Time.now
     UI.important("🕐 Updating copyright metadata...")
     copyright_path = File.join(Dir.pwd, "metadata", "en-US", "copyright.txt")

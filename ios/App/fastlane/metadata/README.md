@@ -264,10 +264,10 @@ After updating, you'll need to:
 - [GeoJSON Specification](https://geojson.org/)
 - [geojson.io - Interactive Editor](https://geojson.io)
 - [geojsonlint.com - Validator](https://geojsonlint.com)
-- [Apple Connect Metadata Documentation](../../../../../docs/APPLE_CONNECT_METADATA.md)
+- [Apple Connect Metadata Documentation](../../../../../docs/apple-connect-metadata.md)
 
 ## Related Files
 
-- [Metadata Documentation](../../../../../docs/APPLE_CONNECT_METADATA.md)
+- [Metadata Documentation](../../../../../docs/apple-connect-metadata.md)
 - [Fastfile](../Fastfile)
 - [Screenshots README](en-US/screenshots/README.md)

@@ -9,11 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Documentation improvements and repository organization
-- CONTRIBUTING.md with contribution guidelines
-- CODE_OF_CONDUCT.md for community guidelines
+- contributing.md with contribution guidelines
+- code-of-conduct.md for community guidelines
 - CHANGELOG.md for tracking project changes
 - Improved README with better structure and navigation
-- GitHub issue templates for bug reports and feature requests
+- Initial GitHub issue templates for bug reports and feature requests (later removed)
 - Pull request template for standardized submissions
 - Build performance optimizations documentation in iOS Development Guide
 
@@ -21,6 +21,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Reorganized documentation files into docs/ directory
 - Updated cross-references between documentation files
 - Improved LICENSE file with proper attribution
+- Updated support and documentation links to use generic GitHub issue creation (`/issues/new`)
+
+### Removed
+- Legacy GitHub issue template files under `.github/ISSUE_TEMPLATE/`
 
 ### Performance
 - Optimized iOS build performance with CocoaPods caching in GitHub Actions

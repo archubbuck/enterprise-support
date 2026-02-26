@@ -218,7 +218,7 @@ function main() {
     console.log(`     - Unbalanced brackets: { [ ]`);
     console.log(`  4. Run this script again to verify fixes\n`);
     
-    console.log(`${colors.blue}See docs/TROUBLESHOOTING.md for more help${colors.reset}\n`);
+    console.log(`${colors.blue}See docs/troubleshooting.md for more help${colors.reset}\n`);
     process.exit(1);
   } else {
     console.log(`${colors.green}✓ All JSON files are valid!${colors.reset}\n`);

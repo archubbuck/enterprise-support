@@ -6,8 +6,8 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { SupportDocument } from '@/lib/documents';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
-import { PdfViewerLazy } from './PdfViewerLazy';
-import { WordViewerLazy } from './WordViewerLazy';
+import { PdfViewerLazy } from './pdf-viewer-lazy';
+import { WordViewerLazy } from './word-viewer-lazy';
 
 interface DocumentViewerProps {
   document: SupportDocument;

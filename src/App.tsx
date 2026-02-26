@@ -4,13 +4,13 @@ import { FileText, Phone, MagnifyingGlass, X } from '@phosphor-icons/react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { DocumentTile } from '@/components/DocumentTile';
-import { DocumentViewer } from '@/components/DocumentViewer';
-import { ContactsView } from '@/components/ContactsView';
-import { TagFilter } from '@/components/TagFilter';
+import { DocumentTile } from '@/components/document-tile';
+import { DocumentViewer } from '@/components/document-viewer';
+import { ContactsView } from '@/components/contacts-view';
+import { TagFilter } from '@/components/tag-filter';
 import { loadSupportDocuments, SupportDocument, initializeDocuments, loadDocumentContent } from '@/lib/documents';
-import { useFeaturePreview } from '@/hooks/useFeaturePreview';
-import { useAppConfig } from '@/hooks/useAppConfig';
+import { useFeaturePreview } from '@/hooks/use-feature-preview';
+import { useAppConfig } from '@/hooks/use-app-config';
 
 function App() {
   const { config, loading: configLoading, error: configError } = useAppConfig();
@@ -56,7 +56,7 @@ function App() {
 
       // Tag filter (only if feature is enabled)
       const matchesTags = !isTagFilteringEnabled || selectedTags.length === 0 ||
-        (doc.tags && selectedTags.every(tag => doc.tags.includes(tag)));
+        (doc.tags && selectedTags.every(tag => doc.tags!.includes(tag)));
 
       // Feature flag filter - check if document type is enabled
       const isTypeEnabled = 
@@ -125,7 +125,7 @@ function App() {
     <div className="min-h-screen bg-background flex flex-col">
       <header className="px-5 py-4 mb-4 bg-[var(--bxd-blue-140)]">
         <div className="flex items-center gap-3">
-          <img src="/barings-logo.svg" alt="Barings" className="h-7" />
+          <img src="/header.svg" alt="Barings" className="h-7" />
           <div className="w-px h-6 bg-[var(--inverse-on-surface)]/40" />
           <h1 className="text-lg font-semibold tracking-tight text-[var(--inverse-on-surface)] flex-1">{config.appName}</h1>
         </div>

@@ -182,7 +182,7 @@ After making changes to documents:
 
 ## Related Documentation
 
-- [Configuration Guide](./CONFIGURATION.md) - App configuration options
-- [Quick Start Guide](./QUICK_START.md) - Getting started
-- [iOS Development Guide](./iOS_DEVELOPMENT.md) - Building for iOS
-- [Contributing Guide](../.github/CONTRIBUTING.md) - How to contribute
+- [Configuration Guide](./configuration.md) - App configuration options
+- [Quick Start Guide](./quick-start.md) - Getting started
+- [iOS Development Guide](./ios-development.md) - Building for iOS
+- [Contributing Guide](../.github/contributing.md) - How to contribute

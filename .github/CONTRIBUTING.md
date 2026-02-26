@@ -61,7 +61,7 @@ npm run ios:build
 npm run ios:open
 ```
 
-See [docs/iOS_DEVELOPMENT.md](./docs/iOS_DEVELOPMENT.md) for detailed iOS development instructions.
+See [docs/ios-development.md](./docs/ios-development.md) for detailed iOS development instructions.
 
 ### Making Changes
 
@@ -136,8 +136,9 @@ See [docs/iOS_DEVELOPMENT.md](./docs/iOS_DEVELOPMENT.md) for detailed iOS develo
 
 ### Naming Conventions
 
-- **Components**: PascalCase (e.g., `DocumentList.tsx`)
-- **Files**: kebab-case for utilities (e.g., `document-utils.ts`)
+- **Files (default)**: kebab-case for all repository files where tooling allows (e.g., `document-list.tsx`, `document-utils.ts`)
+- **Code symbols**: keep standard TypeScript/React naming (`PascalCase` components, `camelCase` functions)
+- **Exceptions**: keep ecosystem-reserved root files unchanged (`README.md`, `CHANGELOG.md`, `LICENSE`) and do not rename platform-managed iOS/Xcode/Fastlane file names under `ios/`
 - **Functions**: camelCase (e.g., `loadDocuments`)
 - **Constants**: UPPER_SNAKE_CASE (e.g., `MAX_DOCUMENTS`)
 
@@ -165,11 +166,11 @@ Update documentation when you:
 ### Documentation Files
 
 - **README.md**: Overview, quick start, and key features
-- **docs/QUICK_START.md**: Getting started guide for new developers
-- **docs/CONFIGURATION.md**: Configuration options and examples
-- **docs/iOS_DEVELOPMENT.md**: iOS-specific development guide
-- **docs/DOCUMENTS.md**: Document management system documentation
-- **CONTRIBUTING.md**: This file
+- **docs/quick-start.md**: Getting started guide for new developers
+- **docs/configuration.md**: Configuration options and examples
+- **docs/ios-development.md**: iOS-specific development guide
+- **docs/documents.md**: Document management system documentation
+- **contributing.md**: This file
 
 ### Documentation Style
 
@@ -192,7 +193,7 @@ To add new IT support documents:
 3. Add an entry to `public/documents/manifest.json`
 4. Test that the document loads correctly
 
-See [docs/DOCUMENTS.md](./docs/DOCUMENTS.md) for detailed instructions.
+See [docs/documents.md](./docs/documents.md) for detailed instructions.
 
 ## Questions?
 

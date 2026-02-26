@@ -371,15 +371,15 @@ Consider adding these checks to your workflow:
 If you're still experiencing issues:
 
 1. **Check the documentation:**
-   - [Quick Start Guide](./QUICK_START.md)
-   - [Configuration Guide](./CONFIGURATION.md)
-   - [Contributing Guide](../.github/CONTRIBUTING.md)
+   - [Quick Start Guide](./quick-start.md)
+   - [Configuration Guide](./configuration.md)
+   - [Contributing Guide](../.github/contributing.md)
 
 2. **Search existing issues:**
    - Check [GitHub Issues](https://github.com/archubbuck/enterprise-support/issues)
 
 3. **Report a new issue:**
-   - Use the appropriate issue template
+   - Open a new issue in the repository
    - Include error messages and logs
    - Describe steps to reproduce
 

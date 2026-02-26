@@ -1,10 +1,10 @@
-import { useFeatureFlag } from './useAppConfig';
+import { useFeatureFlag } from './use-app-config';
 import type { FeatureConfig } from '../types/app-config';
 
 /**
  * Hook to check if a feature preview is enabled
  * 
- * @deprecated Use useFeatureFlag from useAppConfig instead
+ * @deprecated Use useFeatureFlag from use-app-config instead
  * @param featureName - Name of the feature to check
  * @returns Whether the feature is enabled
  */

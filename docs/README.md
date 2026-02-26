@@ -6,7 +6,7 @@ Welcome to the Enterprise Support App documentation! This directory contains com
 
 ### Getting Started
 
-- **[Quick Start Guide](./QUICK_START.md)** - Get up and running in minutes
+- **[Quick Start Guide](./quick-start.md)** - Get up and running in minutes
   - Initial setup for all developers
   - Web development workflow
   - iOS development workflow (Mac only)
@@ -14,7 +14,7 @@ Welcome to the Enterprise Support App documentation! This directory contains com
 
 ### Configuration
 
-- **[Configuration Guide](./CONFIGURATION.md)** - Customize the app for your organization
+- **[Configuration Guide](./configuration.md)** - Customize the app for your organization
   - Company branding and settings
   - Contact information setup
   - Regional configuration
@@ -22,7 +22,7 @@ Welcome to the Enterprise Support App documentation! This directory contains com
 
 ### Platform-Specific Guides
 
-- **[iOS Development Guide](./iOS_DEVELOPMENT.md)** - iOS-specific development
+- **[iOS Development Guide](./ios-development.md)** - iOS-specific development
   - Prerequisites for Mac and Windows
   - Development workflow
   - Building for production
@@ -31,7 +31,7 @@ Welcome to the Enterprise Support App documentation! This directory contains com
 
 ### Content Management
 
-- **[Document Management](./DOCUMENTS.md)** - Managing support documents
+- **[Document Management](./documents.md)** - Managing support documents
   - Document structure
   - Adding new documents
   - Using placeholders
@@ -48,19 +48,19 @@ Welcome to the Enterprise Support App documentation! This directory contains com
 
 ### For New Developers
 
-1. Start with the [Quick Start Guide](./QUICK_START.md)
-2. Review the [Configuration Guide](./CONFIGURATION.md) to customize the app
-3. Read the [Contributing Guide](../.github/CONTRIBUTING.md) if you plan to contribute
+1. Start with the [Quick Start Guide](./quick-start.md)
+2. Review the [Configuration Guide](./configuration.md) to customize the app
+3. Read the [Contributing Guide](../.github/contributing.md) if you plan to contribute
 
 ### For iOS Developers
 
-1. Check the [iOS Development Guide](./iOS_DEVELOPMENT.md) for platform-specific setup
+1. Check the [iOS Development Guide](./ios-development.md) for platform-specific setup
 2. Review iOS-specific commands and workflows
 3. Understand the build and deployment process
 
 ### For Content Creators
 
-1. Read the [Document Management Guide](./DOCUMENTS.md)
+1. Read the [Document Management Guide](./documents.md)
 2. Learn about the Markdown file structure
 3. Understand placeholder usage for company-specific content
 
@@ -68,12 +68,12 @@ Welcome to the Enterprise Support App documentation! This directory contains com
 
 ### Project Files
 
-- [README](../README.md) - Project overview and features
-- [CONTRIBUTING](../.github/CONTRIBUTING.md) - How to contribute
-- [CODE_OF_CONDUCT](../.github/CODE_OF_CONDUCT.md) - Community guidelines
+- [README](../readme.md) - Project overview and features
+- [CONTRIBUTING](../.github/contributing.md) - How to contribute
+- [CODE_OF_CONDUCT](../.github/code-of-conduct.md) - Community guidelines
 - [CHANGELOG](../CHANGELOG.md) - Project version history
 - [LICENSE](../LICENSE) - License information
-- [SECURITY](../.github/SECURITY.md) - Security policy
+- [SECURITY](../.github/security.md) - Security policy
 
 ### External Resources
 
@@ -87,25 +87,25 @@ Welcome to the Enterprise Support App documentation! This directory contains com
 
 - Check the relevant documentation above
 - Search existing [GitHub Issues](https://github.com/archubbuck/enterprise-support/issues)
-- [Open a new issue](https://github.com/archubbuck/enterprise-support/issues/new/choose) if you can't find an answer
-- Review the [Contributing Guide](../.github/CONTRIBUTING.md) for development questions
+- [Open a new issue](https://github.com/archubbuck/enterprise-support/issues/new) if you can't find an answer
+- Review the [Contributing Guide](../.github/contributing.md) for development questions
 
 ## 📝 Documentation Improvements
 
 Found a problem with the documentation? We welcome improvements!
 
-- [Report documentation issues](https://github.com/archubbuck/enterprise-support/issues/new?template=documentation.md)
+- [Report documentation issues](https://github.com/archubbuck/enterprise-support/issues/new)
 - Submit a pull request with fixes or improvements
-- See the [Contributing Guide](../.github/CONTRIBUTING.md) for details
+- See the [Contributing Guide](../.github/contributing.md) for details
 
 ## 🗂️ Documentation Structure
 
 ```
 docs/
-├── README.md                # This file - documentation index
-├── QUICK_START.md          # Getting started guide
-├── CONFIGURATION.md        # Configuration options
-├── iOS_DEVELOPMENT.md      # iOS development guide
-├── DOCUMENTS.md            # Document management guide
-└── PRD.md                  # Product requirements document
+├── readme.md                # This file - documentation index
+├── quick-start.md           # Getting started guide
+├── configuration.md         # Configuration options
+├── ios-development.md       # iOS development guide
+├── documents.md             # Document management guide
+└── prd.md                   # Product requirements document
 ```

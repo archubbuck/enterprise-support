@@ -77,7 +77,7 @@ This repository uses GitHub Actions for continuous integration and deployment. T
 
 ### 4. iOS One-Time Match Setup
 
-**File:** `.github/workflows/setup_match.yml`
+**File:** `.github/workflows/setup-match.yml`
 
 **Triggers:**
 - Manual workflow dispatch only
@@ -304,7 +304,7 @@ CI may show warnings that don't fail the build:
 
 ### Deployment workflow fails
 
-See `docs/iOS_DEVELOPMENT.md` for iOS-specific troubleshooting.
+See `docs/ios-development.md` for iOS-specific troubleshooting.
 
 Common issues:
 - Missing or expired certificates
@@ -340,9 +340,9 @@ Workflows run with minimal required permissions:
 ## Additional Resources
 
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
-- [Troubleshooting Guide](./TROUBLESHOOTING.md)
-- [iOS Development Guide](./iOS_DEVELOPMENT.md)
-- [Quick Start Guide](./QUICK_START.md)
+- [Troubleshooting Guide](./troubleshooting.md)
+- [iOS Development Guide](./ios-development.md)
+- [Quick Start Guide](./quick-start.md)
 
 ## Support
 

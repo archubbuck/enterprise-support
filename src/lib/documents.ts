@@ -110,10 +110,10 @@ async function loadDocumentsFromAssets(): Promise<SupportDocument[]> {
             category: item.category,
             icon: item.icon as SupportDocument['icon'],
             content,
-            tags: item.tags,
+            ...(item.tags ? { tags: item.tags } : {}),
             type: documentType,
             fileUrl,
-          };
+          } satisfies SupportDocument;
         } catch (error) {
           console.error(`Failed to load document ${item.file}:`, error);
           return null;
@@ -121,7 +121,7 @@ async function loadDocumentsFromAssets(): Promise<SupportDocument[]> {
       })
     );
     
-    return documents.filter((doc): doc is SupportDocument => doc !== null);
+    return documents.filter((doc) => doc !== null) as SupportDocument[];
   } catch (error) {
     console.error('Failed to load documents from assets:', error);
     return [];

@@ -121,15 +121,15 @@ enterprise-support/
 
 ## Need Help?
 
-- **iOS Development**: See [iOS_DEVELOPMENT.md](./iOS_DEVELOPMENT.md)
-- **Project Overview**: See [README.md](../README.md)
-- **Configuration Guide**: See [CONFIGURATION.md](./CONFIGURATION.md)
+- **iOS Development**: See [ios-development.md](./ios-development.md)
+- **Project Overview**: See [README.md](../readme.md)
+- **Configuration Guide**: See [configuration.md](./configuration.md)
 - **Issues**: Open an issue on GitHub
 
 ## Tips
 
 💡 **Tip for Windows Developers**: The web version (`npm run dev`) works exactly like the iOS app. You can do 99% of your development using the browser.
 
-💡 **Tip for Mac Developers**: For faster development, configure Capacitor to load from localhost in development mode. See iOS_DEVELOPMENT.md for details.
+💡 **Tip for Mac Developers**: For faster development, configure Capacitor to load from localhost in development mode. See ios-development.md for details.
 
 💡 **Tip for Everyone**: Use `npm run build` for web-only builds, or `npm run ios:build` to build the web app and sync it to iOS in one step.

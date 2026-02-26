@@ -116,8 +116,8 @@ function ChartTooltipContent({
   color,
   nameKey,
   labelKey,
-}: ComponentProps<typeof RechartsPrimitive.Tooltip> &
-  ComponentProps<"div"> & {
+}: // eslint-disable-next-line @typescript-eslint/no-explicit-any
+Record<string, any> & {
     hideLabel?: boolean
     hideIndicator?: boolean
     indicator?: "line" | "dot" | "dashed"
@@ -255,7 +255,8 @@ function ChartLegendContent({
   verticalAlign = "bottom",
   nameKey,
 }: ComponentProps<"div"> &
-  Pick<RechartsPrimitive.LegendProps, "payload" | "verticalAlign"> & {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  Record<string, any> & {
     hideIcon?: boolean
     nameKey?: string
   }) {

@@ -94,7 +94,7 @@ The Fastlane script automatically:
 2025 Enterprise Support
 ```
 
-See [Apple Connect Copyright Automation](./APPLE_CONNECT_COPYRIGHT_AUTOMATION.md) for detailed documentation.
+See [Apple Connect Copyright Automation](./apple-connect-copyright-automation.md) for detailed documentation.
 
 ### 5. Routing App Coverage File ⚠️
 
@@ -260,7 +260,7 @@ App Store Connect supports preview videos to showcase your app.
 - `ios/App/fastlane/metadata/en-US/marketing_url.txt` - Marketing website URL
 
 **Current Values:**
-- Support URL: `https://github.com/archubbuck/enterprise-support/blob/main/.github/SUPPORT.md` - Links to the support documentation
+- Support URL: `https://github.com/archubbuck/enterprise-support/blob/main/.github/support.md` - Links to the support documentation
 - Privacy URL: `https://github.com/archubbuck/enterprise-support/blob/main/docs/PRIVACY.md` - Links to the privacy policy
 - Marketing URL: `https://github.com/archubbuck/enterprise-support/blob/main/README.md` - Links to the project README
 
@@ -270,7 +270,7 @@ App Store Connect supports preview videos to showcase your app.
   - Local-only data storage
   - No third-party tracking
   - Compliance with GDPR and CCPA
-- **.github/SUPPORT.md** - Support resources including:
+- **.github/support.md** - Support resources including:
   - Links to documentation
   - How to report issues
   - Contact information
@@ -397,7 +397,7 @@ ios/App/fastlane/metadata/
 1. Check `metadata/en-US/copyright.txt` exists
 2. Verify Fastfile copyright automation code is present
 3. Check deployment logs for copyright processing
-4. See [Apple Connect Copyright Automation](./APPLE_CONNECT_COPYRIGHT_AUTOMATION.md)
+4. See [Apple Connect Copyright Automation](./apple-connect-copyright-automation.md)
 
 ### Routing Coverage File Issues
 
@@ -466,7 +466,7 @@ Fastlane will automatically upload all locales.
 
 ## Related Documentation
 
-- [Apple Connect Copyright Automation](./APPLE_CONNECT_COPYRIGHT_AUTOMATION.md)
-- [iOS Development Guide](./iOS_DEVELOPMENT.md)
-- [CI/CD Pipeline](./CI_CD.md)
+- [Apple Connect Copyright Automation](./apple-connect-copyright-automation.md)
+- [iOS Development Guide](./ios-development.md)
+- [CI/CD Pipeline](./ci-cd.md)
 - [Deployment Workflow](../.github/workflows/deploy.yml)

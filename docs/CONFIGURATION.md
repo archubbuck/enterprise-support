@@ -407,7 +407,7 @@ For organizations with specific compliance requirements:
 1. Verify `appId` uses correct format
 2. Clean and rebuild: `npm run ios:build`
 3. Check Xcode signing settings match `appId`
-4. See [iOS Development Guide](./iOS_DEVELOPMENT.md)
+4. See [iOS Development Guide](./ios-development.md)
 
 ## Theme Configuration
 
@@ -417,8 +417,8 @@ For detailed information about configuring and customizing themes, see the [Them
 
 ## Related Documentation
 
-- [Quick Start Guide](./QUICK_START.md) - Getting started with development
+- [Quick Start Guide](./quick-start.md) - Getting started with development
 - [Theme Configuration Guide](./THEME_CONFIGURATION.md) - Configuring color themes
-- [iOS Development Guide](./iOS_DEVELOPMENT.md) - iOS-specific instructions
-- [Document Management](./DOCUMENTS.md) - Managing support documents
-- [README](../README.md) - Project overview
+- [iOS Development Guide](./ios-development.md) - iOS-specific instructions
+- [Document Management](./documents.md) - Managing support documents
+- [README](../readme.md) - Project overview
