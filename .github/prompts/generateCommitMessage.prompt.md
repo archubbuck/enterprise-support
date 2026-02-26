@@ -3,7 +3,7 @@ model: GPT-5.1-Codex
 tools: [execute, read]
 description: Generate one consistent, copy-ready commit message from repository changes and return it in a fenced code block.
 agent: agent
-argument-hint: "Please provide a brief description of the changes made in the code repository or reference specific files that were changed."
+argument-hint: "Optional: provide a brief change description and/or file/folder references (comma-separated, newline-separated, or mixed) to scope the commit to those paths."
 name: generateCommitMessage
 ---
 Generate exactly one commit message from the repository changes.
@@ -11,8 +11,14 @@ Generate exactly one commit message from the repository changes.
 ## Inputs
 
 - Use the user's description when provided.
-- If files are referenced, inspect them.
-- If needed, inspect git diff/log to infer the primary intent of the change.
+- File and folder references are optional.
+- When references are provided, treat them as the target list. The list may be:
+	- comma-separated paths
+	- newline-separated paths
+	- mixed file and folder paths
+- Normalize referenced paths, then inspect only changes associated with those paths.
+- If no references are provided, inspect repository changes normally.
+- If needed, inspect git diff/log to infer the primary intent of the change. When references are provided, constrain this inference to the referenced paths.
 
 ## Required Commit Structure
 
@@ -30,6 +36,13 @@ Produce a Conventional Commit with this structure and order:
 - Allowed `type` values: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`.
 - `scope` must be short and specific to the main area changed (for example: `api`, `ui`, `auth`, `repo`, `docs`).
 - `subject` must be imperative, concise, no trailing period, and max 72 characters.
+
+### Scope Resolution Rules
+
+- If file/folder references are provided, derive `scope` from the primary area represented by changes in those referenced paths.
+- If referenced paths map to multiple unrelated areas, choose the dominant area based on the greatest amount of relevant change among referenced paths.
+- If the area cannot be determined confidently, use `repo`.
+- If no references are provided, derive `scope` from the primary area changed across repository changes.
 
 ### Consistency Defaults
 

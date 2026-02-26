@@ -3,7 +3,7 @@ model: GPT-5.1-Codex
 tools: [execute, read]
 description: Generate one AI-enhanced change record for a single commit and return it directly in chat.
 agent: agent
-argument-hint: "Optional: provide a commit target (SHA/ref) to generate one record, or provide a range/date/'last N commits' input to return a reference list of matching commit IDs."
+argument-hint: "Optional: provide a commit target (SHA/ref), a range/date/'last N commits' lookup, and/or file/folder references (comma-separated, newline-separated, or mixed) to focus analysis on selected paths."
 name: generateChangeRecord
 ---
 Generate a single enhanced change record from git history and return it as the chat response.
@@ -19,6 +19,16 @@ For project context and coding standards, refer to [copilot-instructions.md](../
 - If the input is a range, date expression, or "last N commits", return a reference list
    of matching commit IDs and ask the user to choose one ID for record generation.
 - Do not generate multiple change records in one response.
+
+## Optional Path Filter
+
+- File and folder references are optional.
+- When references are provided, treat them as the target list. The list may be:
+   - comma-separated paths
+   - newline-separated paths
+   - mixed file and folder paths
+- Normalize referenced paths and focus commit-file analysis on matching changes only.
+- If no references are provided, analyze all changed files for the selected commit.
 
 ## Step 1 — Resolve Input
 
@@ -103,6 +113,10 @@ Then retrieve the patch:
 ```bash
 git diff-tree -p --no-commit-id <hash>
 ```
+
+If file/folder references are provided, constrain name-status and patch analysis to files under those referenced paths.
+If no changed files in the selected commit match the referenced paths, return:
+`No changed files in the selected commit match the provided file/folder references.`
 
 If the diff exceeds 300 lines, truncate analysis and note that truncation in the output.
 
