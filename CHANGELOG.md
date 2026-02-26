@@ -9,8 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Documentation improvements and repository organization
-- contributing.md with contribution guidelines
-- code-of-conduct.md for community guidelines
+- CONTRIBUTING.md with contribution guidelines
+- CODE_OF_CONDUCT.md for community guidelines
 - CHANGELOG.md for tracking project changes
 - Improved README with better structure and navigation
 - Initial GitHub issue templates for bug reports and feature requests (later removed)

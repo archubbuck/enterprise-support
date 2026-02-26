@@ -274,10 +274,10 @@ After updating, you'll need to:
 - [GeoJSON Specification](https://geojson.org/)
 - [geojson.io - Interactive Editor](https://geojson.io)
 - [geojsonlint.com - Validator](https://geojsonlint.com)
-- [Apple Connect Metadata Documentation](../../../../../docs/apple-connect-metadata.md)
+- [Release Operations Documentation](../../../../../docs/topics/release-operations.md)
 
 ## Related Files
 
-- [Metadata Documentation](../../../../../docs/apple-connect-metadata.md)
+- [Release Operations Documentation](../../../../../docs/topics/release-operations.md)
 - [Fastfile](../Fastfile)
 - [Screenshots README](en-US/screenshots/README.md)

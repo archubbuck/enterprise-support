@@ -61,7 +61,7 @@ npm run ios:build
 npm run ios:open
 ```
 
-See [docs/ios-development.md](./docs/ios-development.md) for detailed iOS development instructions.
+See [docs/topics/ios-development.md](../docs/topics/ios-development.md) for detailed iOS development instructions.
 
 ### Making Changes
 
@@ -166,11 +166,11 @@ Update documentation when you:
 ### Documentation Files
 
 - **README.md**: Overview, quick start, and key features
-- **docs/quick-start.md**: Getting started guide for new developers
-- **docs/configuration.md**: Configuration options and examples
-- **docs/ios-development.md**: iOS-specific development guide
-- **docs/documents.md**: Document management system documentation
-- **contributing.md**: This file
+- **docs/topics/quick-start.md**: Getting started guide for new developers
+- **docs/topics/configuration.md**: Configuration options and examples
+- **docs/topics/ios-development.md**: iOS-specific development guide
+- **docs/topics/content-management.md**: Document management system documentation
+- **CONTRIBUTING.md**: This file
 
 ### Documentation Style
 
@@ -193,7 +193,7 @@ To add new IT support documents:
 3. Add an entry to `public/documents/manifest.json`
 4. Test that the document loads correctly
 
-See [docs/documents.md](./docs/documents.md) for detailed instructions.
+See [docs/topics/content-management.md](./docs/topics/content-management.md) for detailed instructions.
 
 ## Questions?
 

@@ -1,111 +1,46 @@
 # Documentation Index
 
-Welcome to the Enterprise Support App documentation! This directory contains comprehensive guides to help you get started, develop, configure, and contribute to this project.
+This documentation set is organized for internal maintainers and release owners.
 
-## 📚 Available Documentation
+## Domains
 
-### Getting Started
+High-level entry points for each area of ownership:
 
-- **[Quick Start Guide](./quick-start.md)** - Get up and running in minutes
-  - Initial setup for all developers
-  - Web development workflow
-  - iOS development workflow (Mac only)
-  - Common commands and tips
+- [ARCHITECTURE.md](./domains/ARCHITECTURE.md): technical map of app structure and runtime flow
+- [SECURITY.md](./domains/SECURITY.md): security posture, privacy, data handling, and policy links
+- [PRIVACY.md](./domains/PRIVACY.md): privacy policy entry-point for external discovery
 
-### Configuration
+## Topics
 
-- **[Configuration Guide](./configuration.md)** - Customize the app for your organization
-  - Company branding and settings
-  - Contact information setup
-  - Regional configuration
-  - Advanced deployment options
+Hands-on guides for specific workflows (in `docs/topics/`):
 
-### Platform-Specific Guides
+- [quick-start.md](./topics/quick-start.md): first-day setup and daily commands
+- [configuration.md](./topics/configuration.md): `APP_CONFIG_*` reference and validation
+- [content-management.md](./topics/content-management.md): document/manifest operations
+- [ios-development.md](./topics/ios-development.md): macOS/Xcode development details
+- [release-operations.md](./topics/release-operations.md): CI/CD, metadata automation, and deploy flow
+- [runbook.md](./topics/runbook.md): release checklist, incident triage, rollback guidance
+- [troubleshooting.md](./topics/troubleshooting.md): common local/CI failure resolution
 
-- **[iOS Development Guide](./ios-development.md)** - iOS-specific development
-  - Prerequisites for Mac and Windows
-  - Development workflow
-  - Building for production
-  - App Store submission
-  - Troubleshooting
+## Suggested Reading Paths
 
-### Content Management
+### New Maintainer
 
-- **[Document Management](./documents.md)** - Managing support documents
-  - Document structure
-  - Adding new documents
-  - Using placeholders
-  - Testing and best practices
+1. [quick-start.md](./topics/quick-start.md)
+2. [ARCHITECTURE.md](./domains/ARCHITECTURE.md)
+3. [configuration.md](./topics/configuration.md)
+4. [content-management.md](./topics/content-management.md)
 
-### Design & Planning
+### Release Owner
 
-- **[Product Requirements Document (PRD)](./PRD.md)** - Original product specification
-  - Feature requirements
-  - Design direction
-  - User experience goals
+1. [release-operations.md](./topics/release-operations.md)
+2. [ios-development.md](./topics/ios-development.md)
+3. [runbook.md](./topics/runbook.md)
 
-## 🚀 Quick Links
+### Incident Responder
 
-### For New Developers
+1. [runbook.md](./topics/runbook.md)
+2. [troubleshooting.md](./topics/troubleshooting.md)
 
-1. Start with the [Quick Start Guide](./quick-start.md)
-2. Review the [Configuration Guide](./configuration.md) to customize the app
-3. Read the [Contributing Guide](../.github/contributing.md) if you plan to contribute
 
-### For iOS Developers
 
-1. Check the [iOS Development Guide](./ios-development.md) for platform-specific setup
-2. Review iOS-specific commands and workflows
-3. Understand the build and deployment process
-
-### For Content Creators
-
-1. Read the [Document Management Guide](./documents.md)
-2. Learn about the Markdown file structure
-3. Understand placeholder usage for company-specific content
-
-## 📖 Additional Resources
-
-### Project Files
-
-- [README](../readme.md) - Project overview and features
-- [CONTRIBUTING](../.github/contributing.md) - How to contribute
-- [CODE_OF_CONDUCT](../.github/code-of-conduct.md) - Community guidelines
-- [CHANGELOG](../CHANGELOG.md) - Project version history
-- [LICENSE](../LICENSE) - License information
-- [SECURITY](../.github/security.md) - Security policy
-
-### External Resources
-
-- [React Documentation](https://react.dev/)
-- [TypeScript Handbook](https://www.typescriptlang.org/docs/)
-- [Capacitor Documentation](https://capacitorjs.com/docs)
-- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
-- [Vite Documentation](https://vitejs.dev/)
-
-## 🤔 Need Help?
-
-- Check the relevant documentation above
-- Search existing [GitHub Issues](https://github.com/archubbuck/enterprise-support/issues)
-- [Open a new issue](https://github.com/archubbuck/enterprise-support/issues/new) if you can't find an answer
-- Review the [Contributing Guide](../.github/contributing.md) for development questions
-
-## 📝 Documentation Improvements
-
-Found a problem with the documentation? We welcome improvements!
-
-- [Report documentation issues](https://github.com/archubbuck/enterprise-support/issues/new)
-- Submit a pull request with fixes or improvements
-- See the [Contributing Guide](../.github/contributing.md) for details
-
-## 🗂️ Documentation Structure
-
-```
-docs/
-├── readme.md                # This file - documentation index
-├── quick-start.md           # Getting started guide
-├── configuration.md         # Configuration options
-├── ios-development.md       # iOS development guide
-├── documents.md             # Document management guide
-└── prd.md                   # Product requirements document
-```
