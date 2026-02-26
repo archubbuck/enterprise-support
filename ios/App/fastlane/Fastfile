@@ -43,6 +43,28 @@ def prepare_git_authorization(token)
   Base64.strict_encode64("x-access-token:#{token}")
 end
 
+def metadata_path_from_env
+  metadata_path = ENV["METADATA_PATH"]
+  return "./metadata" if metadata_path.nil? || metadata_path.empty?
+
+  metadata_path
+end
+
+def assert_no_unresolved_metadata_placeholder!(metadata_path)
+  placeholder = "<REPLACE>"
+  metadata_files = Dir.glob(File.join(metadata_path, "**", "*.txt"))
+
+  UI.user_error!("No metadata text files found in: #{metadata_path}") if metadata_files.empty?
+
+  unresolved_files = metadata_files.select do |file|
+    File.read(file).include?(placeholder)
+  end
+
+  return if unresolved_files.empty?
+
+  UI.user_error!("Unresolved #{placeholder} placeholders found in metadata files:\n#{unresolved_files.join("\n")}")
+end
+
 # Helper method to configure Xcode project with code signing settings.
 # Uses values from match environment variables set by the match action.
 # Expects `match` to have been run first so that it exports the required environment variables.
@@ -114,6 +136,12 @@ platform :ios do
   lane :release do
     start_time = Time.now
     UI.important("🕐 Release lane started at #{start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+    metadata_path = metadata_path_from_env
+    metadata_abs_path = File.expand_path(metadata_path, Dir.pwd)
+
+    UI.user_error!("Metadata path does not exist: #{metadata_abs_path}") unless Dir.exist?(metadata_abs_path)
+    assert_no_unresolved_metadata_placeholder!(metadata_abs_path)
+    UI.success("✅ Metadata placeholder validation passed")
     
     # Explicitly select Xcode using the DEVELOPER_DIR environment variable
     # This ensures fastlane uses the correct Xcode installation for finding tools like iTMSTransporter
@@ -244,7 +272,7 @@ platform :ios do
     # See: docs/apple-connect-copyright-automation.md for full documentation
     copyright_start = Time.now
     UI.important("🕐 Updating copyright metadata...")
-    copyright_path = File.join(Dir.pwd, "metadata", "en-US", "copyright.txt")
+    copyright_path = File.join(metadata_abs_path, "en-US", "copyright.txt")
     default_company_name = "Enterprise Support"
     year_regex = /^\d{4}$/
     
@@ -293,7 +321,7 @@ platform :ios do
     UI.success("✅ Copyright updated in #{(Time.now - copyright_start).round(1)}s")
 
     # Verify screenshots directory exists and contains files
-    screenshots_path = File.join(Dir.pwd, "metadata", "en-US", "screenshots")
+    screenshots_path = File.join(metadata_abs_path, "en-US", "screenshots")
     if Dir.exist?(screenshots_path)
       screenshot_files = Dir.glob(File.join(screenshots_path, "*.{png,jpg,jpeg}")).sort
       UI.message("📸 Found #{screenshot_files.length} screenshot(s) in: #{screenshots_path}")
@@ -308,8 +336,8 @@ platform :ios do
     UI.important("🚀 Starting App Store upload...")
     UI.important("📦 IPA path: #{ipa_path}")
     UI.important("🔑 API Key configured: #{!api_key.nil?}")
-    UI.important("📁 Metadata path: ./metadata")
-    UI.important("📸 Screenshots path: ./metadata/en-US/screenshots")
+    UI.important("📁 Metadata path: #{metadata_path}")
+    UI.important("📸 Screenshots path: #{File.join(metadata_path, 'en-US', 'screenshots')}")
     
     # Retry configuration - can be customized via environment variables
     max_retries = ENV["FASTLANE_UPLOAD_MAX_RETRIES"] ? ENV["FASTLANE_UPLOAD_MAX_RETRIES"].to_i : 3
@@ -323,7 +351,7 @@ platform :ios do
         app_identifier: APP_IDENTIFIER,
         skip_metadata: false,
         skip_screenshots: false,
-        metadata_path: "./metadata",  # Relative path from fastlane directory
+        metadata_path: metadata_path,
         submit_for_review: false,
         precheck_include_in_app_purchases: false,
         force: true,

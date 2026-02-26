@@ -261,7 +261,7 @@ If you need to change the encryption declaration:
 
 ## App Store Metadata
 
-This project includes pre-configured App Store metadata in the `ios/App/fastlane/metadata/en-US/` directory. This metadata is automatically uploaded to App Store Connect when using Fastlane.
+This project stores App Store metadata templates in `ios/App/fastlane/metadata/en-US/` using the literal placeholder `<REPLACE>`. Before release, metadata is validated and rendered from `.env` into `ios/App/fastlane/.generated-metadata`, which Fastlane uploads.
 
 #### Available Metadata Files
 
@@ -274,6 +274,8 @@ This project includes pre-configured App Store metadata in the `ios/App/fastlane
 - **screenshots/** - App screenshots for different device sizes (required for iOS)
 
 > **Note:** The copyright field is automatically updated with the current year during each deployment. See [Apple Connect Copyright Automation](./apple-connect-copyright-automation.md) for details.
+
+> **Note:** Text files in `ios/App/fastlane/metadata/en-US/` are templates and must keep `<REPLACE>`. Resolved values come from `APP_STORE_*` variables in your env files.
 
 #### App Screenshots
 
@@ -313,18 +315,27 @@ npm run ios:run
 
 To customize the App Store listing for your organization:
 
-1. Edit the metadata files in `ios/App/fastlane/metadata/en-US/`
-2. Keep within character limits (check with `wc -c <filename>`)
-3. The changes will be uploaded automatically during the next Fastlane deployment
+1. Set `APP_STORE_*` values in your `.env` (or `.env.production`) file
+2. Keep within character limits for each field
+3. Validate and generate metadata before release (commands below)
 
 Example:
 ```bash
-# Check character count
-wc -c ios/App/fastlane/metadata/en-US/promotional_text.txt
-
-# Edit the file
-nano ios/App/fastlane/metadata/en-US/promotional_text.txt
+# Edit env values (example)
+nano .env.production
 ```
+
+#### Release Sequence (Exact)
+
+Use this command sequence before uploading:
+
+```bash
+npm run validate:metadata
+npm run prepare:metadata
+cd ios/App && bundle exec fastlane release
+```
+
+Fastlane is configured to fail if any `<REPLACE>` placeholder remains unresolved.
 
 #### Multiple Locales
 
@@ -337,7 +348,7 @@ To add metadata for additional languages:
 
 #### Metadata in CI/CD
 
-The GitHub Actions deployment workflow (`.github/workflows/deploy.yml`) uses Fastlane's `upload_to_app_store` action, which automatically uploads metadata alongside the app binary. The metadata upload can be controlled via the `skip_metadata` parameter in the Fastfile.
+The GitHub Actions deployment workflow (`.github/workflows/deploy.yml`) runs metadata validation and generation before release, then passes `METADATA_PATH=./.generated-metadata` to Fastlane for upload.
 
 ## Project Structure
 

@@ -1,3 +1,13 @@
+# Fastlane Metadata Templates
+
+Text metadata files in this directory now use the literal placeholder `<REPLACE>` and must be rendered from `.env` before release.
+
+- Validate placeholders: `npm run validate:metadata`
+- Generate upload-ready metadata: `npm run prepare:metadata`
+- Generated output path: `ios/App/fastlane/.generated-metadata`
+
+Fastlane uploads from the generated metadata path and fails if any `<REPLACE>` value remains unresolved.
+
 # Routing App Coverage File
 
 This GeoJSON file defines the geographic coverage area for routing functionality in your app.

@@ -177,8 +177,15 @@ jobs:
             exit 1
           fi
 
+      - name: Validate and generate Fastlane metadata
+        run: |
+          npm run validate:metadata
+          npm run prepare:metadata
+
       - name: Verify copyright file
         uses: ./.github/actions/verify-copyright
+        env:
+          METADATA_DIR: fastlane/.generated-metadata
 
       - name: Run Fastlane release
         env:
@@ -197,6 +204,7 @@ jobs:
           FASTLANE_ITUNES_TRANSPORTER_TIMEOUT: 1800  # 30 minute timeout for uploads
           FASTLANE_ITUNES_TRANSPORTER_USE_SHELL_SCRIPT: 1  # Use shell script mode for better reliability
           FASTLANE_ITUNES_TRANSPORTER_PATH: /usr/local/itms  # Path to Transporter directory (not the binary itself)
+          METADATA_PATH: ./.generated-metadata
           # Note: We use automatic transport discovery (no -t flag) per Apple's recommendation
           # See: https://help.apple.com/itc/transporteruserguide/#/apdATD1E1288-D1E1A1303-D1E1288A1126
         working-directory: ios/App
