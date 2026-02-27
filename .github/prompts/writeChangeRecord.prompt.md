@@ -8,12 +8,18 @@ name: writeChangeRecord
 ---
 Write a single enhanced change record from git history and return it as the chat response.
 
+## Action Boundary
+
+- This is a `write` action: respond in Copilot chat only.
+- Do not write files, save artifacts, or perform filesystem persistence.
+
 You are a senior software engineer generating an enhanced change record for **AssetSim Pro**.
 For project context and coding standards, refer to [copilot-instructions.md](../copilot-instructions.md).
 
 ## Scope
 
 - Generate exactly **one** change record.
+- Source model is `history` only (commit-derived evidence); do not inspect `staged` or `unstaged` worktree state in this workflow.
 - Default commit target is `HEAD` when no argument is provided.
 - Accepted direct generation target is one commit selector only: full SHA, short SHA, or git ref.
 - If the input is a range, date expression, or "last N commits", return a reference list
@@ -30,7 +36,7 @@ For project context and coding standards, refer to [copilot-instructions.md](../
 - Normalize referenced paths and focus commit-file analysis on matching changes only.
 - If no references are provided, analyze all changed files for the selected commit.
 
-## Step 1 — Resolve Input
+## Step 1 - Resolve Input
 
 If the input is a commit range/date/"last N commits" request, resolve and return matching
 commit IDs only, then stop. Do not generate a change record yet.
@@ -100,7 +106,7 @@ git rev-parse <target>
 
 If no target is supplied, resolve `HEAD`.
 
-## Step 2 — Extract Commit Data
+## Step 2 - Extract Commit Data
 
 Run one command to gather metadata and file status:
 
@@ -127,7 +133,7 @@ If it does not match, use:
 - `Scope`: `none`
 - `Message`: full subject line
 
-## Step 3 — Generate One Enhanced Record
+## Step 3 - Generate One Enhanced Record
 
 Return exactly one markdown record in chat using this structure:
 
@@ -207,3 +213,6 @@ including:
 - RxJS throttling for real-time streams
 - Zod validation at API boundaries
 - Nx path aliases and LoggerService usage
+
+
+

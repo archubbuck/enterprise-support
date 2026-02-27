@@ -61,7 +61,7 @@ Produce the response with these sections in order:
 You may include command examples only for:
 - listing files and folders
 - searching references
-- checking git status/history
+- checking git working tree status and history
 - running validation checks
 
 Do not include direct destructive execution as completed actions. If deletion commands are shown, present them only as **planned** steps under explicit user-confirmation gates.
