@@ -32,8 +32,8 @@ If you're deploying or managing the Enterprise Support app:
 
 If you're developing or contributing to the Enterprise Support app:
 
-1. **Getting Started:** See [README.md](../README.md) for quick start instructions
-2. **Contributing:** See [CONTRIBUTING.md](./CONTRIBUTING.md) for contribution guidelines
+1. **Getting Started:** See [README.md](./README.md) for quick start instructions
+2. **Contributing:** See [.github/CONTRIBUTING.md](./.github/CONTRIBUTING.md) for contribution guidelines
 3. **GitHub Issues:** Report bugs or request features via [GitHub Issues](https://github.com/archubbuck/enterprise-support/issues)
 4. **GitHub Discussions:** Ask questions or discuss ideas via [GitHub Discussions](https://github.com/archubbuck/enterprise-support/discussions)
 
@@ -62,11 +62,11 @@ Have an idea for a new feature? Submit it via [GitHub Issues](https://github.com
 
 **Do not report security vulnerabilities through public GitHub issues.**
 
-Please see our [Security Policy](SECURITY.md) for instructions on reporting security vulnerabilities.
+Please see our [Security Policy](./.github/SECURITY.md) for instructions on reporting security vulnerabilities.
 
 ## Documentation
 
-Comprehensive documentation is available in the [docs](../docs/) directory:
+Comprehensive documentation is available in the [docs](./docs/) directory:
 
 - **[Quick Start Guide](../docs/topics/quick-start.md)** - Get up and running quickly
 - **[Configuration Guide](../docs/topics/configuration.md)** - Customize the app for your organization
@@ -83,7 +83,7 @@ Comprehensive documentation is available in the [docs](../docs/) directory:
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](../LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
 
 ## Frequently Asked Questions
 
@@ -109,7 +109,7 @@ See the [Troubleshooting Guide](../docs/topics/troubleshooting.md) for solutions
 
 ### How do I contribute to the project?
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md) for contribution guidelines.
+See [.github/CONTRIBUTING.md](./.github/CONTRIBUTING.md) for contribution guidelines.
 
 ## Contact
 
@@ -121,4 +121,4 @@ To stay informed about updates:
 
 1. **Watch the Repository:** Click "Watch" on [GitHub](https://github.com/archubbuck/enterprise-support)
 2. **Check Releases:** See [Releases](https://github.com/archubbuck/enterprise-support/releases) for version updates
-3. **Read the Changelog:** See [CHANGELOG.md](../CHANGELOG.md) for detailed changes
+3. **Read the Changelog:** See [CHANGELOG.md](./CHANGELOG.md) for detailed changes

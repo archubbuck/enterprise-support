@@ -17,6 +17,12 @@
 # - FASTLANE_UPLOAD_MAX_RETRIES: Maximum number of upload retry attempts (default: 3)
 # - FASTLANE_UPLOAD_RETRY_DELAY: Initial retry delay in seconds (default: 60)
 #   Note: Delay doubles with each retry attempt (exponential backoff)
+#
+# Optional metadata environment variables (see .env.example for complete list):
+# - METADATA_REVIEW_FIRST_NAME, METADATA_REVIEW_LAST_NAME, etc.: Review contact information
+# - METADATA_TRADE_REP_*: Trade representative contact (for Korean App Store)
+# - METADATA_*_SUB_CATEGORY: App category subcategories
+# See ios/App/fastlane/.env.example for full list and documentation
 
 default_platform(:ios)
 
@@ -168,6 +174,14 @@ platform :ios do
     assert_no_unresolved_metadata_placeholder!(metadata_abs_path)
     UI.success("✅ Metadata placeholder validation passed")
     
+    # Inject metadata from environment variables
+    # This allows sensitive values (phone numbers, emails, etc.) to be defined in .env
+    # instead of being committed to the repository
+    inject_start = Time.now
+    UI.important("🕐 Injecting metadata from environment variables...")
+    sh("ruby scripts/inject_metadata.rb")
+    UI.success("✅ Metadata injection completed in #{(Time.now - inject_start).round(1)}s")
+    
     # Explicitly select Xcode using the DEVELOPER_DIR environment variable
     # This ensures fastlane uses the correct Xcode installation for finding tools like iTMSTransporter
     # The DEVELOPER_DIR is set by the setup-xcode GitHub Action
@@ -230,6 +244,95 @@ platform :ios do
     UI.important("🕐 Configuring code signing settings...")
     configure_code_signing(APP_IDENTIFIER)
     UI.success("✅ Code signing configured in #{(Time.now - signing_start).round(1)}s")
+
+    # Update version number and build number from git tag
+    # This ensures both the app version and build number match the release tag (e.g., v1.2.3 -> 1.2.3)
+    # Both CFBundleShortVersionString (marketing version) and CFBundleVersion (build number) are set
+    # directly from the git tag to ensure consistency in App Store Connect.
+    version_start = Time.now
+    UI.important("🕐 Setting app version and build number from git tag...")
+    
+    begin
+      # Get the current git tag
+      # Prefer GIT_TAG_NAME from environment (set by GitHub Actions) to ensure
+      # we use the exact tag that triggered the workflow. This prevents issues
+      # when multiple tags point to the same commit.
+      # Fallback to last_git_tag for local/manual runs.
+      git_tag = ENV["GIT_TAG_NAME"] || last_git_tag
+      
+      if git_tag.nil? || git_tag.empty?
+        UI.user_error!("No git tag found. For App Store deployment, a version tag (e.g., v1.2.3) is required.")
+      elsif !git_tag.start_with?('v')
+        UI.user_error!("Git tag '#{git_tag}' doesn't match expected format. Expected 'v*' (e.g., v1.2.3) for App Store deployment.")
+      end
+      
+      # Extract version number from tag (e.g., v1.2.3 -> 1.2.3)
+      version_number = git_tag.sub(/^v/, '')
+      
+      # Validate version format for CFBundleShortVersionString (MARKETING_VERSION):
+      # While Apple allows "a string of one to three period-separated integers" (e.g., 1, 1.0, 1.2.3),
+      # this lane intentionally requires AT LEAST TWO numeric components (e.g., 1.0, 1.2.3) for consistency.
+      # Regex accepts X.Y, X.Y.Z, X.Y.Z.W with numeric components only (no pre-release suffixes)
+      unless version_number.match?(/^\d+(\.\d+)+$/)
+        UI.user_error!("Invalid version format: #{version_number}. Expected at least two numeric components like 1.0, 1.2.3, or 2.3.4.5 (no pre-release suffixes; single-component versions like '1' are not allowed)")
+      end
+      
+      UI.important("📌 Extracted version #{version_number} from tag #{git_tag}")
+      
+      # Update the marketing version (CFBundleShortVersionString)
+      # This is the user-facing version shown in App Store
+      increment_version_number(
+        version_number: version_number,
+        xcodeproj: "App.xcodeproj"
+      )
+      UI.success("✅ Marketing version (CFBundleShortVersionString) set to: #{version_number}")
+      
+      # Set build number (CFBundleVersion) from git commit count
+      # This ensures each build has a unique, monotonically increasing build number
+      # Apple's CFBundleVersion accepts "a string of one to three period-separated integers"
+      # Here we intentionally use a single integer (the commit count) within that allowed range.
+      # Using commit count provides:
+      # 1. Unique, monotonically increasing build numbers (required by App Store)
+      # 2. Git repository history correlation for debugging and audit purposes
+      # 3. Simplicity and compliance with Apple's format requirements
+      # 
+      # IMPORTANT: Avoid rewriting git history (rebase, squash, filter-branch) after deployment,
+      # as this could result in a lower commit count and cause App Store Connect upload failures.
+      commit_count = number_of_commits.to_s
+      
+      # Validate commit count is a non-negative integer
+      unless commit_count.match?(/^\d+$/)
+        UI.user_error!("Invalid commit count: #{commit_count}")
+      end
+      
+      # Handle edge case where commit count is 0 (e.g., new repo or shallow clone)
+      if commit_count.to_i < 1
+        UI.important("Git commit count was #{commit_count.inspect}, using fallback build number 1")
+        commit_count = "1"
+      end
+      
+      build_number = commit_count
+      
+      UI.important("🔢 Setting build number to #{build_number} (git commit count for uniqueness)")
+      
+      increment_build_number(
+        build_number: build_number,
+        xcodeproj: "App.xcodeproj"
+      )
+      
+      UI.success("✅ Build number (CFBundleVersion) set to: #{build_number}")
+      UI.success("✅ Version and build number synchronized with git tag #{git_tag} in #{(Time.now - version_start).round(1)}s")
+      UI.important("📱 App Store Connect will show: Version #{version_number} (Build #{build_number})")
+      UI.important("🔍 Traceability: Git tag #{git_tag} (total commits: #{build_number})")
+    rescue FastlaneCore::Interface::FastlaneError
+      # Re-raise FastlaneError (including UI.user_error!) to preserve specific error messages
+      raise
+    rescue => ex
+      # Catch other unexpected errors
+      UI.error("❌ Unexpected error setting version from git tag: #{ex.message}")
+      UI.error("Stack trace: #{ex.backtrace.first(3).join("\n")}")
+      UI.user_error!("Failed to set version from git tag. Deployment cannot continue without proper version tagging.")
+    end
 
     # Build the app with optimizations for faster CI/release builds
     # xcargs optimizations:

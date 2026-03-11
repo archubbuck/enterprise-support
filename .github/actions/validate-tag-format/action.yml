@@ -1,0 +1,152 @@
+name: 'Validate Git Tag Format'
+description: 'Validates that the git tag matches the required format for App Store deployment (v*)'
+runs:
+  using: 'composite'
+  steps:
+    - name: Validate tag format
+      shell: bash
+      run: |
+        echo "::group::🏷️  Validating Git Tag Format"
+        
+        # Get the tag name from the git ref
+        # GITHUB_REF format: refs/tags/v1.0.0
+        
+        # Validate GITHUB_REF is set and has the expected format
+        if [[ -z "$GITHUB_REF" || ! "$GITHUB_REF" =~ ^refs/tags/ ]]; then
+          echo "::endgroup::"
+          echo "::error::Invalid GITHUB_REF format: $GITHUB_REF"
+          echo "Expected format: refs/tags/<tag-name>"
+          exit 1
+        fi
+        
+        TAG_NAME="${GITHUB_REF#refs/tags/}"
+        
+        echo "📋 Checking tag format for App Store deployment..."
+        echo "   Tag: $TAG_NAME"
+        echo ""
+        
+        # Validate that tag starts with 'v'
+        if [[ ! "$TAG_NAME" =~ ^v ]]; then
+          echo "::endgroup::"
+          echo "::error title=Invalid Tag Format::Git tag '$TAG_NAME' doesn't match expected format"
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "❌ Error: Git tag '$TAG_NAME' doesn't match expected format"
+          echo ""
+          echo "   For App Store deployment, tags must start with 'v' followed by a version number."
+          echo ""
+          echo "   ✅ Valid formats:"
+          echo "      • v1.0.0"
+          echo "      • v1.2.3"
+          echo "      • v2.0.0.1"
+          echo ""
+          echo "   ❌ Invalid formats:"
+          echo "      • release/YYYY.MM.DD.HH  (use 'release/*' tags for GitHub releases only)"
+          echo "      • 1.0.0                  (missing 'v' prefix)"
+          echo "      • v1.0-beta              (suffixes not allowed)"
+          echo "      • v1                     (needs at least two numeric components, e.g., v1.0)"
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "📝 How to fix:"
+          echo ""
+          echo "  1. Delete the invalid tag:"
+          echo "     git tag -d $TAG_NAME"
+          echo "     git push origin :refs/tags/$TAG_NAME"
+          echo ""
+          echo "  2. Create a proper version tag:"
+          echo "     git tag v1.0.0"
+          echo "     git push origin v1.0.0"
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "📖 Tag Format Rules:"
+          echo ""
+          echo "   • Must start with 'v'"
+          echo "   • Must have at least two numeric components (e.g., v1.0, v1.2.3)"
+          echo "   • Cannot include suffixes like -beta, -rc1, etc."
+          echo ""
+          echo "   The 'release/*' tag pattern is reserved for automated GitHub releases"
+          echo "   and does NOT trigger App Store deployment."
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "📚 For more information:"
+          echo "   • docs/CI_CD.md - CI/CD pipeline documentation"
+          echo "   • docs/DEPLOY_SETUP.md - Deployment setup guide"
+          echo "   • ios/App/fastlane/Fastfile - Version validation logic"
+          echo ""
+          exit 1
+        fi
+        
+        # Extract version number from tag (e.g., v1.2.3 -> 1.2.3)
+        VERSION_NUMBER="${TAG_NAME#v}"
+        
+        # Validate that version is not empty (handles edge case of tag being just 'v')
+        if [[ -z "$VERSION_NUMBER" ]]; then
+          echo "::endgroup::"
+          echo "::error title=Empty Version::Tag '$TAG_NAME' has no version after 'v' prefix"
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "❌ Error: Tag '$TAG_NAME' has no version after 'v' prefix"
+          echo ""
+          echo "   Tag must include a version number after 'v' (e.g., v1.0.0)"
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          exit 1
+        fi
+        
+        # Validate version format:
+        # Regex: ^[0-9]+(\.[0-9]+)+$
+        # Explanation: Matches one or more digits, followed by one or more groups of
+        #              (dot + one or more digits), ensuring at least two numeric components
+        # Examples: 1.0, 1.2.3, 2.3.4.5 are valid; 1, 1.0-beta, a.b.c are invalid
+        if [[ ! "$VERSION_NUMBER" =~ ^[0-9]+(\.[0-9]+)+$ ]]; then
+          echo "::endgroup::"
+          echo "::error title=Invalid Version Format::Version '$VERSION_NUMBER' doesn't match expected format"
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "❌ Error: Invalid version format: $VERSION_NUMBER"
+          echo ""
+          echo "   Version must have at least two numeric components separated by periods."
+          echo ""
+          echo "   ✅ Valid versions:"
+          echo "      • 1.0"
+          echo "      • 1.2.3"
+          echo "      • 2.3.4.5"
+          echo ""
+          echo "   ❌ Invalid versions:"
+          echo "      • 1           (needs at least two components, e.g., 1.0)"
+          echo "      • 1.0-beta    (suffixes not allowed)"
+          echo "      • 1.0.0-rc1   (suffixes not allowed)"
+          echo "      • 1.0.0.beta  (non-numeric components not allowed)"
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "📝 How to fix:"
+          echo ""
+          echo "  Use a version with at least two numeric components:"
+          echo "     git tag -d $TAG_NAME"
+          echo "     git push origin :refs/tags/$TAG_NAME"
+          echo "     git tag v1.0.0"
+          echo "     git push origin v1.0.0"
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          exit 1
+        fi
+        
+        # Tag format is valid
+        echo "✅ Tag format is valid for App Store deployment"
+        echo "   Tag: $TAG_NAME"
+        echo "   Version: $VERSION_NUMBER"
+        echo ""
+        echo "   This tag will be used to set:"
+        echo "   • Marketing Version (CFBundleShortVersionString): $VERSION_NUMBER"
+        echo "   • Build Number (CFBundleVersion): <git commit count>"
+        echo ""
+        echo "::endgroup::"

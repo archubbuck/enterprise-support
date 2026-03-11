@@ -1,0 +1,38 @@
+{
+  "$schema": "../schemas/app.config.schema.json",
+  "$version": "1.0",
+  "companyName": "StartupCo",
+  "appName": "StartupCo Support",
+  "appId": "com.startupco.support",
+  "appSubtitle": "Quick IT Help",
+  "domain": "startupco.io",
+  "vpnPortal": "vpn.startupco.io",
+  "contacts": {
+    "email": "help@startupco.io",
+    "emergencyEmail": "urgent@startupco.io"
+  },
+  "features": {
+    "tagFiltering": false,
+    "pdfDocuments": true,
+    "wordDocuments": false,
+    "imageDocuments": true
+  },
+  "theme": {
+    "defaultTheme": "light",
+    "enableThemeSwitcher": false,
+    "themes": [
+      {
+        "id": "light",
+        "name": "Light",
+        "description": "Clean light theme",
+        "enabled": true
+      }
+    ]
+  },
+  "documents": [
+    {
+      "name": "IT Support Documents",
+      "path": "public/documents/manifest.json"
+    }
+  ]
+}

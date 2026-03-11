@@ -3,6 +3,15 @@ name: Deploy to App Store
 # This workflow builds and deploys the iOS app to the App Store.
 # It is automatically triggered when a tag starting with 'v' is pushed (e.g., v1.0.0).
 #
+# IMPORTANT: Tag Format Requirements
+# ==================================
+# Tags MUST follow this format: v<version>
+#   ✅ Valid:   v1.0.0, v1.2.3, v2.0.0.1
+#   ❌ Invalid: release/2026.01.26.23, 1.0.0, v1.0-beta, v1
+#
+# The 'release/*' tag pattern is reserved for automated GitHub releases
+# and does NOT trigger App Store deployment.
+#
 # Prerequisites:
 # Before using this workflow, ensure you have configured the following repository secrets:
 #   - MATCH_PASSWORD: Password for encrypting the certificates repository
@@ -35,63 +44,22 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate git tag format
+        uses: ./.github/actions/validate-tag-format
 
       - name: Validate required secrets
-        run: |
-          # Check if all required secrets are configured
-          missing_secrets=()
-          
-          if [ -z "${{ secrets.MATCH_PASSWORD }}" ]; then
-            missing_secrets+=("MATCH_PASSWORD")
-          fi
-          
-          if [ -z "${{ secrets.MATCH_GIT_URL }}" ]; then
-            missing_secrets+=("MATCH_GIT_URL")
-          fi
-          
-          if [ -z "${{ secrets.GIT_AUTHORIZATION }}" ]; then
-            missing_secrets+=("GIT_AUTHORIZATION")
-          fi
-          
-          if [ -z "${{ secrets.APPSTORE_ISSUER_ID }}" ]; then
-            missing_secrets+=("APPSTORE_ISSUER_ID")
-          fi
-          
-          if [ -z "${{ secrets.APPSTORE_KEY_ID }}" ]; then
-            missing_secrets+=("APPSTORE_KEY_ID")
-          fi
-          
-          if [ -z "${{ secrets.APPSTORE_P8 }}" ]; then
-            missing_secrets+=("APPSTORE_P8")
-          fi
-          
-          if [ -z "${{ secrets.APPLE_TEAM_ID }}" ]; then
-            missing_secrets+=("APPLE_TEAM_ID")
-          fi
-          
-          if [ ${#missing_secrets[@]} -gt 0 ]; then
-            echo "❌ Error: The following required secrets are not configured:"
-            for secret in "${missing_secrets[@]}"; do
-              echo "  - $secret"
-            done
-            echo ""
-            echo "📝 Please configure these secrets in your repository settings:"
-            echo "   Settings > Secrets and variables > Actions > Repository secrets"
-            echo ""
-            echo "Required secrets:"
-            echo "  • MATCH_PASSWORD: Password for encrypting the certificates repository"
-            echo "  • MATCH_GIT_URL: Git URL of the match certificates repository"
-            echo "  • GIT_AUTHORIZATION: GitHub Personal Access Token with repo access"
-            echo "  • APPSTORE_ISSUER_ID: App Store Connect API Issuer ID"
-            echo "  • APPSTORE_KEY_ID: App Store Connect API Key ID"
-            echo "  • APPSTORE_P8: App Store Connect API .p8 key content (raw, not base64)"
-            echo "  • APPLE_TEAM_ID: Apple Developer Team ID"
-            echo ""
-            echo "For more information, see the README or workflow comments."
-            exit 1
-          fi
-          
-          echo "✅ All required secrets are configured"
+        uses: ./.github/actions/validate-secrets
+        with:
+          match_password: ${{ secrets.MATCH_PASSWORD }}
+          match_git_url: ${{ secrets.MATCH_GIT_URL }}
+          git_authorization: ${{ secrets.GIT_AUTHORIZATION }}
+          appstore_issuer_id: ${{ secrets.APPSTORE_ISSUER_ID }}
+          appstore_key_id: ${{ secrets.APPSTORE_KEY_ID }}
+          appstore_p8: ${{ secrets.APPSTORE_P8 }}
+          apple_team_id: ${{ secrets.APPLE_TEAM_ID }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -117,7 +85,14 @@ jobs:
         id: setup-xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: '16'
+          xcode-version: 'latest-stable'
+
+      - name: Log resolved Xcode version
+        run: |
+          echo "Resolved Xcode version:"
+          xcodebuild -version
+          echo "Available iOS SDKs:"
+          xcodebuild -showsdks | grep iOS
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
@@ -187,6 +162,9 @@ jobs:
         env:
           METADATA_DIR: fastlane/.generated-metadata
 
+      - name: Validate metadata folder structure
+        run: npm run validate:metadata
+
       - name: Run Fastlane release
         env:
           APPSTORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
@@ -196,6 +174,9 @@ jobs:
           GIT_AUTHORIZATION: ${{ secrets.GIT_AUTHORIZATION }}
           MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          # Pass the triggering tag to Fastlane to ensure consistency with validation
+          # This prevents issues when multiple tags point to the same commit
+          GIT_TAG_NAME: ${{ github.ref_name }}
           # Increase timeout and retries for xcodebuild -showBuildSettings
           # to prevent hanging on slow CI environments (default: 3 seconds, 4 retries)
           FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 300

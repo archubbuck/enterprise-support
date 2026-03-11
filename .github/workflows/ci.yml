@@ -35,6 +35,9 @@ jobs:
       - name: Validate JSON files
         run: npm run validate:json
       
+      - name: Validate metadata folder structure
+        run: npm run validate:metadata
+      
       - name: Run linting
         run: npm run lint
       

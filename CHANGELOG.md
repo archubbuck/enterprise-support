@@ -34,6 +34,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhanced Podfile with post_install hook for build optimization settings
 - Expected 30-50% reduction in build times for CI/CD deployments
 
+### Fixed
+- Updated workflows to track the latest stable Xcode available in CI to address App Store Connect SDK version warnings
+- Improved alignment with Apple's iOS SDK requirements by using latest available Xcode in CI
+
 ## [0.0.0] - Initial Release
 
 ### Added
