@@ -1,6 +1,6 @@
 ---
 model: GPT-5.1-Codex
-tools: [read, execute]
+tools: [read]
 description: Rewrite one referenced commit message to strict Conventional Commit format and return it in a fenced code block.
 agent: agent
 argument-hint: "Provide one existing commit message and optional change context (files/diff notes) to normalize."

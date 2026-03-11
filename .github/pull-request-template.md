@@ -65,6 +65,7 @@ If applicable, add screenshots to help reviewers understand your changes:
 - [ ] My changes generate no new warnings
 - [ ] I have made corresponding changes to the documentation
 - [ ] My changes do not break existing functionality
+- [ ] Any new files under `.github/instructions/` use action-oriented names (verb-first or clear activity)
 
 ## Additional Notes
 

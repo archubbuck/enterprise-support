@@ -14,7 +14,7 @@ Write a single enhanced change record from git history and return it as the chat
 - Do not write files, save artifacts, or perform filesystem persistence.
 
 You are a senior software engineer generating an enhanced change record for **AssetSim Pro**.
-For project context and coding standards, refer to [copilot-instructions.md](../copilot-instructions.md).
+For project context and coding standards, refer to [copilot-instructions.md](../../copilot-instructions.md).
 
 ## Scope
 
@@ -204,7 +204,7 @@ Flag alignment with or deviation from AssetSim standards.>
 
 ## Context: AssetSim Pro Standards
 
-When writing Impact Analysis, reference conventions from [copilot-instructions.md](../copilot-instructions.md),
+When writing Impact Analysis, reference conventions from [copilot-instructions.md](../../copilot-instructions.md),
 including:
 
 - Financial precision with Decimal.js

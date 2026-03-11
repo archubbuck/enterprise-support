@@ -1,10 +1,10 @@
 ---
-applyTo: ".github/prompts/prompt/*.prompt.md"
+applyTo: ".github/prompts/change-record/*.prompt.md"
 ---
 
-# Prompt Management Instructions
+# Change Record Prompt Instructions
 
-These instructions define shared lifecycle behavior for prompt authoring workflows.
+These instructions define shared lifecycle behavior for change-record prompt workflows.
 
 ## Lifecycle Model
 
@@ -28,7 +28,7 @@ These instructions define shared lifecycle behavior for prompt authoring workflo
 ## File Persistence Policy
 
 - All file creation and editing must use native agent tool calls (such as `create_file` or `replace_string_in_file`). Do not invoke `apply_patch`, `patch`, or other commands in a terminal or shell to write or modify files.
-- Terminal execution (`execute` tool) is reserved for read-only data-gathering commands only. It must never be used for file persistence, creation, or editing.
+- Terminal execution (`execute` tool) is reserved for read-only data-gathering commands (such as `git` queries) only. It must never be used for file persistence, creation, or editing.
 - Terminal-based file patching commands are not portable across operating systems and must not be used regardless of the host environment.
 
 ## Non-Duplication Rules

@@ -1,6 +1,6 @@
 ---
 model: GPT-5.1-Codex
-tools: [read, execute]
+tools: [read]
 description: Rewrite one referenced change record to strict writeChangeRecord structure and return it in chat.
 agent: agent
 argument-hint: "Provide one existing change record draft (optionally with commit metadata/diff) to normalize."

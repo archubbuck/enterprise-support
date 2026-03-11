@@ -139,6 +139,8 @@ See [docs/topics/ios-development.md](../docs/topics/ios-development.md) for deta
 - **Files (default)**: kebab-case for all repository files where tooling allows (e.g., `document-list.tsx`, `document-utils.ts`)
 - **Code symbols**: keep standard TypeScript/React naming (`PascalCase` components, `camelCase` functions)
 - **Exceptions**: keep ecosystem-reserved root files unchanged (`README.md`, `CHANGELOG.md`, `LICENSE`) and do not rename platform-managed iOS/Xcode/Fastlane file names under `ios/`
+- **Instruction files**: names under `.github/instructions/` must be action-oriented (verb-first or clear activity), end with `.instructions.md`, and avoid topic-only labels
+- **Instruction file legacy note**: existing instruction filenames are grandfathered; apply this rule to all new instruction files and intentional renames
 - **Functions**: camelCase (e.g., `loadDocuments`)
 - **Constants**: UPPER_SNAKE_CASE (e.g., `MAX_DOCUMENTS`)
 

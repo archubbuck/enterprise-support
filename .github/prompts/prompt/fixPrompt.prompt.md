@@ -1,6 +1,6 @@
 ---
 model: GPT-5.1-Codex
-tools: [read, execute]
+tools: [read]
 description: Rewrite one referenced prompt draft to strict writePrompt structure and return it in a fenced code block.
 agent: agent
 argument-hint: "Provide one existing prompt draft (can be incomplete/conflicting) to normalize."
@@ -8,7 +8,7 @@ name: fixPrompt
 ---
 Rewrite exactly one referenced prompt so it strictly conforms to the repository's `writePrompt` structure and rules.
 
-Apply shared lifecycle invariants from [prompt-management.instructions.md](../instructions/prompt-management.instructions.md).
+Apply shared lifecycle invariants from [prompt-management.instructions.md](../../instructions/prompt-management.instructions.md).
 
 ## Task statement
 
@@ -24,6 +24,7 @@ Apply shared lifecycle invariants from [prompt-management.instructions.md](../in
 - Primary input is one referenced prompt draft (may be incomplete or conflicting).
 - Preserve explicit actionable constraints verbatim where possible.
 - Resolve ambiguity conservatively with neutral defaults.
+- Ensure repaired prompt metadata clearly maps the artifact to one .github/prompts/<subfolder> family when determinable from context.
 
 ## Step-by-step execution instructions
 
@@ -56,4 +57,5 @@ Apply shared lifecycle invariants from [prompt-management.instructions.md](../in
 
 - Exactly one prompt is returned.
 - Required six-part structure is present and in the correct order.
+- Metadata supports saving the prompt under one appropriate .github/prompts/<subfolder>.
 - Instructions are unambiguous and testable.

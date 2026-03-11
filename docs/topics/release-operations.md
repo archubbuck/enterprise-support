@@ -7,6 +7,7 @@ This document is the canonical guide for CI/CD, App Store metadata automation, a
 - `.github/workflows/ci.yml`: runs validation and build checks for code quality.
 - `.github/workflows/release.yml`: auto-creates GitHub releases on `main` using `release/*` tags.
 - `.github/workflows/deploy.yml`: deploys to App Store Connect when a manual `v*` tag is pushed.
+- `.github/workflows/build-enterprise.yml`: builds an enterprise IPA on demand (manual trigger, any OS).
 - `.github/workflows/setup-match.yml`: one-time signing setup for match/certificates.
 
 ## Release Modes
@@ -16,6 +17,7 @@ This document is the canonical guide for CI/CD, App Store metadata automation, a
 Trigger: merge/push to `main`.
 
 Outcome:
+
 - GitHub release tag in `release/YYYY.MM.DD.N` format.
 - Release notes generated from commits.
 - No App Store deployment.
@@ -34,8 +36,38 @@ git push origin v1.2.3
 ```
 
 Outcome:
+
 - Deploy workflow builds, signs, and uploads to App Store Connect.
 - Metadata generation and upload are included in deployment.
+
+### 3) Enterprise In-House Distribution
+
+Trigger: manual — via GitHub Actions (any OS) or local Mac build.
+
+#### From any device (including Windows)
+
+1. Go to **Actions > "Build Enterprise IPA" > "Run workflow"** in GitHub.
+2. Download the `enterprise-ipa` artifact when the run completes.
+
+Or via CLI:
+
+```bash
+gh workflow run build-enterprise.yml
+gh run download --name enterprise-ipa
+```
+
+#### From a local Mac
+
+```bash
+npm run ios:enterprise:build
+```
+
+Outcome:
+
+- Signed `.ipa` produced (locally at `ios/App/build/App.ipa`, or as a CI artifact).
+- No App Store upload. Upload the IPA to your MDM solution for device distribution.
+
+See [ios-development.md — Enterprise Distribution](./ios-development.md#enterprise-distribution-in-house) for full prerequisites and details.
 
 ## Local Pre-Release Validation
 

@@ -1,0 +1,151 @@
+name: Build Enterprise IPA
+
+# This workflow builds an enterprise (in-house) signed IPA for MDM distribution.
+# It runs on a macOS runner so Windows contributors can trigger it remotely.
+#
+# Prerequisites:
+# Before using this workflow, ensure you have configured the following repository secrets:
+#   - MATCH_PASSWORD: Password for encrypting the certificates repository
+#   - MATCH_GIT_URL: Git URL of the match certificates repository
+#   - GIT_AUTHORIZATION: GitHub Personal Access Token with 'repo' scope
+#   - APPSTORE_ISSUER_ID: App Store Connect API Issuer ID (Enterprise team)
+#   - APPSTORE_KEY_ID: App Store Connect API Key ID (Enterprise team)
+#   - APPSTORE_P8: App Store Connect API .p8 key content (raw, not base64-encoded)
+#   - APPLE_ENTERPRISE_TEAM_ID: Apple Developer Enterprise Team ID
+#
+# You must also run setup_enterprise_certificates (locally or via setup-match.yml adapted
+# for enterprise) ONCE before using this workflow.
+#
+# How to use:
+#   1. Go to Actions > "Build Enterprise IPA" > "Run workflow"
+#   2. Select the branch (default: main)
+#   3. Wait for the build to complete
+#   4. Download the IPA artifact from the workflow run summary
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    timeout-minutes: 60
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate required secrets
+        run: |
+          missing_secrets=()
+
+          if [ -z "${{ secrets.MATCH_PASSWORD }}" ]; then
+            missing_secrets+=("MATCH_PASSWORD")
+          fi
+
+          if [ -z "${{ secrets.MATCH_GIT_URL }}" ]; then
+            missing_secrets+=("MATCH_GIT_URL")
+          fi
+
+          if [ -z "${{ secrets.GIT_AUTHORIZATION }}" ]; then
+            missing_secrets+=("GIT_AUTHORIZATION")
+          fi
+
+          if [ -z "${{ secrets.APPSTORE_ISSUER_ID }}" ]; then
+            missing_secrets+=("APPSTORE_ISSUER_ID")
+          fi
+
+          if [ -z "${{ secrets.APPSTORE_KEY_ID }}" ]; then
+            missing_secrets+=("APPSTORE_KEY_ID")
+          fi
+
+          if [ -z "${{ secrets.APPSTORE_P8 }}" ]; then
+            missing_secrets+=("APPSTORE_P8")
+          fi
+
+          if [ -z "${{ secrets.APPLE_ENTERPRISE_TEAM_ID }}" ]; then
+            missing_secrets+=("APPLE_ENTERPRISE_TEAM_ID")
+          fi
+
+          if [ ${#missing_secrets[@]} -gt 0 ]; then
+            echo "❌ Error: The following required secrets are not configured:"
+            for secret in "${missing_secrets[@]}"; do
+              echo "  - $secret"
+            done
+            echo ""
+            echo "📝 Configure these in: Settings > Secrets and variables > Actions > Repository secrets"
+            exit 1
+          fi
+
+          echo "✅ All required secrets are configured"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        uses: nick-fields/retry@v3
+        with:
+          timeout_minutes: 5
+          max_attempts: 3
+          retry_wait_seconds: 10
+          command: npm ci
+
+      - name: Build web app
+        run: npm run build
+
+      - name: Sync Capacitor
+        run: npx cap sync ios
+
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '16'
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+          working-directory: ios/App
+
+      - name: Cache CocoaPods
+        uses: actions/cache@v4
+        with:
+          path: ios/App/Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('ios/App/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-
+
+      - name: Install CocoaPods dependencies
+        uses: nick-fields/retry@v3
+        with:
+          timeout_minutes: 5
+          max_attempts: 3
+          retry_wait_seconds: 10
+          command: cd ios/App && pod install
+
+      - name: Build enterprise IPA
+        env:
+          APPSTORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
+          APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
+          APPSTORE_P8: ${{ secrets.APPSTORE_P8 }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          GIT_AUTHORIZATION: ${{ secrets.GIT_AUTHORIZATION }}
+          MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
+          APPLE_ENTERPRISE_TEAM_ID: ${{ secrets.APPLE_ENTERPRISE_TEAM_ID }}
+          FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 300
+          FASTLANE_XCODEBUILD_SETTINGS_RETRIES: 8
+        working-directory: ios/App
+        run: bundle exec fastlane build_enterprise
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: enterprise-ipa
+          path: ios/App/build/App.ipa
+          retention-days: 30
+          if-no-files-found: error

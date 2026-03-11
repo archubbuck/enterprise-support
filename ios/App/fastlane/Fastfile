@@ -97,6 +97,31 @@ def configure_code_signing(app_identifier)
   )
 end
 
+# Helper method to configure Xcode project with enterprise (in-house) code signing settings.
+# Uses values from match environment variables set by the match action with type "enterprise".
+# Expects `match(type: "enterprise")` to have been run first.
+#
+# @param app_identifier [String] The app's bundle identifier in reverse-DNS format
+def configure_enterprise_code_signing(app_identifier)
+  UI.user_error!("app_identifier cannot be nil or empty") if app_identifier.nil? || app_identifier.empty?
+
+  team_id = ENV["sigh_#{app_identifier}_enterprise_team-id"]
+  profile_name = ENV["sigh_#{app_identifier}_enterprise_profile-name"]
+
+  UI.user_error!("Enterprise Team ID not found. Ensure match(type: 'enterprise') has been run.") if team_id.nil? || team_id.empty?
+  UI.user_error!("Enterprise Profile name not found. Ensure match(type: 'enterprise') has been run.") if profile_name.nil? || profile_name.empty?
+
+  update_code_signing_settings(
+    use_automatic_signing: false,
+    path: "App.xcodeproj",
+    targets: "App",
+    team_id: team_id,
+    bundle_identifier: app_identifier,
+    profile_name: profile_name,
+    code_sign_identity: "Apple Distribution"
+  )
+end
+
 platform :ios do
   desc "Generate certificates and provisioning profiles using match"
   lane :setup_certificates do
@@ -377,6 +402,125 @@ platform :ios do
     
     total_time = Time.now - start_time
     UI.success("🎉 Release lane completed successfully!")
+    UI.important("⏱️  Total time: #{total_time.round(1)}s (#{(total_time / 60).round(1)} minutes)")
+  end
+
+  desc "Generate enterprise (in-house) certificates and provisioning profiles using match"
+  lane :setup_enterprise_certificates do
+    setup_ci if is_ci
+
+    app_store_connect_api_key(
+      key_id: ENV["APPSTORE_KEY_ID"],
+      issuer_id: ENV["APPSTORE_ISSUER_ID"],
+      key_content: ENV["APPSTORE_P8"],
+      is_key_content_base64: false
+    )
+
+    enterprise_team_id = ENV["APPLE_ENTERPRISE_TEAM_ID"] || ENV["APPLE_TEAM_ID"]
+    UI.user_error!("Enterprise Team ID not set. Provide APPLE_ENTERPRISE_TEAM_ID or APPLE_TEAM_ID.") if enterprise_team_id.nil? || enterprise_team_id.empty?
+
+    git_auth = prepare_git_authorization(ENV["GIT_AUTHORIZATION"])
+
+    match(
+      type: "enterprise",
+      app_identifier: APP_IDENTIFIER,
+      git_url: ENV["MATCH_GIT_URL"],
+      readonly: false,
+      git_basic_authorization: git_auth,
+      team_id: enterprise_team_id
+    )
+
+    configure_enterprise_code_signing(APP_IDENTIFIER)
+    UI.success("✅ Enterprise certificates and profiles configured")
+  end
+
+  desc "Build enterprise IPA for MDM / in-house distribution (no App Store upload)"
+  lane :build_enterprise do
+    start_time = Time.now
+    UI.important("🕐 Enterprise build started at #{start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+
+    setup_ci if is_ci
+
+    app_store_connect_api_key(
+      key_id: ENV["APPSTORE_KEY_ID"],
+      issuer_id: ENV["APPSTORE_ISSUER_ID"],
+      key_content: ENV["APPSTORE_P8"],
+      is_key_content_base64: false
+    )
+
+    enterprise_team_id = ENV["APPLE_ENTERPRISE_TEAM_ID"] || ENV["APPLE_TEAM_ID"]
+    UI.user_error!("Enterprise Team ID not set. Provide APPLE_ENTERPRISE_TEAM_ID or APPLE_TEAM_ID.") if enterprise_team_id.nil? || enterprise_team_id.empty?
+
+    # Download enterprise certificates and profiles
+    match_start = Time.now
+    UI.important("🕐 Downloading enterprise certificates and profiles with match...")
+    git_auth = prepare_git_authorization(ENV["GIT_AUTHORIZATION"])
+
+    match(
+      type: "enterprise",
+      app_identifier: APP_IDENTIFIER,
+      git_url: ENV["MATCH_GIT_URL"],
+      readonly: true,
+      git_basic_authorization: git_auth,
+      team_id: enterprise_team_id
+    )
+    UI.success("✅ Match completed in #{(Time.now - match_start).round(1)}s")
+
+    # Configure Xcode project with enterprise signing
+    signing_start = Time.now
+    UI.important("🕐 Configuring enterprise code signing...")
+    configure_enterprise_code_signing(APP_IDENTIFIER)
+    UI.success("✅ Enterprise code signing configured in #{(Time.now - signing_start).round(1)}s")
+
+    # Build with the same optimizations as the release lane
+    xcargs_optimizations = [
+      "COMPILER_INDEX_STORE_ENABLE=NO",
+      "SKIP_MACRO_VALIDATION=YES",
+      "CLANG_ENABLE_MODULE_DEBUGGING=NO",
+      "DEBUG_INFORMATION_FORMAT=dwarf-with-dsym",
+      "ENABLE_BITCODE=NO",
+      "ONLY_ACTIVE_ARCH=NO",
+      "SWIFT_COMPILATION_MODE=wholemodule"
+    ].join(" ")
+
+    profile_name = ENV["sigh_#{APP_IDENTIFIER}_enterprise_profile-name"]
+    UI.user_error!("Enterprise provisioning profile name not found. Ensure match has been run.") if profile_name.nil? || profile_name.empty?
+
+    build_start = Time.now
+    UI.important("🕐 Building enterprise IPA...")
+    build_app(
+      scheme: "App",
+      workspace: "App.xcworkspace",
+      export_method: "enterprise",
+      xcargs: xcargs_optimizations,
+      export_options: {
+        provisioningProfiles: {
+          APP_IDENTIFIER => profile_name
+        },
+        thinning: "<none>"
+      }
+    )
+    UI.success("✅ Build completed in #{(Time.now - build_start).round(1)}s")
+
+    # Validate IPA
+    ipa_path = lane_context[SharedValues::IPA_OUTPUT_PATH]
+    UI.user_error!("IPA file not found at: #{ipa_path}") unless File.exist?(ipa_path)
+
+    ipa_size_mb = File.size(ipa_path) / 1024.0 / 1024.0
+    UI.important("📦 IPA size: #{ipa_size_mb.round(2)} MB")
+
+    min_ipa_size_mb = 1.0
+    UI.user_error!("IPA file is suspiciously small (#{ipa_size_mb.round(2)} MB). Build may have failed.") if ipa_size_mb < min_ipa_size_mb
+
+    # Copy IPA to build/ output directory
+    output_dir = File.expand_path("./build", Dir.pwd)
+    FileUtils.mkdir_p(output_dir)
+    output_path = File.join(output_dir, "App.ipa")
+    FileUtils.cp(ipa_path, output_path)
+
+    total_time = Time.now - start_time
+    UI.success("🎉 Enterprise IPA built successfully!")
+    UI.important("📦 IPA: #{output_path} (#{ipa_size_mb.round(2)} MB)")
     UI.important("⏱️  Total time: #{total_time.round(1)}s (#{(total_time / 60).round(1)} minutes)")
   end
 end

@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial GitHub issue templates for bug reports and feature requests (later removed)
 - Pull request template for standardized submissions
 - Build performance optimizations documentation in iOS Development Guide
+- Action-oriented naming policy for files under `.github/instructions/`, with PR checklist guidance for new instruction files
 
 ### Changed
 - Reorganized documentation files into docs/ directory

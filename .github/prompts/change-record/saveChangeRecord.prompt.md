@@ -1,6 +1,6 @@
 ---
 model: GPT-5.1-Codex
-tools: [read, execute]
+tools: [read]
 description: Save one previously written change record from the current Copilot chat to a file.
 agent: agent
 argument-hint: "Optional: provide target file path and candidate identifier when multiple change records exist."

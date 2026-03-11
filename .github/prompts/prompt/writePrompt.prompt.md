@@ -1,6 +1,6 @@
 ---
 model: GPT-5.1-Codex
-tools: [read, execute]
+tools: [read]
 description: Generate one complete prompt file from arbitrary user input, including YAML frontmatter, and return it in a fenced code block.
 agent: agent
 argument-hint: "Provide any combination of goal, constraints, style notes, examples, inputs, outputs, tooling, or audience details; free-form text is accepted."
@@ -8,7 +8,7 @@ name: writePrompt
 ---
 Write exactly one prompt from the user-provided arbitrary input.
 
-Apply shared lifecycle invariants from [prompt-management.instructions.md](../instructions/prompt-management.instructions.md).
+Apply shared lifecycle invariants from [prompt-management.instructions.md](../../instructions/prompt-management.instructions.md).
 
 ## Input
 
@@ -37,11 +37,15 @@ Frontmatter requirements:
 - Frontmatter must be the first content in the generated prompt.
 - Frontmatter must include all of these keys: `model`, `tools`, `description`, `agent`, `argument-hint`, `name`.
 - Preserve explicit user-provided metadata values when supplied; otherwise choose neutral defaults consistent with the prompt intent.
+- Use `agent: agent` as the default value for the `agent` frontmatter key unless the user explicitly provides a different value.
+- Set metadata so the resulting prompt clearly belongs to a single `.github/prompts/<subfolder>` family (derived from explicit user input when available, otherwise inferred conservatively).
+- Default `tools` to `[read]` unless the prompt explicitly requires terminal command execution (for example, running `git` commands). Only include `execute` when the prompt's step-by-step instructions contain concrete terminal commands that must be run. Never include `execute` solely for file creation or editing — those operations must use native agent tool calls.
 
 ## Consistency Defaults
 
 If specific details are not provided, use:
 - formatting: markdown unless user input specifies otherwise
+- agent: agent
 
 ## Quick Usage Examples
 
@@ -55,6 +59,7 @@ Expected behavior:
 - Produces one complete prompt only.
 - Includes YAML frontmatter in the generated prompt.
 - Preserves explicit constraints from the input.
+- Includes metadata that supports saving under one appropriate `.github/prompts/<subfolder>`.
 - Returns output in one fenced `text` code block.
 
 ## Output Format (Strict)
