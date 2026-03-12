@@ -519,8 +519,8 @@ platform :ios do
       is_key_content_base64: false
     )
 
-    enterprise_team_id = ENV["APPLE_ENTERPRISE_TEAM_ID"] || ENV["APPLE_TEAM_ID"]
-    UI.user_error!("Enterprise Team ID not set. Provide APPLE_ENTERPRISE_TEAM_ID or APPLE_TEAM_ID.") if enterprise_team_id.nil? || enterprise_team_id.empty?
+    enterprise_team_id = ENV["APPLE_TEAM_ID"] || ENV["APPLE_TEAM_ID"]
+    UI.user_error!("Enterprise Team ID not set. Provide APPLE_TEAM_ID or APPLE_TEAM_ID.") if enterprise_team_id.nil? || enterprise_team_id.empty?
 
     git_auth = prepare_git_authorization(ENV["GIT_AUTHORIZATION"])
 
@@ -551,8 +551,8 @@ platform :ios do
       is_key_content_base64: false
     )
 
-    enterprise_team_id = ENV["APPLE_ENTERPRISE_TEAM_ID"] || ENV["APPLE_TEAM_ID"]
-    UI.user_error!("Enterprise Team ID not set. Provide APPLE_ENTERPRISE_TEAM_ID or APPLE_TEAM_ID.") if enterprise_team_id.nil? || enterprise_team_id.empty?
+    enterprise_team_id = ENV["APPLE_TEAM_ID"] || ENV["APPLE_TEAM_ID"]
+    UI.user_error!("Enterprise Team ID not set. Provide APPLE_TEAM_ID or APPLE_TEAM_ID.") if enterprise_team_id.nil? || enterprise_team_id.empty?
 
     # Download enterprise certificates and profiles
     match_start = Time.now

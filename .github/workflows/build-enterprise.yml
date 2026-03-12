@@ -11,7 +11,7 @@ name: Build Enterprise IPA
 #   - APPSTORE_ISSUER_ID: App Store Connect API Issuer ID (Enterprise team)
 #   - APPSTORE_KEY_ID: App Store Connect API Key ID (Enterprise team)
 #   - APPSTORE_P8: App Store Connect API .p8 key content (raw, not base64-encoded)
-#   - APPLE_ENTERPRISE_TEAM_ID: Apple Developer Enterprise Team ID
+#   - APPLE_TEAM_ID: Apple Developer Enterprise Team ID
 #
 # You must also run setup_enterprise_certificates (locally or via setup-match.yml adapted
 # for enterprise) ONCE before using this workflow.
@@ -64,8 +64,8 @@ jobs:
             missing_secrets+=("APPSTORE_P8")
           fi
 
-          if [ -z "${{ secrets.APPLE_ENTERPRISE_TEAM_ID }}" ]; then
-            missing_secrets+=("APPLE_ENTERPRISE_TEAM_ID")
+          if [ -z "${{ secrets.APPLE_TEAM_ID }}" ]; then
+            missing_secrets+=("APPLE_TEAM_ID")
           fi
 
           if [ ${#missing_secrets[@]} -gt 0 ]; then
@@ -136,7 +136,7 @@ jobs:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           GIT_AUTHORIZATION: ${{ secrets.GIT_AUTHORIZATION }}
           MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
-          APPLE_ENTERPRISE_TEAM_ID: ${{ secrets.APPLE_ENTERPRISE_TEAM_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 300
           FASTLANE_XCODEBUILD_SETTINGS_RETRIES: 8
         working-directory: ios/App

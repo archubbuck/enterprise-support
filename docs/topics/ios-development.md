@@ -63,7 +63,7 @@ Enterprise distribution produces a signed `.ipa` for internal MDM delivery, bypa
 ### One-Time Setup
 
 1. Copy `.env.enterprise.example` to `.env.enterprise.local` and fill in all values.
-2. Configure the `APPLE_ENTERPRISE_TEAM_ID` repository secret in GitHub (Settings > Secrets > Actions).
+2. Configure the `APPLE_TEAM_ID` repository secret in GitHub (Settings > Secrets > Actions).
 3. Bootstrap enterprise certificates and provisioning profiles (requires macOS):
 
 ```bash
